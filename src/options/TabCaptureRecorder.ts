@@ -1,8 +1,10 @@
-import browser from "webextension-polyfill";
+import browser from 'webextension-polyfill';
 
-import { isMessage, isRecordingDownloadedMessage, isRecordingStoppedMessage, isRecordMessage } from "../common/Message";
-import { RecordingMetadata } from "../common/RecordingMetadata";
-import { TabCaptureRecording } from "./TabCaptureRecording";
+import {
+ isMessage, isRecordingDownloadedMessage, isRecordingStoppedMessage, isRecordMessage, 
+} from '../common/Message';
+import { RecordingMetadata } from '../common/RecordingMetadata';
+import { TabCaptureRecording } from './TabCaptureRecording';
 
 export class TabCaptureRecorder {
   private tabCaptureRecordings: TabCaptureRecording[];
@@ -14,7 +16,7 @@ export class TabCaptureRecorder {
       if (!isMessage(message) || !message.dispatched) {
         return;
       }
-      console.log("TabCaptureRecorder <<", message);
+      console.log('TabCaptureRecorder <<', message);
 
       if (isRecordMessage(message)) {
         this.createAndStartTabCapture(message.title);

@@ -1,12 +1,12 @@
 import tailwindcss from '@tailwindcss/vite';
-import vue from "@vitejs/plugin-vue";
-import { defineConfig } from "vite";
+import vue from '@vitejs/plugin-vue';
+import { defineConfig } from 'vite';
 import eslint from 'vite-plugin-eslint';
-import webExtension, { readJsonFile } from "vite-plugin-web-extension";
+import webExtension, { readJsonFile } from 'vite-plugin-web-extension';
 
-function generateManifest() {
-  const manifest = readJsonFile("src/manifest.json");
-  const pkg = readJsonFile("package.json");
+function generateManifest(): void {
+  const manifest = readJsonFile('src/manifest.json');
+  const pkg = readJsonFile('package.json');
   return {
     name: pkg.name,
     description: pkg.description,
@@ -23,7 +23,7 @@ export default defineConfig({
     vue(),
     webExtension({
       manifest: generateManifest,
-      watchFilePaths: ["package.json", "manifest.json"],
+      watchFilePaths: ['package.json', 'manifest.json'],
     }),
   ],
 });

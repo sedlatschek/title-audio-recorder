@@ -9,10 +9,12 @@ const props = defineProps<{
 }>();
 
 import { DateTime } from 'luxon';
-import { onMounted, onUnmounted, ref } from 'vue';
+import {
+ onMounted, onUnmounted, ref, 
+} from 'vue';
 
 let interval: ReturnType<typeof setInterval> | undefined;
-const duration = ref("0");
+const duration = ref('0');
 
 onMounted(() => {
   interval = setInterval(() => {

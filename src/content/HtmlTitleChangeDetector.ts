@@ -1,4 +1,6 @@
-import { TitleChangeDetector, TitleChangeHandler } from "./TitleChangeDetector";
+import {
+ TitleChangeDetector, TitleChangeHandler, 
+} from './TitleChangeDetector';
 
 export class HtmlTitleChangeDetector implements TitleChangeDetector {
   private handlers: TitleChangeHandler[] = [];
@@ -15,9 +17,9 @@ export class HtmlTitleChangeDetector implements TitleChangeDetector {
   }
 
   private getTitleHtmlElement(): HTMLElement {
-    const htmlElement = document.querySelector("title");
+    const htmlElement = document.querySelector('title');
     if (!htmlElement) {
-      throw new Error("Could not find title HTML element");
+      throw new Error('Could not find title HTML element');
     }
     return htmlElement;
   }

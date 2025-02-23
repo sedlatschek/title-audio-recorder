@@ -16,9 +16,9 @@
 </template>
 
 <script setup lang="ts">
-import browser from "webextension-polyfill";
+import browser from 'webextension-polyfill';
 
-import GenericButton from "../components/GenericButton.vue";
+import GenericButton from '../components/GenericButton.vue';
 import { MessageType } from './Message';
 import { RecordingMetadata } from './RecordingMetadata';
 
@@ -26,11 +26,11 @@ const props = defineProps<{
   recording: RecordingMetadata;
 }>();
 
-function start() {
+function start(): void {
   sendMessage(MessageType.RECORDING_STARTED);
 }
 
-function stop() {
+function stop(): void {
   sendMessage(MessageType.RECORDING_STOPPED);
 }
 

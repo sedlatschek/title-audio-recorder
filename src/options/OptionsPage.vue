@@ -4,5 +4,5 @@
 </template>
 
 <script setup lang="ts">
-import RecorderWidget from "./RecorderWidget.vue";
+import RecorderWidget from './RecorderWidget.vue';
 </script>

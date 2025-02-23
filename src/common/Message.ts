@@ -1,7 +1,7 @@
-import { RecordingMetadata } from "./RecordingMetadata";
+import { RecordingMetadata } from './RecordingMetadata';
 
 export enum MessageType {
-  RECORD = "RECORD",
+  RECORD = 'RECORD',
   RECORDING_ADDED = 'RECORDING_ADDED',
   RECORDING_STARTED = 'RECORDING_STARTED',
   RECORDING_STOPPED = 'RECORDING_STOPPED',
@@ -14,8 +14,8 @@ type MessageBase = {
 
 export function isMessage(message: unknown): message is Message {
   return message != null
-    && typeof message === "object"
-    && "messageType" in message
+    && typeof message === 'object'
+    && 'messageType' in message
     && Object.values(MessageType).includes(message.messageType as MessageType);
 }
 
@@ -26,7 +26,7 @@ export type RecordMessage = {
 
 export function isRecordMessage(message: unknown): message is RecordMessage {
   return isMessage(message)
-    && "title" in message
+    && 'title' in message
     && message.messageType === MessageType.RECORD;
 }
 

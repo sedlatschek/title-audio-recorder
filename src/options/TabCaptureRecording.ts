@@ -1,9 +1,11 @@
-import filenamify from "filenamify";
-import { DateTime } from "luxon";
-import browser from "webextension-polyfill";
-import { Message, MessageType } from "../common/Message";
-import { RecordingMetadata } from "../common/RecordingMetadata";
-import { UUID } from "../common/types";
+import filenamify from 'filenamify';
+import { DateTime } from 'luxon';
+import browser from 'webextension-polyfill';
+import {
+ Message, MessageType, 
+} from '../common/Message';
+import { RecordingMetadata } from '../common/RecordingMetadata';
+import { UUID } from '../common/types';
 
 export class TabCaptureRecording {
   private mediaRecorder: MediaRecorder | undefined;
@@ -11,8 +13,12 @@ export class TabCaptureRecording {
   private startedAt?: DateTime;
   private stoppedAt?: DateTime;
   private blobUrl: string | undefined;
+  public readonly id: UUID;
+  public readonly title: string;
 
-  public constructor(public readonly id: UUID, public readonly title: string) {
+  public constructor(id: UUID, title: string) {
+    this.id = id;
+    this.title = title;
     this.sendMessage(MessageType.RECORDING_ADDED);
   }
 
@@ -20,7 +26,7 @@ export class TabCaptureRecording {
     return new Promise((resolve, reject) => {
       const captureOptions: chrome.tabCapture.CaptureOptions = {
         audio: true,
-        video: false
+        video: false,
       };
 
       chrome.tabCapture.capture(captureOptions, stream => {
@@ -35,10 +41,10 @@ export class TabCaptureRecording {
 
   public async start(): Promise<void> {
     if (this.startedAt) {
-      throw new Error("Can not start recording: Recording already started");
+      throw new Error('Can not start recording: Recording already started');
     }
     if (this.stoppedAt) {
-      throw new Error("Can not start recording: Recording already finished")
+      throw new Error('Can not start recording: Recording already finished')
     }
     this.startedAt = DateTime.now();
 
@@ -48,17 +54,17 @@ export class TabCaptureRecording {
     mediaStreamSource.connect(audioContext.destination);
 
     this.mediaRecorder = new MediaRecorder(stream, {
-      mimeType: "audio/webm"
+      mimeType: 'audio/webm',
     });
 
-    this.mediaRecorder.ondataavailable = (event) => {
+    this.mediaRecorder.ondataavailable = (event): void => {
       if (event.data && event.data.size > 0) {
         this.chunks.push(event.data);
       }
     };
 
-    this.mediaRecorder.onstop = () => {
-      const audioBlob = new Blob(this.chunks, { type: "audio/webm" });
+    this.mediaRecorder.onstop = (): void => {
+      const audioBlob = new Blob(this.chunks, { type: 'audio/webm' });
       this.blobUrl = URL.createObjectURL(audioBlob);
       this.chunks = [];
       this.mediaRecorder = undefined;
@@ -71,10 +77,10 @@ export class TabCaptureRecording {
 
   public stop(): Promise<void> {
     if (this.stoppedAt) {
-      throw new Error("Can not stop recording: Recording already stopped")
+      throw new Error('Can not stop recording: Recording already stopped')
     }
     if (!this.mediaRecorder || !this.startedAt) {
-      throw new Error("Can not stop recording: Recording was not running");
+      throw new Error('Can not stop recording: Recording was not running');
     }
     this.stoppedAt = DateTime.now();
 
@@ -95,7 +101,7 @@ export class TabCaptureRecording {
     });
   }
 
-  private sendMessage(messageType: MessageType.RECORDING_ADDED |  MessageType.RECORDING_STARTED | MessageType.RECORDING_STOPPED) {
+  private sendMessage(messageType: MessageType.RECORDING_ADDED |  MessageType.RECORDING_STARTED | MessageType.RECORDING_STOPPED): void {
     const message: Message = {
       messageType,
       recording: this.getRecordingMetadata(),

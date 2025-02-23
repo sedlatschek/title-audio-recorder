@@ -1,13 +1,13 @@
-import eslintJs from "@eslint/js";
+import eslintJs from '@eslint/js';
 import eslintImport from 'eslint-plugin-import';
-import eslintVue from "eslint-plugin-vue";
-import globals from "globals";
-import eslintTypescript from "typescript-eslint";
+import eslintVue from 'eslint-plugin-vue';
+import globals from 'globals';
+import eslintTypescript from 'typescript-eslint';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
-  { ignores: ["**/dist/**/*", "**/node_modules/**/*"] },
-  { files: ["**/*.{js,mjs,cjs,ts,vue}"] },
+  { ignores: ['**/dist/**/*', '**/node_modules/**/*'] },
+  { files: ['**/*.{js,mjs,cjs,ts,vue}'] },
   { languageOptions: { globals: globals.browser } },
   {
     plugins: { import: eslintImport },
@@ -27,7 +27,7 @@ export default [
           ],
           alphabetize: {
             order: 'asc',
-            caseInsensitive: true
+            caseInsensitive: true,
           },
         },
       ],
@@ -35,11 +35,20 @@ export default [
   },
   eslintJs.configs.recommended,
   ...eslintTypescript.configs.recommended,
-  ...eslintVue.configs["flat/recommended"],
+  ...eslintVue.configs['flat/recommended'],
   {
-    files: ["**/*.vue"],
+    files: ['**/*.vue'],
     languageOptions: {
-      parserOptions: {parser: eslintTypescript.parser}
-    }
+      parserOptions: {
+        parser: eslintTypescript.parser,
+      },
+    },
+  },
+  {
+    rules: {
+      '@typescript-eslint/explicit-function-return-type': 'error',
+      'quotes': ['error', 'single', { 'avoidEscape': true }],
+      'comma-dangle': ['error', 'always-multiline' ],
+    },
   },
 ];

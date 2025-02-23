@@ -1,12 +1,17 @@
 <script lang="ts" setup>
-import browser, { Tabs } from "webextension-polyfill";
+import browser, { Tabs } from 'webextension-polyfill';
 
-import { type RecordMessage, MessageType } from "../common/Message";
+import {
+ type RecordMessage, MessageType, 
+} from '../common/Message';
 
 async function getCurrentTab(): Promise<Tabs.Tab> {
-  const [tab] = await browser.tabs.query({ active: true, lastFocusedWindow: true });
+  const [tab] = await browser.tabs.query({
+ active: true,
+lastFocusedWindow: true, 
+});
   if (!tab) {
-    throw new Error("Could not retrieve currently active tab");
+    throw new Error('Could not retrieve currently active tab');
   }
   return tab;
 }
@@ -14,7 +19,7 @@ async function getCurrentTab(): Promise<Tabs.Tab> {
 async function getCurrentTitle(): Promise<string> {
   const { title } = await getCurrentTab();
   if (!title) {
-    throw new Error("Currently active tab has no title");
+    throw new Error('Currently active tab has no title');
   }
   return title;
 }
