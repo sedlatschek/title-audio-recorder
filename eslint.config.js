@@ -6,9 +6,9 @@ import eslintTypescript from "typescript-eslint";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
-  {ignores: ["**/dist/**/*", "**/node_modules/**/*", "**/.werk/**/*"]},
-  {files: ["**/*.{js,mjs,cjs,ts,vue}"]},
-  {languageOptions: { globals: globals.browser }},
+  { ignores: ["**/dist/**/*", "**/node_modules/**/*"] },
+  { files: ["**/*.{js,mjs,cjs,ts,vue}"] },
+  { languageOptions: { globals: globals.browser } },
   {
     plugins: { import: eslintImport },
     rules: {
@@ -25,13 +25,21 @@ export default [
             'object',
             'type',
           ],
-          alphabetize: { order: 'asc', caseInsensitive: true },
+          alphabetize: {
+            order: 'asc',
+            caseInsensitive: true
+          },
         },
       ],
     },
   },
   eslintJs.configs.recommended,
   ...eslintTypescript.configs.recommended,
-  ...eslintVue.configs["flat/essential"],
-  {files: ["**/*.vue"], languageOptions: {parserOptions: {parser: eslintTypescript.parser}}},
+  ...eslintVue.configs["flat/recommended"],
+  {
+    files: ["**/*.vue"],
+    languageOptions: {
+      parserOptions: {parser: eslintTypescript.parser}
+    }
+  },
 ];

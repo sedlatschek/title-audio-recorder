@@ -1,13 +1,15 @@
 <template>
   <div class="flex justify-between">
     <GenericButton
+      :disabled="recording.startedAtTs"
       @click="start"
-      :disabled="recording.startedAtTs">
+    >
       Start
     </GenericButton>
     <GenericButton
+      :disabled="recording.stoppedAtTs"
       @click="stop"
-      :disabled="recording.stoppedAtTs">
+    >
       Stop
     </GenericButton>
   </div>

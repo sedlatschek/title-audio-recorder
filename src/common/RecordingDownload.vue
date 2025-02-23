@@ -1,7 +1,8 @@
 <template>
   <GenericButton
+    :disabled="!recording.stoppedAtTs"
     @click="download"
-    :disabled="!recording.stoppedAtTs">
+  >
     Download
   </GenericButton>
 </template>

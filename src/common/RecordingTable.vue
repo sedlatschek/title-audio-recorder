@@ -3,7 +3,8 @@
     <RecordingWidget
       v-for="recording in recordings"
       :key="recording.id"
-      :recording="recording"/>
+      :recording="recording"
+    />
   </div>
 </template>
 
