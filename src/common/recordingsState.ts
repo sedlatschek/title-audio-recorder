@@ -1,7 +1,7 @@
 import { Ref, ref } from "vue";
 import browser from "webextension-polyfill";
-import { RecordingMetadata } from "./RecordingMetadata";
 import { isMessage, isRecordingAddedMessage, isRecordingStartedMessage, isRecordingStoppedMessage } from "./Message";
+import { RecordingMetadata } from "./RecordingMetadata";
 
 export function createRecordingsState(): Ref<RecordingMetadata[]> {
   const recordings = ref<RecordingMetadata[]>([]);

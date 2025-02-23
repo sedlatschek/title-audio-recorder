@@ -1,9 +1,9 @@
+import filenamify from "filenamify";
 import { DateTime } from "luxon";
 import browser from "webextension-polyfill";
+import { Message, MessageType } from "../common/Message";
 import { RecordingMetadata } from "../common/RecordingMetadata";
 import { UUID } from "../common/types";
-import { Message, MessageType } from "../common/Message";
-import filenamify from "filenamify";
 
 export class TabCaptureRecording {
   private mediaRecorder: MediaRecorder | undefined;

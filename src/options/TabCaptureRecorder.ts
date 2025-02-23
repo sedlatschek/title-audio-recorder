@@ -1,8 +1,8 @@
 import browser from "webextension-polyfill";
 
-import { TabCaptureRecording } from "./TabCaptureRecording";
 import { isMessage, isRecordingDownloadedMessage, isRecordingStoppedMessage, isRecordMessage } from "../common/Message";
 import { RecordingMetadata } from "../common/RecordingMetadata";
+import { TabCaptureRecording } from "./TabCaptureRecording";
 
 export class TabCaptureRecorder {
   private tabCaptureRecordings: TabCaptureRecording[];

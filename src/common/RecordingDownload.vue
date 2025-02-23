@@ -9,9 +9,9 @@
 <script setup lang="ts">
 import browser from "webextension-polyfill";
 
-import { RecordingMetadata } from './RecordingMetadata';
 import GenericButton from "../components/GenericButton.vue";
 import { MessageType, RecordingDownloadedMessage } from "./Message";
+import { RecordingMetadata } from './RecordingMetadata';
 
 const props = defineProps<{
   recording: RecordingMetadata;

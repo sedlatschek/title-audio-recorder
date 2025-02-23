@@ -1,16 +1,37 @@
+import eslintJs from "@eslint/js";
+import eslintImport from 'eslint-plugin-import';
+import eslintVue from "eslint-plugin-vue";
 import globals from "globals";
-import pluginJs from "@eslint/js";
-import tseslint from "typescript-eslint";
-import pluginVue from "eslint-plugin-vue";
-
+import eslintTypescript from "typescript-eslint";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
-  {ignores: ["**/dist/", "**/.werk/"]},
+  {ignores: ["**/dist/**/*", "**/node_modules/**/*", "**/.werk/**/*"]},
   {files: ["**/*.{js,mjs,cjs,ts,vue}"]},
   {languageOptions: { globals: globals.browser }},
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
-  ...pluginVue.configs["flat/essential"],
-  {files: ["**/*.vue"], languageOptions: {parserOptions: {parser: tseslint.parser}}},
+  {
+    plugins: { import: eslintImport },
+    rules: {
+      'import/order': [
+        'error',
+        {
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            'parent',
+            'sibling',
+            'index',
+            'object',
+            'type',
+          ],
+          alphabetize: { order: 'asc', caseInsensitive: true },
+        },
+      ],
+    },
+  },
+  eslintJs.configs.recommended,
+  ...eslintTypescript.configs.recommended,
+  ...eslintVue.configs["flat/essential"],
+  {files: ["**/*.vue"], languageOptions: {parserOptions: {parser: eslintTypescript.parser}}},
 ];

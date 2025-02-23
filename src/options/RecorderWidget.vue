@@ -3,8 +3,8 @@
 </template>
 
 <script setup lang="ts">
-import RecordingTable from "../common/RecordingTable.vue";
 import { createRecordingsState } from "../common/recordingsState";
+import RecordingTable from "../common/RecordingTable.vue";
 
 const recordings = createRecordingsState();
 </script>

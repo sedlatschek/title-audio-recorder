@@ -1,7 +1,7 @@
 import browser from "webextension-polyfill";
 
-import { TitleChangeDetector } from "./TitleChangeDetector";
 import { HtmlTitleChangeDetector } from "./HtmlTitleChangeDetector";
+import { TitleChangeDetector } from "./TitleChangeDetector";
 
 const titleChangeDetector: TitleChangeDetector = new HtmlTitleChangeDetector();
 titleChangeDetector.onTitleChanged((title: string) => {

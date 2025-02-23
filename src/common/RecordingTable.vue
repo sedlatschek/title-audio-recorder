@@ -8,8 +8,8 @@
 </template>
 
 <script setup lang="ts">
-import RecordingWidget from "./RecordingWidget.vue";
 import { RecordingMetadata } from "./RecordingMetadata";
+import RecordingWidget from "./RecordingWidget.vue";
 
 defineProps<{
   recordings: RecordingMetadata[];

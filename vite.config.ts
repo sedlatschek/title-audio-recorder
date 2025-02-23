@@ -1,6 +1,7 @@
-import { defineConfig } from "vite";
 import tailwindcss from '@tailwindcss/vite';
 import vue from "@vitejs/plugin-vue";
+import { defineConfig } from "vite";
+import eslint from 'vite-plugin-eslint';
 import webExtension, { readJsonFile } from "vite-plugin-web-extension";
 
 function generateManifest() {
@@ -17,6 +18,7 @@ function generateManifest() {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
+    eslint(),
     tailwindcss(),
     vue(),
     webExtension({

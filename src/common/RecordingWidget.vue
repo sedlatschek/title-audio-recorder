@@ -19,10 +19,10 @@
 </template>
 
 <script setup lang="ts">
-import { RecordingMetadata } from './RecordingMetadata';
 import DurationTimer from '../components/DurationTimer.vue'
-import RecordingDownload from "./RecordingDownload.vue";
 import RecordingControls from './RecordingControls.vue';
+import RecordingDownload from "./RecordingDownload.vue";
+import { RecordingMetadata } from './RecordingMetadata';
 
 defineProps<{
   recording: RecordingMetadata;

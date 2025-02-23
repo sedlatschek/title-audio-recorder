@@ -1,4 +1,4 @@
-import Popup from "./Popup.vue";
 import { createApp } from "vue";
+import PopupPage from "./PopupPage.vue";
 
-createApp(Popup).mount("body");
+createApp(PopupPage).mount("body");
