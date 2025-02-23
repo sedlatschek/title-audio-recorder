@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import DurationTimer from '../components/DurationTimer.vue'
+import DurationTimer from '../components/DurationTimer.vue';
 import RecordingControls from './RecordingControls.vue';
 import RecordingDownload from './RecordingDownload.vue';
 import { RecordingMetadata } from './RecordingMetadata';

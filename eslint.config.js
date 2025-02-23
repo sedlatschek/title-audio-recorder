@@ -49,6 +49,7 @@ export default [
       '@typescript-eslint/explicit-function-return-type': 'error',
       'quotes': ['error', 'single', { 'avoidEscape': true }],
       'comma-dangle': ['error', 'always-multiline' ],
+      'semi': ['error', 'always'],
     },
   },
 ];

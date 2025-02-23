@@ -6,3 +6,4 @@ import { TabCaptureRecorder } from './TabCaptureRecorder';
 createApp(OptionsPage).mount('body');
 
 new TabCaptureRecorder();
+

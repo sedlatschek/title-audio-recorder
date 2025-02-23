@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill';
 
 import {
- isMessage, isRecordingDownloadedMessage, isRecordingStoppedMessage, isRecordMessage, 
+ isMessage, isRecordingDownloadedMessage, isRecordingStoppedMessage, isRecordMessage,
 } from '../common/Message';
 import { RecordingMetadata } from '../common/RecordingMetadata';
 import { TabCaptureRecording } from './TabCaptureRecording';
@@ -16,7 +16,8 @@ export class TabCaptureRecorder {
       if (!isMessage(message) || !message.dispatched) {
         return;
       }
-      console.log('TabCaptureRecorder <<', message);
+      console.debug('<< [TabCaptureRecorder]', message);
+
 
       if (isRecordMessage(message)) {
         this.createAndStartTabCapture(message.title);
@@ -47,7 +48,7 @@ export class TabCaptureRecorder {
   private stopTabCapture(recording: RecordingMetadata): Promise<void>
   {
     const tabCapture = this.getTabCapture(recording);
-    return tabCapture.stop()
+    return tabCapture.stop();
   }
 
   private downloadTabCapture(recording: RecordingMetadata): void {

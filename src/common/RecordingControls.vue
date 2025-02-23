@@ -35,9 +35,11 @@ function stop(): void {
 }
 
 function sendMessage(messageType: MessageType.RECORDING_STARTED | MessageType.RECORDING_STOPPED): void {
-  browser.runtime.sendMessage({
+  const message = {
     messageType,
     recording: props.recording,
-  });
+  };
+  console.debug('>> [RecordingControls]', message);
+  browser.runtime.sendMessage(message);
 }
 </script>

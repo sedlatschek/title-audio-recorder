@@ -2,7 +2,7 @@ import filenamify from 'filenamify';
 import { DateTime } from 'luxon';
 import browser from 'webextension-polyfill';
 import {
- Message, MessageType, 
+ Message, MessageType,
 } from '../common/Message';
 import { RecordingMetadata } from '../common/RecordingMetadata';
 import { UUID } from '../common/types';
@@ -31,12 +31,12 @@ export class TabCaptureRecording {
 
       chrome.tabCapture.capture(captureOptions, stream => {
         if (chrome.runtime.lastError || !stream) {
-          reject(chrome.runtime.lastError)
+          reject(chrome.runtime.lastError);
           return;
         }
         resolve(stream);
       });
-    })
+    });
   }
 
   public async start(): Promise<void> {
@@ -44,7 +44,7 @@ export class TabCaptureRecording {
       throw new Error('Can not start recording: Recording already started');
     }
     if (this.stoppedAt) {
-      throw new Error('Can not start recording: Recording already finished')
+      throw new Error('Can not start recording: Recording already finished');
     }
     this.startedAt = DateTime.now();
 
@@ -68,7 +68,7 @@ export class TabCaptureRecording {
       this.blobUrl = URL.createObjectURL(audioBlob);
       this.chunks = [];
       this.mediaRecorder = undefined;
-    }
+    };
 
     this.mediaRecorder.start();
 
@@ -77,7 +77,7 @@ export class TabCaptureRecording {
 
   public stop(): Promise<void> {
     if (this.stoppedAt) {
-      throw new Error('Can not stop recording: Recording already stopped')
+      throw new Error('Can not stop recording: Recording already stopped');
     }
     if (!this.mediaRecorder || !this.startedAt) {
       throw new Error('Can not stop recording: Recording was not running');
@@ -105,7 +105,8 @@ export class TabCaptureRecording {
     const message: Message = {
       messageType,
       recording: this.getRecordingMetadata(),
-    }
+    };
+    console.debug('>> [TabCaptureRecording]', message);
     browser.runtime.sendMessage(message);
   }
 
@@ -115,6 +116,6 @@ export class TabCaptureRecording {
       title: this.title,
       ...(this.startedAt !== undefined && { startedAtTs: this.startedAt.toMillis() }),
       ...(this.stoppedAt !== undefined && { stoppedAtTs: this.stoppedAt.toMillis() }),
-    }
+    };
   }
 }

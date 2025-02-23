@@ -2,13 +2,13 @@
 import browser, { Tabs } from 'webextension-polyfill';
 
 import {
- type RecordMessage, MessageType, 
+ type RecordMessage, MessageType,
 } from '../common/Message';
 
 async function getCurrentTab(): Promise<Tabs.Tab> {
   const [tab] = await browser.tabs.query({
  active: true,
-lastFocusedWindow: true, 
+lastFocusedWindow: true,
 });
   if (!tab) {
     throw new Error('Could not retrieve currently active tab');
@@ -29,6 +29,7 @@ async function start(): Promise<void> {
     messageType: MessageType.RECORD,
     title: await getCurrentTitle(),
   };
+  console.debug('>> [PopupPage]', message);
   browser.runtime.sendMessage(message);
 }
 

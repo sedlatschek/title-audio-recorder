@@ -12,7 +12,7 @@ import browser from 'webextension-polyfill';
 
 import GenericButton from '../components/GenericButton.vue';
 import {
- MessageType, RecordingDownloadedMessage, 
+ MessageType, RecordingDownloadedMessage,
 } from './Message';
 import { RecordingMetadata } from './RecordingMetadata';
 
@@ -24,7 +24,8 @@ function download(): void {
   const message: RecordingDownloadedMessage = {
     messageType: MessageType.RECORDING_DOWNLOADED,
     recording: props.recording,
-  }
+  };
+  console.debug('>> [RecordingDownload]', message);
   browser.runtime.sendMessage(message);
 }
 </script>
