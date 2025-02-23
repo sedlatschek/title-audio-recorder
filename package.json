@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "lint": "eslint",
     "build": "vue-tsc && vite build"
   },
   "dependencies": {
@@ -13,13 +14,18 @@
     "vue": "^3.3"
   },
   "devDependencies": {
+    "@eslint/js": "^9.21.0",
     "@tailwindcss/vite": "^4.0.8",
     "@types/chrome": "^0.0.306",
     "@types/luxon": "^3.4.2",
     "@types/webextension-polyfill": "^0.12.2",
     "@vitejs/plugin-vue": "^5.2.0",
+    "eslint": "^9.21.0",
+    "eslint-plugin-vue": "^9.32.0",
+    "globals": "^16.0.0",
     "tailwindcss": "^4.0.7",
     "typescript": "~5.7.3",
+    "typescript-eslint": "^8.24.1",
     "vite": "^6.0.0",
     "vite-plugin-web-extension": "^4.0.0",
     "vue-tsc": "^2.2.2",

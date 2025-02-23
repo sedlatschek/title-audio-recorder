@@ -3,7 +3,7 @@
     <div class="text-xs font-mono w-full text-center">{{ recording.id }}</div>
     <div class="flex justify-between">
       <span class="text-md font-bold">{{ recording.title }}</span>
-      <Duration
+      <DurationTimer
         v-if="recording.startedAtTs"
         :started-at-ts="recording.startedAtTs"
         :ended-at-ts="recording.stoppedAtTs"
@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { RecordingMetadata } from './RecordingMetadata';
-import Duration from '../components/Duration.vue'
+import DurationTimer from '../components/DurationTimer.vue'
 import RecordingDownload from "./RecordingDownload.vue";
 import RecordingControls from './RecordingControls.vue';
 

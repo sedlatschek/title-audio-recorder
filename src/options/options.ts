@@ -1,8 +1,8 @@
-import Options from "./Options.vue";
+import OptionsPage from "./OptionsPage.vue";
 import { createApp } from "vue";
 import '../index.css';
 import { TabCaptureRecorder } from "./TabCaptureRecorder";
 
-createApp(Options).mount("body");
+createApp(OptionsPage).mount("body");
 
 new TabCaptureRecorder();
