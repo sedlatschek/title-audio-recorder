@@ -1,3 +1,7 @@
 {
-  "recommendations": ["EditorConfig.EditorConfig", "Vue.volar"]
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "EditorConfig.EditorConfig",
+    "Vue.volar"
+  ]
 }
