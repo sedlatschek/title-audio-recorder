@@ -6,8 +6,9 @@ import {
 } from '../common/Message';
 import { RecordingMetadata } from '../common/RecordingMetadata';
 import { UUID } from '../common/types';
+import { Recording } from './Recording';
 
-export class TabCaptureRecording {
+export class TabCaptureRecording implements Recording {
   private mediaRecorder: MediaRecorder | undefined;
   private chunks: BlobPart[] = [];
   private startedAt?: DateTime;
