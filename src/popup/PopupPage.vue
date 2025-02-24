@@ -37,10 +37,6 @@ async function start(): Promise<void> {
 
 <template>
   <div>
-    <img
-      src="/icon-with-shadow.svg"
-      style="width: 100px"
-    >
     <button @click="start">
       Start
     </button>
