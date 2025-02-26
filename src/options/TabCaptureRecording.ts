@@ -15,29 +15,14 @@ export class TabCaptureRecording implements Recording {
   private stoppedAt?: DateTime;
   private blobUrl: string | undefined;
   public readonly id: UUID;
-  public readonly title: string;
 
-  public constructor(id: UUID, title: string) {
-    this.id = id;
-    this.title = title;
+  public constructor(private readonly stream: MediaStream, public readonly title: string) {
+    this.id = self.crypto.randomUUID();
     this.sendMessage(MessageType.RECORDING_ADDED);
   }
 
-  private async getStream(): Promise<MediaStream> {
-    return new Promise((resolve, reject) => {
-      const captureOptions: chrome.tabCapture.CaptureOptions = {
-        audio: true,
-        video: false,
-      };
-
-      chrome.tabCapture.capture(captureOptions, stream => {
-        if (chrome.runtime.lastError || !stream) {
-          reject(chrome.runtime.lastError);
-          return;
-        }
-        resolve(stream);
-      });
-    });
+  public get state(): RecordingState {
+    return this.mediaRecorder?.state ?? 'inactive';
   }
 
   public async start(): Promise<void> {
@@ -49,12 +34,11 @@ export class TabCaptureRecording implements Recording {
     }
     this.startedAt = DateTime.now();
 
-    const stream = await this.getStream();
     const audioContext = new AudioContext();
-    const mediaStreamSource = audioContext.createMediaStreamSource(stream);
+    const mediaStreamSource = audioContext.createMediaStreamSource(this.stream);
     mediaStreamSource.connect(audioContext.destination);
 
-    this.mediaRecorder = new MediaRecorder(stream, {
+    this.mediaRecorder = new MediaRecorder(this.stream, {
       mimeType: 'audio/webm',
     });
 
@@ -98,7 +82,7 @@ export class TabCaptureRecording implements Recording {
     }
     browser.downloads.download({
       url: this.blobUrl,
-      filename: `${filenamify(this.title)}.webm`,
+      filename: `${filenamify(this.title ?? this.id)}.webm`,
     });
   }
 
