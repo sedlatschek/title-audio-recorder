@@ -1,9 +1,6 @@
 import filenamify from 'filenamify';
 import { DateTime } from 'luxon';
 import browser from 'webextension-polyfill';
-import {
- Message, MessageType,
-} from '../common/Message';
 import { RecordingMetadata } from '../common/RecordingMetadata';
 import { UUID } from '../common/types';
 import { Recording } from './Recording';
@@ -18,7 +15,6 @@ export class TabCaptureRecording implements Recording {
 
   public constructor(private readonly stream: MediaStream, public readonly title: string) {
     this.id = self.crypto.randomUUID();
-    this.sendMessage(MessageType.RECORDING_ADDED);
   }
 
   public get state(): RecordingState {
@@ -56,8 +52,6 @@ export class TabCaptureRecording implements Recording {
     };
 
     this.mediaRecorder.start();
-
-    this.sendMessage(MessageType.RECORDING_STARTED);
   }
 
   public stop(): Promise<void> {
@@ -71,8 +65,6 @@ export class TabCaptureRecording implements Recording {
 
     this.mediaRecorder.stop();
 
-    this.sendMessage(MessageType.RECORDING_STOPPED);
-
     return Promise.resolve();
   }
 
@@ -84,15 +76,6 @@ export class TabCaptureRecording implements Recording {
       url: this.blobUrl,
       filename: `${filenamify(this.title ?? this.id)}.webm`,
     });
-  }
-
-  private sendMessage(messageType: MessageType.RECORDING_ADDED |  MessageType.RECORDING_STARTED | MessageType.RECORDING_STOPPED): void {
-    const message: Message = {
-      messageType,
-      recording: this.getRecordingMetadata(),
-    };
-    console.debug('>> [TabCaptureRecording]', message);
-    browser.runtime.sendMessage(message);
   }
 
   public getRecordingMetadata(): RecordingMetadata {

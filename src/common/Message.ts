@@ -1,7 +1,8 @@
 import { RecordingMetadata } from './RecordingMetadata';
 
 export enum MessageType {
-  RECORD = 'RECORD',
+  START_RECORDING = 'START_RECORDING',
+  STOP_RECORDING = 'STOP_RECORDING',
   RECORDING_ADDED = 'RECORDING_ADDED',
   RECORDING_STARTED = 'RECORDING_STARTED',
   RECORDING_STOPPED = 'RECORDING_STOPPED',
@@ -21,13 +22,22 @@ export function isMessage(message: unknown): message is Message {
     && Object.values(MessageType).includes(message.messageType as MessageType);
 }
 
-export type RecordMessage = {
-  messageType: MessageType.RECORD,
+export type StartRecordingMessage = {
+  messageType: MessageType.START_RECORDING,
   tabId: number;
 }
 
-export function isRecordMessage(message: unknown): message is RecordMessage {
-  return isMessage(message) && message.messageType === MessageType.RECORD;
+export function isStartRecordingMessage(message: unknown): message is StartRecordingMessage {
+  return isMessage(message) && message.messageType === MessageType.START_RECORDING;
+}
+
+export type StopRecordingMessage = {
+  messageType: MessageType.STOP_RECORDING,
+  recording: RecordingMetadata,
+}
+
+export function isStopRecordingMessage(message: unknown): message is StopRecordingMessage {
+  return isMessage(message) && message.messageType === MessageType.STOP_RECORDING;
 }
 
 export type RecordingAddedMessage = {
@@ -85,7 +95,8 @@ export function isTabTitleChangedMessage(message: unknown): message is TabTitleC
   return isMessage(message) && message.messageType === MessageType.TAB_TITLE_CHANGED;
 }
 
-export type Message = MessageBase & (RecordMessage
+export type Message = MessageBase & (StartRecordingMessage
+  | StopRecordingMessage
   | RecordingAddedMessage
   | RecordingStartedMessage
   | RecordingStoppedMessage

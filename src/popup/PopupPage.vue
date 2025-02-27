@@ -2,7 +2,7 @@
 import browser from 'webextension-polyfill';
 
 import {
- type RecordMessage, MessageType,
+ type StartRecordingMessage, MessageType,
 } from '../common/Message';
 
 async function getCurrentTabId(): Promise<number> {
@@ -17,8 +17,8 @@ async function getCurrentTabId(): Promise<number> {
 }
 
 async function start(): Promise<void> {
-  const message: RecordMessage = {
-    messageType: MessageType.RECORD,
+  const message: StartRecordingMessage = {
+    messageType: MessageType.START_RECORDING,
     tabId: await getCurrentTabId(),
   };
   console.debug('>> [PopupPage]', message);

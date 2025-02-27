@@ -1,7 +1,8 @@
 import { Recording } from './Recording';
 import { RecordingStream } from './RecordingStream';
+import { RecordingWrapper } from './RecordingWrapper';
 
-export class RecordingSession<T extends RecordingStream>
+export class RecordingSession<T extends RecordingStream<R>, R extends Recording>
 {
   private stream: T | undefined;
 
@@ -38,7 +39,7 @@ export class RecordingSession<T extends RecordingStream>
     return tab.title ?? 'Unknown Title';
   }
 
-  public async record(title?: string): Promise<Recording> {
+  public async record(title?: string): Promise<RecordingWrapper<R>> {
     if (!this.stream) {
       throw new Error('Can not record title: Session is not running');
     }

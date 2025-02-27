@@ -1,11 +1,11 @@
-import { Recording } from './Recording';
 import { RecordingStream } from './RecordingStream';
+import { RecordingWrapper } from './RecordingWrapper';
 import { TabCaptureRecording } from './TabCaptureRecording';
 
-export class TabCaptureRecordingStream implements RecordingStream
+export class TabCaptureRecordingStream implements RecordingStream<TabCaptureRecording>
 {
   private stream: MediaStream | undefined;
-  private lastRecording: TabCaptureRecording | undefined;
+  private lastRecording: RecordingWrapper<TabCaptureRecording> | undefined;
 
   private async tabCapture(): Promise<MediaStream> {
     return new Promise((resolve, reject) => {
@@ -44,7 +44,7 @@ export class TabCaptureRecordingStream implements RecordingStream
     await Promise.allSettled(this.stream.getTracks().map((track) => track.stop()));
   }
 
-  async record(title: string): Promise<Recording> {
+  async record(title: string): Promise<RecordingWrapper<TabCaptureRecording>> {
     if (!this.stream) {
       throw new Error('Can not create title: Stream is not running');
     }
@@ -52,7 +52,7 @@ export class TabCaptureRecordingStream implements RecordingStream
 
     await this.ensureLastRecordingIsStopped();
 
-    this.lastRecording = new TabCaptureRecording(this.stream, title);
+    this.lastRecording = new RecordingWrapper(new TabCaptureRecording(this.stream, title));
     this.lastRecording.start();
 
     return this.lastRecording;
