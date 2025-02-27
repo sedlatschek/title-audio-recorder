@@ -12,14 +12,14 @@ import {
 import { RecordingMetadata } from '../common/RecordingMetadata';
 import { Recording } from './Recording';
 import { RecordingSession } from './RecordingSession';
-import { RecordingStream } from './RecordingStream';
+import { RecordingSessionWrapper } from './RecordingSessionWrapper';
 import { RecordingWrapper } from './RecordingWrapper';
 
-export class Recorder<T extends RecordingStream<R>, R extends Recording> {
-  private recordingSessions: Record<number, RecordingSession<T, R>> = [];
+export class Recorder<T extends RecordingSession<R>, R extends Recording> {
+  private recordingSessionWrappers: Record<number, RecordingSessionWrapper<T, R>> = [];
   private recordingWrappers: EventArray<RecordingWrapper<R>>;
 
-  public constructor(private readonly recordingStreamType: new(tabId: number) => T) {
+  public constructor(private readonly recordingSessionType: new(tabId: number) => T) {
     this.recordingWrappers = new EventArray<RecordingWrapper<R>>();
 
     this.recordingWrappers.on('push', (items: RecordingWrapper<R>[]): void => {
@@ -56,22 +56,22 @@ export class Recorder<T extends RecordingStream<R>, R extends Recording> {
     });
   }
 
-  private async getRecordingSession(tabId: number): Promise<RecordingSession<T, R>> {
-    const existingRecordingSession = this.recordingSessions[tabId];
-    if (existingRecordingSession) {
-      return existingRecordingSession;
+  private async getRecordingSessionWrapper(tabId: number): Promise<RecordingSessionWrapper<T, R>> {
+    const existingRecordingSessionWrapper = this.recordingSessionWrappers[tabId];
+    if (existingRecordingSessionWrapper) {
+      return existingRecordingSessionWrapper;
     }
 
-    const recordingStream = new RecordingSession<T, R>(this.recordingStreamType, tabId);
-    this.recordingSessions[tabId] = recordingStream;
-    await recordingStream.start();
-    return recordingStream;
+    const recordingSessionWrapper = new RecordingSessionWrapper<T, R>(this.recordingSessionType, tabId);
+    this.recordingSessionWrappers[tabId] = recordingSessionWrapper;
+    await recordingSessionWrapper.start();
+    return recordingSessionWrapper;
   }
 
   private async startRecording(tabId: number): Promise<void> {
-    const recordingSession = await this.getRecordingSession(tabId);
-    const recording = await recordingSession.record();
-    this.recordingWrappers.push(recording);
+    const recordingSessionWrapper = await this.getRecordingSessionWrapper(tabId);
+    const recordingWrapper = await recordingSessionWrapper.record();
+    this.recordingWrappers.push(recordingWrapper);
   }
 
   private getRecordingWrapper(recordingMetadata: RecordingMetadata): RecordingWrapper<R> {
@@ -97,8 +97,8 @@ export class Recorder<T extends RecordingStream<R>, R extends Recording> {
   }
 
   private async registerTitleChange(tabId: number, title: string): Promise<void> {
-    const recordingSession = await this.getRecordingSession(tabId);
-    const recordingWrapper = await recordingSession.record(title);
+    const recordingSessionWrapper = await this.getRecordingSessionWrapper(tabId);
+    const recordingWrapper = await recordingSessionWrapper.record(title);
     this.recordingWrappers.push(recordingWrapper);
   }
 
