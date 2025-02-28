@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-import { EventArray } from '../common/EventArray';
+import { EventArray } from '../../common/EventArray';
 import {
   isMessage,
   isRecordingDownloadedMessage,
@@ -8,8 +8,8 @@ import {
   isTabTitleChangedMessage,
   Message,
   MessageType,
-} from '../common/Message';
-import { RecordingMetadata } from '../common/RecordingMetadata';
+} from '../../common/Message';
+import { RecordingMetadata } from '../../common/RecordingMetadata';
 import { Recording } from './Recording';
 import { RecordingSession } from './RecordingSession';
 import { RecordingSessionWrapper } from './RecordingSessionWrapper';

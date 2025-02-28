@@ -1,5 +1,5 @@
-import { RecordingMetadata } from '../common/RecordingMetadata';
-import { UUID } from '../common/types';
+import { RecordingMetadata } from '../../common/RecordingMetadata';
+import { UUID } from '../../common/types';
 
 export interface Recording {
   readonly id: UUID;

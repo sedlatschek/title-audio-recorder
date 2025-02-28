@@ -1,8 +1,8 @@
 import filenamify from 'filenamify';
 import { DateTime } from 'luxon';
 import browser from 'webextension-polyfill';
-import { RecordingMetadata } from '../common/RecordingMetadata';
-import { UUID } from '../common/types';
+import { RecordingMetadata } from '../../common/RecordingMetadata';
+import { UUID } from '../../common/types';
 import { Recording } from './Recording';
 
 export class TabCaptureRecording implements Recording {

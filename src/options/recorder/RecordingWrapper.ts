@@ -1,5 +1,5 @@
-import { RecordingMetadata } from '../common/RecordingMetadata';
-import { UUID } from '../common/types';
+import { RecordingMetadata } from '../../common/RecordingMetadata';
+import { UUID } from '../../common/types';
 import { Recording } from './Recording';
 
 export type RecordingEventType = 'started' | 'stopped';
