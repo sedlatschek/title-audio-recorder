@@ -5,7 +5,10 @@ export class HtmlTitleChangeDetector implements TitleChangeDetector {
 
   public constructor() {
     const observer = new MutationObserver(() => {
-      this.publishTitleChangedEvent(this.getTitleHtmlElement().innerText);
+      this.publishTitleChangedEvent(
+        this.getTitleHtmlElement().innerText,
+        window.location.href,
+      );
     });
     observer.observe(this.getTitleHtmlElement(), {
       subtree: true,
@@ -22,9 +25,9 @@ export class HtmlTitleChangeDetector implements TitleChangeDetector {
     return htmlElement;
   }
 
-  private publishTitleChangedEvent(title: string): void {
+  private publishTitleChangedEvent(title: string, url: string): void {
     for (const handler of this.handlers) {
-      handler(title);
+      handler(title, url);
     }
   }
 

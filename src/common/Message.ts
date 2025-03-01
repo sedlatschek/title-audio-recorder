@@ -7,12 +7,12 @@ export enum MessageType {
   RECORDING_STARTED = 'RECORDING_STARTED',
   RECORDING_STOPPED = 'RECORDING_STOPPED',
   RECORDING_DOWNLOADED = 'RECORDING_DOWNLOADED',
-  TAB_TITLE_CHANGE_DETECTED = 'TAB_TITLE_CHANGE_DETECTED',
   TAB_TITLE_CHANGED = 'TAB_TITLE_CHANGED',
 }
 
 type MessageBase = {
   dispatched?: true;
+  tabId?: number;
 };
 
 export function isMessage(message: unknown): message is Message {
@@ -100,19 +100,6 @@ export function isRecordingDownloadedMessage(
   return (
     isMessage(message) &&
     message.messageType === MessageType.RECORDING_DOWNLOADED
-  );
-}
-
-export type TabTitleChangeDetectedMessage = {
-  messageType: MessageType.TAB_TITLE_CHANGED;
-  title: string;
-};
-
-export function isTabTitleChangeDetectedMessage(
-  message: unknown,
-): message is TabTitleChangeDetectedMessage {
-  return (
-    isMessage(message) && message.messageType === MessageType.TAB_TITLE_CHANGED
   );
 }
 

@@ -1,13 +1,13 @@
 import browser from 'webextension-polyfill';
-import { MessageType, TabTitleChangeDetectedMessage } from '../common/Message';
+import { MessageType } from '../common/Message';
 import { HtmlTitleChangeDetector } from './HtmlTitleChangeDetector';
 import { TitleChangeDetector } from './TitleChangeDetector';
 
 const titleChangeDetector: TitleChangeDetector = new HtmlTitleChangeDetector();
-titleChangeDetector.onTitleChanged((title: string) => {
-  const message: TabTitleChangeDetectedMessage = {
+titleChangeDetector.onTitleChanged((title: string, url: string) => {
+  browser.runtime.sendMessage({
     messageType: MessageType.TAB_TITLE_CHANGED,
     title,
-  };
-  browser.runtime.sendMessage(message);
+    url,
+  });
 });

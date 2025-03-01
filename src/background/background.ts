@@ -1,10 +1,6 @@
 import browser, { Runtime } from 'webextension-polyfill';
 
-import {
-  isMessage,
-  isTabTitleChangeDetectedMessage,
-  Message,
-} from '../common/Message';
+import { isMessage, Message } from '../common/Message';
 
 browser.runtime.onMessage.addListener(async (message, sender) => {
   if (!isMessage(message)) {
@@ -26,17 +22,11 @@ function transformMessage(
   message: Message,
   sender: Runtime.MessageSender,
 ): Message {
-  if (isTabTitleChangeDetectedMessage(message)) {
-    const tabId = sender.tab?.id;
-    if (tabId === undefined) {
-      throw new Error('Can not retrieve tabId from sender');
-    }
-    return {
-      ...message,
-      tabId,
-    };
-  }
-  return message;
+  const tabId = sender.tab?.id;
+  return {
+    ...message,
+    ...(tabId && { tabId }),
+  };
 }
 
 function openTab(): Promise<browser.Tabs.Tab> {
