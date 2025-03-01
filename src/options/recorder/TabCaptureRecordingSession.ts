@@ -44,7 +44,7 @@ export class TabCaptureRecordingSession implements RecordingSession<TabCaptureRe
     await Promise.allSettled(this.stream.getTracks().map((track) => track.stop()));
   }
 
-  async record(title: string): Promise<RecordingWrapper<TabCaptureRecording>> {
+  async record(title: string, url: string): Promise<RecordingWrapper<TabCaptureRecording>> {
     if (!this.stream) {
       throw new Error('Can not create title: Stream is not running');
     }
@@ -52,7 +52,9 @@ export class TabCaptureRecordingSession implements RecordingSession<TabCaptureRe
 
     await this.ensureLastRecordingIsStopped();
 
-    this.lastRecording = new RecordingWrapper(new TabCaptureRecording(this.stream, title));
+    this.lastRecording = new RecordingWrapper(
+      new TabCaptureRecording(this.stream, title, url),
+    );
     this.lastRecording.start();
 
     return this.lastRecording;

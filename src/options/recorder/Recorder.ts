@@ -41,7 +41,7 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
       } else if (isRecordingDownloadedMessage(message)) {
         this.downloadRecording(message.recording);
       } else if (isTabTitleChangedMessage(message)) {
-        this.registerTitleChange(message.tabId, message.title);
+        this.registerTitleChange(message.tabId, message.title, message.url);
       }
     });
   }
@@ -96,9 +96,9 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
     recordingWrapper.download();
   }
 
-  private async registerTitleChange(tabId: number, title: string): Promise<void> {
+  private async registerTitleChange(tabId: number, title: string, url: string): Promise<void> {
     const recordingSessionWrapper = await this.getRecordingSessionWrapper(tabId);
-    const recordingWrapper = await recordingSessionWrapper.record(title);
+    const recordingWrapper = await recordingSessionWrapper.record(title, url);
     this.recordingWrappers.push(recordingWrapper);
   }
 

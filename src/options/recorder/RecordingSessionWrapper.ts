@@ -39,12 +39,21 @@ export class RecordingSessionWrapper<T extends RecordingSession<R>, R extends Re
     return tab.title ?? 'Unknown Title';
   }
 
-  public async record(title?: string): Promise<RecordingWrapper<R>> {
+  private async getTabUrl(): Promise<string>
+  {
+    const tab = await chrome.tabs.get(this.tabId);
+    return tab.url ?? 'Unknown URL';
+  }
+
+  public async record(title?: string, url?: string): Promise<RecordingWrapper<R>> {
     if (!this.recordingSession) {
       throw new Error('Can not record title: Session is not running');
     }
     console.debug(`[RecordingSessionWrapper] registering title "${title}"`);
 
-    return this.recordingSession.record(title ?? await this.getTabTitle());
+    return this.recordingSession.record(
+      title ?? await this.getTabTitle(),
+      url ?? await this.getTabUrl(),
+    );
   }
 }

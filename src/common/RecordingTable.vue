@@ -1,8 +1,9 @@
 <template>
-  <div class="flex flex-col">
+  <div class="pt-5">
     <RecordingWidget
       v-for="recording in recordings"
       :key="recording.id"
+      class="mx-auto my-4"
       :recording="recording"
     />
   </div>

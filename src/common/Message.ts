@@ -89,6 +89,7 @@ export type TabTitleChangedMessage = {
   messageType: MessageType.TAB_TITLE_CHANGED;
   tabId: number;
   title: string;
+  url: string;
 }
 
 export function isTabTitleChangedMessage(message: unknown): message is TabTitleChangedMessage {

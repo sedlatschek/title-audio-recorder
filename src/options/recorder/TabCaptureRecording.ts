@@ -13,7 +13,11 @@ export class TabCaptureRecording implements Recording {
   private blobUrl: string | undefined;
   public readonly id: UUID;
 
-  public constructor(private readonly stream: MediaStream, public readonly title: string) {
+  public constructor(
+    private readonly stream: MediaStream,
+    private readonly title: string,
+    private readonly url: string,
+  ) {
     this.id = self.crypto.randomUUID();
   }
 
@@ -82,6 +86,7 @@ export class TabCaptureRecording implements Recording {
     return {
       id: this.id,
       title: this.title,
+      url: this.url,
       ...(this.startedAt !== undefined && { startedAtTs: this.startedAt.toMillis() }),
       ...(this.stoppedAt !== undefined && { stoppedAtTs: this.stoppedAt.toMillis() }),
     };
