@@ -2,7 +2,7 @@ import browser from 'webextension-polyfill';
 import { EventArray } from '../../common/EventArray';
 import {
   isMessage,
-  isRecordingDownloadedMessage,
+  isDownloadRecordingMessage,
   isStartRecordingMessage,
   isStopRecordingMessage,
   isTabTitleChangedMessage,
@@ -43,7 +43,7 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
         this.startRecording(message.tabId);
       } else if (isStopRecordingMessage(message)) {
         this.stopRecording(message.recording);
-      } else if (isRecordingDownloadedMessage(message)) {
+      } else if (isDownloadRecordingMessage(message)) {
         this.downloadRecording(message.recording);
       } else if (isTabTitleChangedMessage(message)) {
         this.registerTitleChange(message.tabId, message.title, message.url);

@@ -6,7 +6,7 @@ export enum MessageType {
   RECORDING_ADDED = 'RECORDING_ADDED',
   RECORDING_STARTED = 'RECORDING_STARTED',
   RECORDING_STOPPED = 'RECORDING_STOPPED',
-  RECORDING_DOWNLOADED = 'RECORDING_DOWNLOADED',
+  DOWNLOAD_RECORDING = 'DOWNLOAD_RECORDING',
   TAB_TITLE_CHANGED = 'TAB_TITLE_CHANGED',
 }
 
@@ -89,17 +89,16 @@ export function isRecordingStoppedMessage(
   );
 }
 
-export type RecordingDownloadedMessage = {
-  messageType: MessageType.RECORDING_DOWNLOADED;
+export type DownloadRecordingMessage = {
+  messageType: MessageType.DOWNLOAD_RECORDING;
   recording: RecordingMetadata;
 };
 
-export function isRecordingDownloadedMessage(
+export function isDownloadRecordingMessage(
   message: unknown,
-): message is RecordingDownloadedMessage {
+): message is DownloadRecordingMessage {
   return (
-    isMessage(message) &&
-    message.messageType === MessageType.RECORDING_DOWNLOADED
+    isMessage(message) && message.messageType === MessageType.DOWNLOAD_RECORDING
   );
 }
 
@@ -125,6 +124,6 @@ export type Message = MessageBase &
     | RecordingAddedMessage
     | RecordingStartedMessage
     | RecordingStoppedMessage
-    | RecordingDownloadedMessage
+    | DownloadRecordingMessage
     | TabTitleChangedMessage
   );

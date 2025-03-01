@@ -57,7 +57,7 @@ import IconDownload from '../components/IconDownload.vue';
 import IconStop from '../components/IconStop.vue';
 import {
   MessageType,
-  RecordingDownloadedMessage,
+  DownloadRecordingMessage,
   StopRecordingMessage,
 } from './Message';
 import RecordingImage from './RecordingImage.vue';
@@ -68,8 +68,8 @@ const props = defineProps<{
 }>();
 
 function download(): void {
-  const message: RecordingDownloadedMessage = {
-    messageType: MessageType.RECORDING_DOWNLOADED,
+  const message: DownloadRecordingMessage = {
+    messageType: MessageType.DOWNLOAD_RECORDING,
     recording: props.recording,
   };
   console.debug('>> [RecordingWidget]', message);
