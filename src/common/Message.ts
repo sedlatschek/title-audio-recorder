@@ -13,76 +13,107 @@ export enum MessageType {
 
 type MessageBase = {
   dispatched?: true;
-}
+};
 
 export function isMessage(message: unknown): message is Message {
-  return message != null
-    && typeof message === 'object'
-    && 'messageType' in message
-    && Object.values(MessageType).includes(message.messageType as MessageType);
+  return (
+    message != null &&
+    typeof message === 'object' &&
+    'messageType' in message &&
+    Object.values(MessageType).includes(message.messageType as MessageType)
+  );
 }
 
 export type StartRecordingMessage = {
-  messageType: MessageType.START_RECORDING,
+  messageType: MessageType.START_RECORDING;
   tabId: number;
-}
+};
 
-export function isStartRecordingMessage(message: unknown): message is StartRecordingMessage {
-  return isMessage(message) && message.messageType === MessageType.START_RECORDING;
+export function isStartRecordingMessage(
+  message: unknown,
+): message is StartRecordingMessage {
+  return (
+    isMessage(message) && message.messageType === MessageType.START_RECORDING
+  );
 }
 
 export type StopRecordingMessage = {
-  messageType: MessageType.STOP_RECORDING,
-  recording: RecordingMetadata,
-}
+  messageType: MessageType.STOP_RECORDING;
+  recording: RecordingMetadata;
+};
 
-export function isStopRecordingMessage(message: unknown): message is StopRecordingMessage {
-  return isMessage(message) && message.messageType === MessageType.STOP_RECORDING;
+export function isStopRecordingMessage(
+  message: unknown,
+): message is StopRecordingMessage {
+  return (
+    isMessage(message) && message.messageType === MessageType.STOP_RECORDING
+  );
 }
 
 export type RecordingAddedMessage = {
   messageType: MessageType.RECORDING_ADDED;
   recording: RecordingMetadata;
-}
+};
 
-export function isRecordingAddedMessage(message: unknown): message is RecordingAddedMessage {
-  return isMessage(message) && message.messageType === MessageType.RECORDING_ADDED;
+export function isRecordingAddedMessage(
+  message: unknown,
+): message is RecordingAddedMessage {
+  return (
+    isMessage(message) && message.messageType === MessageType.RECORDING_ADDED
+  );
 }
 
 export type RecordingStartedMessage = {
   messageType: MessageType.RECORDING_STARTED;
   recording: RecordingMetadata;
-}
+};
 
-export function isRecordingStartedMessage(message: unknown): message is RecordingStartedMessage {
-  return isMessage(message) && message.messageType === MessageType.RECORDING_STARTED;
+export function isRecordingStartedMessage(
+  message: unknown,
+): message is RecordingStartedMessage {
+  return (
+    isMessage(message) && message.messageType === MessageType.RECORDING_STARTED
+  );
 }
 
 export type RecordingStoppedMessage = {
   messageType: MessageType.RECORDING_STOPPED;
   recording: RecordingMetadata;
-}
+};
 
-export function isRecordingStoppedMessage(message: unknown): message is RecordingStoppedMessage {
-  return isMessage(message) && message.messageType === MessageType.RECORDING_STOPPED;
+export function isRecordingStoppedMessage(
+  message: unknown,
+): message is RecordingStoppedMessage {
+  return (
+    isMessage(message) && message.messageType === MessageType.RECORDING_STOPPED
+  );
 }
 
 export type RecordingDownloadedMessage = {
   messageType: MessageType.RECORDING_DOWNLOADED;
   recording: RecordingMetadata;
-}
+};
 
-export function isRecordingDownloadedMessage(message: unknown): message is RecordingDownloadedMessage {
-  return isMessage(message) && message.messageType === MessageType.RECORDING_DOWNLOADED;
+export function isRecordingDownloadedMessage(
+  message: unknown,
+): message is RecordingDownloadedMessage {
+  return (
+    isMessage(message) &&
+    message.messageType === MessageType.RECORDING_DOWNLOADED
+  );
 }
 
 export type TabTitleChangeDetectedMessage = {
   messageType: MessageType.TAB_TITLE_CHANGED;
   title: string;
-}
+};
 
-export function isTabTitleChangeDetectedMessage(message: unknown): message is TabTitleChangeDetectedMessage {
-  return isMessage(message) && message.messageType === MessageType.TAB_TITLE_CHANGED;
+export function isTabTitleChangeDetectedMessage(
+  message: unknown,
+): message is TabTitleChangeDetectedMessage {
+  return (
+    isMessage(message) && message.messageType === MessageType.TAB_TITLE_CHANGED
+  );
 }
 
 export type TabTitleChangedMessage = {
@@ -90,16 +121,23 @@ export type TabTitleChangedMessage = {
   tabId: number;
   title: string;
   url: string;
+};
+
+export function isTabTitleChangedMessage(
+  message: unknown,
+): message is TabTitleChangedMessage {
+  return (
+    isMessage(message) && message.messageType === MessageType.TAB_TITLE_CHANGED
+  );
 }
 
-export function isTabTitleChangedMessage(message: unknown): message is TabTitleChangedMessage {
-  return isMessage(message) && message.messageType === MessageType.TAB_TITLE_CHANGED;
-}
-
-export type Message = MessageBase & (StartRecordingMessage
-  | StopRecordingMessage
-  | RecordingAddedMessage
-  | RecordingStartedMessage
-  | RecordingStoppedMessage
-  | RecordingDownloadedMessage
-  | TabTitleChangedMessage);
+export type Message = MessageBase &
+  (
+    | StartRecordingMessage
+    | StopRecordingMessage
+    | RecordingAddedMessage
+    | RecordingStartedMessage
+    | RecordingStoppedMessage
+    | RecordingDownloadedMessage
+    | TabTitleChangedMessage
+  );

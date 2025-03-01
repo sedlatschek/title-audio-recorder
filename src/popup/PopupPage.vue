@@ -1,9 +1,7 @@
 <script lang="ts" setup>
 import browser from 'webextension-polyfill';
 
-import {
- type StartRecordingMessage, MessageType,
-} from '../common/Message';
+import { type StartRecordingMessage, MessageType } from '../common/Message';
 
 async function getCurrentTabId(): Promise<number> {
   const [tab] = await browser.tabs.query({
@@ -24,13 +22,10 @@ async function start(): Promise<void> {
   console.debug('>> [PopupPage]', message);
   browser.runtime.sendMessage(message);
 }
-
 </script>
 
 <template>
   <div>
-    <button @click="start">
-      Start
-    </button>
+    <button @click="start">Start</button>
   </div>
 </template>

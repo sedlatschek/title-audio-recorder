@@ -20,14 +20,11 @@
     "{{firefox}}.scripts": ["src/background/background.ts"],
     "type": "module"
   },
-  "content_scripts":[{
-    "js": ["src/content/content.ts"],
-    "matches": ["https://*/*"]
-  }],
-  "permissions": [
-    "activeTab",
-    "downloads",
-    "tabCapture",
-    "tabs"
-  ]
+  "content_scripts": [
+    {
+      "js": ["src/content/content.ts"],
+      "matches": ["https://*/*"]
+    }
+  ],
+  "permissions": ["activeTab", "downloads", "tabCapture", "tabs"]
 }

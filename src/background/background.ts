@@ -1,12 +1,16 @@
 import browser, { Runtime } from 'webextension-polyfill';
 
 import {
- isMessage, isTabTitleChangeDetectedMessage, Message,
+  isMessage,
+  isTabTitleChangeDetectedMessage,
+  Message,
 } from '../common/Message';
 
 browser.runtime.onMessage.addListener(async (message, sender) => {
   if (!isMessage(message)) {
-    throw new Error(`[BG] received invalid message: ${JSON.stringify(message)}`);
+    throw new Error(
+      `[BG] received invalid message: ${JSON.stringify(message)}`,
+    );
   }
   if (!message.dispatched) {
     const dispatchedMessage: Message = {
@@ -18,7 +22,10 @@ browser.runtime.onMessage.addListener(async (message, sender) => {
   }
 });
 
-function transformMessage(message: Message, sender: Runtime.MessageSender): Message {
+function transformMessage(
+  message: Message,
+  sender: Runtime.MessageSender,
+): Message {
   if (isTabTitleChangeDetectedMessage(message)) {
     const tabId = sender.tab?.id;
     if (tabId === undefined) {
@@ -33,13 +40,11 @@ function transformMessage(message: Message, sender: Runtime.MessageSender): Mess
 }
 
 function openTab(): Promise<browser.Tabs.Tab> {
-  return browser.tabs.create(
-    {
-      pinned: false,
-      active: false,
-      url: browser.runtime.getURL('src/options/options.html'),
-    },
-  );
+  return browser.tabs.create({
+    pinned: false,
+    active: false,
+    url: browser.runtime.getURL('src/options/options.html'),
+  });
 }
 
 openTab();

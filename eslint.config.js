@@ -1,4 +1,5 @@
 import eslintJs from '@eslint/js';
+import prettierConfig from '@vue/eslint-config-prettier';
 import eslintImport from 'eslint-plugin-import';
 import eslintVue from 'eslint-plugin-vue';
 import globals from 'globals';
@@ -44,12 +45,10 @@ export default [
       },
     },
   },
+  prettierConfig,
   {
     rules: {
       '@typescript-eslint/explicit-function-return-type': 'error',
-      'quotes': ['error', 'single', { 'avoidEscape': true }],
-      'comma-dangle': ['error', 'always-multiline' ],
-      'semi': ['error', 'always'],
     },
   },
 ];

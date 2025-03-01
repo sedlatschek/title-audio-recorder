@@ -13,8 +13,12 @@ const props = defineProps<{
 
 const duration = ref<string>('00:00:00');
 
-const startedAt = computed<DateTime>(() => DateTime.fromMillis(props.startedAtTs));
-const stoppedAt = computed<DateTime | undefined>(() => props.stoppedAtTs ? DateTime.fromMillis(props.stoppedAtTs) : undefined);
+const startedAt = computed<DateTime>(() =>
+  DateTime.fromMillis(props.startedAtTs),
+);
+const stoppedAt = computed<DateTime | undefined>(() =>
+  props.stoppedAtTs ? DateTime.fromMillis(props.stoppedAtTs) : undefined,
+);
 
 function getTimeDifference(a: DateTime, b: DateTime): string {
   const durationValue = b.diff(a);
@@ -43,10 +47,13 @@ onUnmounted(() => {
   clearInterval(interval);
 });
 
-watch(() => props.stoppedAtTs, (value) => {
-  if (value !== undefined) {
-    clearInterval(interval);
-    updateDuration();
-  }
-});
+watch(
+  () => props.stoppedAtTs,
+  (value) => {
+    if (value !== undefined) {
+      clearInterval(interval);
+      updateDuration();
+    }
+  },
+);
 </script>

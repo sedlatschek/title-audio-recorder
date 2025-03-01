@@ -4,8 +4,7 @@
       v-for="recording in recordings"
       :key="recording.id"
       class="mx-auto my-4"
-      :recording="recording"
-    />
+      :recording="recording" />
   </div>
 </template>
 

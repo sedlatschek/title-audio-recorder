@@ -87,8 +87,12 @@ export class TabCaptureRecording implements Recording {
       id: this.id,
       title: this.title,
       url: this.url,
-      ...(this.startedAt !== undefined && { startedAtTs: this.startedAt.toMillis() }),
-      ...(this.stoppedAt !== undefined && { stoppedAtTs: this.stoppedAt.toMillis() }),
+      ...(this.startedAt !== undefined && {
+        startedAtTs: this.startedAt.toMillis(),
+      }),
+      ...(this.stoppedAt !== undefined && {
+        stoppedAtTs: this.stoppedAt.toMillis(),
+      }),
     };
   }
 }

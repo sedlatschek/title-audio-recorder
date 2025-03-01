@@ -1,6 +1,4 @@
-import {
- TitleChangeDetector, TitleChangeHandler, 
-} from './TitleChangeDetector';
+import { TitleChangeDetector, TitleChangeHandler } from './TitleChangeDetector';
 
 export class HtmlTitleChangeDetector implements TitleChangeDetector {
   private handlers: TitleChangeHandler[] = [];
@@ -25,7 +23,7 @@ export class HtmlTitleChangeDetector implements TitleChangeDetector {
   }
 
   private publishTitleChangedEvent(title: string): void {
-    for(const handler of this.handlers) {
+    for (const handler of this.handlers) {
       handler(title);
     }
   }
