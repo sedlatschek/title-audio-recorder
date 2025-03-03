@@ -1,21 +1,32 @@
 import { createApp } from 'vue';
 import browser from 'webextension-polyfill';
 import { isDiscoverOptionsTabMessage } from '../common/Message';
+import { getErrorPageUrl, getOptionPageTabs } from '../common/tabs';
 import OptionsPage from './OptionsPage.vue';
-import '../index.css';
 import { Recorder } from './recorder/Recorder';
 import { TabCaptureRecordingSession } from './recorder/TabCaptureRecordingSession';
+import '../index.css';
 
-createApp(OptionsPage).mount('body');
+initialize();
 
-new Recorder(TabCaptureRecordingSession);
+async function initialize(): Promise<void> {
+  const tabs = await getOptionPageTabs();
 
-browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-  console.debug('<< [options]', message);
+  if (tabs.length > 1) {
+    window.location.href = getErrorPageUrl();
+  } else {
+    createApp(OptionsPage).mount('body');
 
-  if (isDiscoverOptionsTabMessage(message)) {
-    console.debug('>> [options] responding to discover options message');
-    sendResponse(true);
-    return true;
+    new Recorder(TabCaptureRecordingSession);
+
+    browser.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+      console.debug('<< [options]', message);
+
+      if (isDiscoverOptionsTabMessage(message)) {
+        console.debug('>> [options] responding to discover options message');
+        sendResponse(true);
+        return true;
+      }
+    });
   }
-});
+}

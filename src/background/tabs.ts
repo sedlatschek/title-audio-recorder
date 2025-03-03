@@ -1,13 +1,7 @@
 import pRetry from 'p-retry';
 import browser, { Tabs } from 'webextension-polyfill';
 import { DiscoverOptionsTabMessage, MessageType } from '../common/Message';
-
-const url = browser.runtime.getURL('src/options/options.html');
-
-async function getOptionsTab(): Promise<Tabs.Tab | undefined> {
-  const tabs = await browser.tabs.query({ url });
-  return tabs[0];
-}
+import { getOptionPageTabs, getOptionsPageUrl } from '../common/tabs';
 
 function optionsTabIsResponding(): Promise<boolean> {
   const message: DiscoverOptionsTabMessage = {
@@ -22,7 +16,7 @@ async function openOptionsTab(): Promise<Tabs.Tab> {
   const tab = await browser.tabs.create({
     pinned: false,
     active: false,
-    url,
+    url: getOptionsPageUrl(),
   });
 
   await pRetry(
@@ -44,6 +38,6 @@ async function openOptionsTab(): Promise<Tabs.Tab> {
 }
 
 export async function ensureOptionsTabIsOpen(): Promise<Tabs.Tab> {
-  const tab = await getOptionsTab();
+  const [tab] = await getOptionPageTabs();
   return tab ?? openOptionsTab();
 }
