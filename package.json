@@ -12,6 +12,7 @@
   "dependencies": {
     "filenamify": "^6.0.0",
     "luxon": "^3.5.0",
+    "p-retry": "^6.2.1",
     "vue": "^3.3"
   },
   "devDependencies": {

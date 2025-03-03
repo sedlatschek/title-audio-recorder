@@ -8,6 +8,7 @@ export enum MessageType {
   RECORDING_STOPPED = 'RECORDING_STOPPED',
   DOWNLOAD_RECORDING = 'DOWNLOAD_RECORDING',
   TAB_TITLE_CHANGED = 'TAB_TITLE_CHANGED',
+  DISCOVER_OPTIONS_TAB = 'DISCOVER_OPTIONS_TAB',
 }
 
 type MessageBase = {
@@ -117,6 +118,19 @@ export function isTabTitleChangedMessage(
   );
 }
 
+export type DiscoverOptionsTabMessage = {
+  messageType: MessageType.DISCOVER_OPTIONS_TAB;
+};
+
+export function isDiscoverOptionsTabMessage(
+  message: unknown,
+): message is DiscoverOptionsTabMessage {
+  return (
+    isMessage(message) &&
+    message.messageType === MessageType.DISCOVER_OPTIONS_TAB
+  );
+}
+
 export type Message = MessageBase &
   (
     | StartRecordingMessage
@@ -126,4 +140,5 @@ export type Message = MessageBase &
     | RecordingStoppedMessage
     | DownloadRecordingMessage
     | TabTitleChangedMessage
+    | DiscoverOptionsTabMessage
   );
