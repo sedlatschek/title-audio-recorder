@@ -6,7 +6,7 @@
         :title="buttonTitle"
         @click="start">
         <IconCaretLeft v-if="currentRecordings.length > 0" />
-        <IconStart v-else />
+        <IconCircle v-else />
         <span class="ms-2">{{ buttonTitle }}</span>
       </BtnIcon>
     </div>
@@ -32,7 +32,7 @@ import RecordingWidget from '../common/RecordingWidget.vue';
 import { getCurrentTabId } from '../common/tabs';
 import BtnIcon from '../components/BtnIcon.vue';
 import IconCaretLeft from '../components/IconCaretLeft.vue';
-import IconStart from '../components/IconStart.vue';
+import IconCircle from '../components/IconCircle.vue';
 
 const messageBus = new MessageBus('Popup');
 

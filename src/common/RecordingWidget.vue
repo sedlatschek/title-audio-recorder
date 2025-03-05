@@ -34,13 +34,13 @@
             title="Stop recording"
             :disabled="recording.stoppedAtTs"
             @click="stop">
-            <IconStop />
+            <IconRectangle />
           </BtnIcon>
           <BtnIcon
             title="Download recording"
             :disabled="!recording.stoppedAtTs"
             @click="download">
-            <IconDownload />
+            <IconArrowDown />
           </BtnIcon>
         </div>
       </div>
@@ -52,8 +52,8 @@
 import BtnIcon from '../components/BtnIcon.vue';
 import DateText from '../components/DateText.vue';
 import DurationText from '../components/DurationText.vue';
-import IconDownload from '../components/IconDownload.vue';
-import IconStop from '../components/IconStop.vue';
+import IconArrowDown from '../components/IconArrowDown.vue';
+import IconRectangle from '../components/IconRectangle.vue';
 import { MessageBus } from './MessageBus';
 import RecordingImage from './RecordingImage.vue';
 import { RecordingMetadata } from './RecordingMetadata';
