@@ -1,31 +1,33 @@
+import { PubSub } from '../../common/PubSub';
 import { RecordingMetadata } from '../../common/RecordingMetadata';
 import { UUID } from '../../common/types';
 import { Recording } from './Recording';
 
-export type RecordingEventType = 'started' | 'stopped';
-
-export type RecordingEventSubscription = {
-  eventType: RecordingEventType;
-  callback: () => void;
-};
-
 export class RecordingWrapper<T extends Recording> {
-  private readonly subscriptions: RecordingEventSubscription[];
+  private readonly startedPubSub = new PubSub<void, void>();
+  private readonly stoppedPubSub = new PubSub<void, void>();
   public readonly id: UUID;
 
   public constructor(private readonly recording: T) {
     this.id = recording.id;
-    this.subscriptions = [];
+  }
+
+  public onStarted(callback: () => Promise<void>): void {
+    this.startedPubSub.on(callback);
+  }
+
+  public onStopped(callback: () => Promise<void>): void {
+    this.stoppedPubSub.on(callback);
   }
 
   public async start(): Promise<void> {
     await this.recording.start();
-    this.dispatch('started');
+    this.startedPubSub.emit();
   }
 
   public async stop(): Promise<void> {
     await this.recording.stop();
-    this.dispatch('stopped');
+    this.stoppedPubSub.emit();
   }
 
   public download(): void {
@@ -34,17 +36,5 @@ export class RecordingWrapper<T extends Recording> {
 
   public getRecordingMetadata(): RecordingMetadata {
     return this.recording.getRecordingMetadata();
-  }
-
-  public on(eventType: RecordingEventType, callback: () => void): void {
-    const subscription: RecordingEventSubscription = { eventType, callback };
-    this.subscriptions.push(subscription);
-  }
-
-  private dispatch(eventType: RecordingEventType): void {
-    const subscriptions = this.subscriptions.filter((s) => s.eventType === eventType);
-    for (const { callback } of subscriptions) {
-      callback();
-    }
   }
 }

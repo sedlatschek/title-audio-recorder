@@ -54,16 +54,19 @@ function createMessageBus(recorder: Recorder<RecordingSession<Recording>, Record
     return Promise.resolve(recorder.registerTitleChange(tabId, url, title));
   });
 
-  recorder.on('recordingAdded', (recordingMetadata) => {
+  recorder.onRecordingAdded((recordingMetadata) => {
     messageBus.recordingAdded(recordingMetadata);
+    return Promise.resolve();
   });
 
-  recorder.on('recordingStarted', (recordingMetadata) => {
+  recorder.onRecordingStarted((recordingMetadata) => {
     messageBus.recordingStarted(recordingMetadata);
+    return Promise.resolve();
   });
 
-  recorder.on('recordingStopped', (recordingMetadata) => {
+  recorder.onRecordingStopped((recordingMetadata) => {
     messageBus.recordingStopped(recordingMetadata);
+    return Promise.resolve();
   });
 
   return messageBus;

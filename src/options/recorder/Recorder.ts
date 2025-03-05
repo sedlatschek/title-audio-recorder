@@ -1,23 +1,20 @@
 import { EventArray } from '../../common/EventArray';
+import { PubSub } from '../../common/PubSub';
 import { RecordingMetadata } from '../../common/RecordingMetadata';
 import { Recording } from './Recording';
 import { RecordingSession } from './RecordingSession';
 import { RecordingSessionWrapper } from './RecordingSessionWrapper';
 import { RecordingWrapper } from './RecordingWrapper';
 
-type RecorderEventType = 'recordingAdded' | 'recordingStarted' | 'recordingStopped';
-type RecorderEventSubscription = {
-  eventType: RecorderEventType;
-  callback: (recording: RecordingMetadata) => void;
-};
-
 export class Recorder<T extends RecordingSession<R>, R extends Recording> {
-  private subscriptions: RecorderEventSubscription[];
+  private recordingAddedPubSub = new PubSub<RecordingMetadata, void>();
+  private recordingStartedPubSub = new PubSub<RecordingMetadata, void>();
+  private recordingStoppedPubSub = new PubSub<RecordingMetadata, void>();
+
   private recordingSessionWrappers: Record<number, RecordingSessionWrapper<T, R>> = [];
   private recordingWrappers: EventArray<RecordingWrapper<R>>;
 
   public constructor(private readonly recordingSessionType: new (tabId: number) => T) {
-    this.subscriptions = [];
     this.recordingWrappers = new EventArray<RecordingWrapper<R>>();
 
     this.recordingWrappers.on('push', (items: RecordingWrapper<R>[]): void => {
@@ -27,15 +24,16 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
     });
   }
 
-  on(eventType: RecorderEventType, callback: (recording: RecordingMetadata) => void): void {
-    this.subscriptions.push({ eventType, callback });
+  onRecordingAdded(callback: (recording: RecordingMetadata) => Promise<void>): void {
+    this.recordingAddedPubSub.on(callback);
   }
 
-  private dispatch(eventType: RecorderEventType, recordingWrapper: RecordingWrapper<R>): void {
-    const subscriptions = this.subscriptions.filter((s) => s.eventType === eventType);
-    for (const { callback } of subscriptions) {
-      callback(recordingWrapper.getRecordingMetadata());
-    }
+  onRecordingStarted(callback: (recording: RecordingMetadata) => Promise<void>): void {
+    this.recordingStartedPubSub.on(callback);
+  }
+
+  onRecordingStopped(callback: (recording: RecordingMetadata) => Promise<void>): void {
+    this.recordingStoppedPubSub.on(callback);
   }
 
   public getRecordingMetadatas(): RecordingMetadata[] {
@@ -43,12 +41,14 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
   }
 
   private initializeRecording(recordingWrapper: RecordingWrapper<R>): void {
-    this.dispatch('recordingAdded', recordingWrapper);
-    recordingWrapper.on('started', () => {
-      this.dispatch('recordingStarted', recordingWrapper);
+    this.recordingAddedPubSub.emit(recordingWrapper.getRecordingMetadata());
+    recordingWrapper.onStarted(() => {
+      this.recordingStartedPubSub.emit(recordingWrapper.getRecordingMetadata());
+      return Promise.resolve();
     });
-    recordingWrapper.on('stopped', () => {
-      this.dispatch('recordingStopped', recordingWrapper);
+    recordingWrapper.onStopped(() => {
+      this.recordingStoppedPubSub.emit(recordingWrapper.getRecordingMetadata());
+      return Promise.resolve();
     });
   }
 
