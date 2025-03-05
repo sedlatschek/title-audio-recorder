@@ -6,8 +6,7 @@
       class="relative flex w-full flex-row items-center gap-6 rounded-2xl bg-white outline outline-black/5 dark:bg-gray-950">
       <RecordingImage :recording="recording" />
       <div class="items-left flex flex-col">
-        <span
-          class="mb-2 text-2xl leading-none font-medium text-gray-950 dark:text-white">
+        <span class="mb-2 text-2xl leading-none font-medium text-gray-950 dark:text-white">
           {{ recording.title }}
         </span>
         <div>

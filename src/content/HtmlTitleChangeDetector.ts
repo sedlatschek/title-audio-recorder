@@ -5,10 +5,7 @@ export class HtmlTitleChangeDetector implements TitleChangeDetector {
 
   public constructor() {
     const observer = new MutationObserver(() => {
-      this.publishTitleChangedEvent(
-        this.getTitleHtmlElement().innerText,
-        window.location.href,
-      );
+      this.publishTitleChangedEvent(this.getTitleHtmlElement().innerText, window.location.href);
     });
     observer.observe(this.getTitleHtmlElement(), {
       subtree: true,

@@ -4,8 +4,8 @@
     class="p-4">
     <AlertBanner class="mx-auto w-180">
       <template #headline>Warning</template>
-      Do not close this tab while recording. Closing the tab will cause all the
-      recordings to be lost.
+      Do not close this tab while recording. Closing the tab will cause all the recordings to be
+      lost.
     </AlertBanner>
     <div class="pt-5">
       <RecordingWidget
@@ -18,14 +18,12 @@
     </div>
   </main>
   <main v-else>
-    <div
-      class="py-8 text-center text-2xl font-bold text-gray-600 dark:text-gray-400">
+    <div class="py-8 text-center text-2xl font-bold text-gray-600 dark:text-gray-400">
       Waiting for you to start recording 👀
     </div>
   </main>
   <footer>
-    <p
-      class="p-4 text-center text-sm font-extralight text-gray-600 dark:text-gray-400">
+    <p class="p-4 text-center text-sm font-extralight text-gray-600 dark:text-gray-400">
       Made with ❤️ by
       <a
         target="_blank"

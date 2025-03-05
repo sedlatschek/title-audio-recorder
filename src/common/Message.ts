@@ -26,12 +26,8 @@ export type StartRecordingMessage = {
   tabId: number;
 };
 
-export function isStartRecordingMessage(
-  message: unknown,
-): message is StartRecordingMessage {
-  return (
-    isMessage(message) && message.messageType === MessageType.START_RECORDING
-  );
+export function isStartRecordingMessage(message: unknown): message is StartRecordingMessage {
+  return isMessage(message) && message.messageType === MessageType.START_RECORDING;
 }
 
 export type StopRecordingMessage = {
@@ -39,12 +35,8 @@ export type StopRecordingMessage = {
   recording: RecordingMetadata;
 };
 
-export function isStopRecordingMessage(
-  message: unknown,
-): message is StopRecordingMessage {
-  return (
-    isMessage(message) && message.messageType === MessageType.STOP_RECORDING
-  );
+export function isStopRecordingMessage(message: unknown): message is StopRecordingMessage {
+  return isMessage(message) && message.messageType === MessageType.STOP_RECORDING;
 }
 
 export type RecordingAddedMessage = {
@@ -52,12 +44,8 @@ export type RecordingAddedMessage = {
   recording: RecordingMetadata;
 };
 
-export function isRecordingAddedMessage(
-  message: unknown,
-): message is RecordingAddedMessage {
-  return (
-    isMessage(message) && message.messageType === MessageType.RECORDING_ADDED
-  );
+export function isRecordingAddedMessage(message: unknown): message is RecordingAddedMessage {
+  return isMessage(message) && message.messageType === MessageType.RECORDING_ADDED;
 }
 
 export type RecordingStartedMessage = {
@@ -65,12 +53,8 @@ export type RecordingStartedMessage = {
   recording: RecordingMetadata;
 };
 
-export function isRecordingStartedMessage(
-  message: unknown,
-): message is RecordingStartedMessage {
-  return (
-    isMessage(message) && message.messageType === MessageType.RECORDING_STARTED
-  );
+export function isRecordingStartedMessage(message: unknown): message is RecordingStartedMessage {
+  return isMessage(message) && message.messageType === MessageType.RECORDING_STARTED;
 }
 
 export type RecordingStoppedMessage = {
@@ -78,12 +62,8 @@ export type RecordingStoppedMessage = {
   recording: RecordingMetadata;
 };
 
-export function isRecordingStoppedMessage(
-  message: unknown,
-): message is RecordingStoppedMessage {
-  return (
-    isMessage(message) && message.messageType === MessageType.RECORDING_STOPPED
-  );
+export function isRecordingStoppedMessage(message: unknown): message is RecordingStoppedMessage {
+  return isMessage(message) && message.messageType === MessageType.RECORDING_STOPPED;
 }
 
 export type DownloadRecordingMessage = {
@@ -91,12 +71,8 @@ export type DownloadRecordingMessage = {
   recording: RecordingMetadata;
 };
 
-export function isDownloadRecordingMessage(
-  message: unknown,
-): message is DownloadRecordingMessage {
-  return (
-    isMessage(message) && message.messageType === MessageType.DOWNLOAD_RECORDING
-  );
+export function isDownloadRecordingMessage(message: unknown): message is DownloadRecordingMessage {
+  return isMessage(message) && message.messageType === MessageType.DOWNLOAD_RECORDING;
 }
 
 export type TabTitleChangedMessageTab = {
@@ -110,12 +86,8 @@ export type TabTitleChangedMessage = {
   tab: TabTitleChangedMessageTab;
 };
 
-export function isTabTitleChangedMessage(
-  message: unknown,
-): message is TabTitleChangedMessage {
-  return (
-    isMessage(message) && message.messageType === MessageType.TAB_TITLE_CHANGED
-  );
+export function isTabTitleChangedMessage(message: unknown): message is TabTitleChangedMessage {
+  return isMessage(message) && message.messageType === MessageType.TAB_TITLE_CHANGED;
 }
 
 export type DiscoverOptionsTabMessage = {
@@ -125,22 +97,15 @@ export type DiscoverOptionsTabMessage = {
 export function isDiscoverOptionsTabMessage(
   message: unknown,
 ): message is DiscoverOptionsTabMessage {
-  return (
-    isMessage(message) &&
-    message.messageType === MessageType.DISCOVER_OPTIONS_TAB
-  );
+  return isMessage(message) && message.messageType === MessageType.DISCOVER_OPTIONS_TAB;
 }
 
 export type GetRecordingsMessage = {
   messageType: MessageType.GET_RECORDINGS;
 };
 
-export function isGetRecordingsMessage(
-  message: unknown,
-): message is GetRecordingsMessage {
-  return (
-    isMessage(message) && message.messageType === MessageType.GET_RECORDINGS
-  );
+export function isGetRecordingsMessage(message: unknown): message is GetRecordingsMessage {
+  return isMessage(message) && message.messageType === MessageType.GET_RECORDINGS;
 }
 
 export type Message =

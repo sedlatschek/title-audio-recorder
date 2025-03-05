@@ -14,10 +14,7 @@ export class EventArray<T> extends Array<T> {
     this.subscriptions = [];
   }
 
-  public on(
-    eventType: EventArrayEventType,
-    callback: (items: T[]) => void,
-  ): void {
+  public on(eventType: EventArrayEventType, callback: (items: T[]) => void): void {
     const subscription: EventArraySubscription<T> = {
       eventType,
       callback,
@@ -26,9 +23,7 @@ export class EventArray<T> extends Array<T> {
   }
 
   private dispatch(eventType: EventArrayEventType, items: T[]): void {
-    const subscriptions = this.subscriptions.filter(
-      (s) => s.eventType === eventType,
-    );
+    const subscriptions = this.subscriptions.filter((s) => s.eventType === eventType);
     for (const subscription of subscriptions) {
       try {
         subscription.callback(items);

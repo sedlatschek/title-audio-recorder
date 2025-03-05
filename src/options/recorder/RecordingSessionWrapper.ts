@@ -2,10 +2,7 @@ import { Recording } from './Recording';
 import { RecordingSession } from './RecordingSession';
 import { RecordingWrapper } from './RecordingWrapper';
 
-export class RecordingSessionWrapper<
-  T extends RecordingSession<R>,
-  R extends Recording,
-> {
+export class RecordingSessionWrapper<T extends RecordingSession<R>, R extends Recording> {
   private recordingSession: T | undefined;
 
   public constructor(
@@ -42,10 +39,7 @@ export class RecordingSessionWrapper<
     return tab.url ?? 'Unknown URL';
   }
 
-  public async record(
-    title?: string,
-    url?: string,
-  ): Promise<RecordingWrapper<R>> {
+  public async record(title?: string, url?: string): Promise<RecordingWrapper<R>> {
     if (!this.recordingSession) {
       throw new Error('Can not record title: Session is not running');
     }

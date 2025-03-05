@@ -42,9 +42,7 @@ export class RecordingWrapper<T extends Recording> {
   }
 
   private dispatch(eventType: RecordingEventType): void {
-    const subscriptions = this.subscriptions.filter(
-      (s) => s.eventType === eventType,
-    );
+    const subscriptions = this.subscriptions.filter((s) => s.eventType === eventType);
     for (const { callback } of subscriptions) {
       callback();
     }

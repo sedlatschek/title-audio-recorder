@@ -13,9 +13,7 @@ const props = defineProps<{
 
 const duration = ref<string>('00:00:00');
 
-const startedAt = computed<DateTime>(() =>
-  DateTime.fromMillis(props.startedAtTs),
-);
+const startedAt = computed<DateTime>(() => DateTime.fromMillis(props.startedAtTs));
 const stoppedAt = computed<DateTime | undefined>(() =>
   props.stoppedAtTs ? DateTime.fromMillis(props.stoppedAtTs) : undefined,
 );

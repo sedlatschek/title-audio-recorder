@@ -2,9 +2,7 @@ import { RecordingSession } from './RecordingSession';
 import { RecordingWrapper } from './RecordingWrapper';
 import { TabCaptureRecording } from './TabCaptureRecording';
 
-export class TabCaptureRecordingSession
-  implements RecordingSession<TabCaptureRecording>
-{
+export class TabCaptureRecordingSession implements RecordingSession<TabCaptureRecording> {
   private stream: MediaStream | undefined;
   private lastRecording: RecordingWrapper<TabCaptureRecording> | undefined;
 
@@ -44,15 +42,10 @@ export class TabCaptureRecordingSession
     }
 
     await this.ensureLastRecordingIsStopped();
-    await Promise.allSettled(
-      this.stream.getTracks().map((track) => track.stop()),
-    );
+    await Promise.allSettled(this.stream.getTracks().map((track) => track.stop()));
   }
 
-  async record(
-    title: string,
-    url: string,
-  ): Promise<RecordingWrapper<TabCaptureRecording>> {
+  async record(title: string, url: string): Promise<RecordingWrapper<TabCaptureRecording>> {
     if (!this.stream) {
       throw new Error('Can not create title: Stream is not running');
     }
@@ -69,16 +62,10 @@ export class TabCaptureRecordingSession
   }
 
   private ensureLastRecordingIsStopped(): Promise<void> {
-    if (
-      !this.lastRecording ||
-      this.lastRecording.getRecordingMetadata().stoppedAtTs
-    ) {
+    if (!this.lastRecording || this.lastRecording.getRecordingMetadata().stoppedAtTs) {
       return Promise.resolve();
     }
-    console.debug(
-      '[TabCaptureRecordingSession] stop last recording',
-      this.lastRecording,
-    );
+    console.debug('[TabCaptureRecordingSession] stop last recording', this.lastRecording);
     return this.lastRecording.stop();
   }
 }

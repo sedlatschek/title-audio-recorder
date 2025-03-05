@@ -26,9 +26,7 @@ export function getMessageBus(): MessageBus {
   return messageBus;
 }
 
-function createMessageBus(
-  recorder: Recorder<RecordingSession<Recording>, Recording>,
-): MessageBus {
+function createMessageBus(recorder: Recorder<RecordingSession<Recording>, Recording>): MessageBus {
   const messageBus = new MessageBus('Options');
 
   messageBus.onDiscoverOptionsTab(() => {

@@ -23,9 +23,7 @@ export function createRecordingsState(
   const handleChanged = (recording: RecordingMetadata): Promise<void> => {
     console.debug('[recordingsState] recording was updated', recording);
 
-    const index = recordingMetadatas.value.findIndex(
-      (r) => r.id === recording.id,
-    );
+    const index = recordingMetadatas.value.findIndex((r) => r.id === recording.id);
     if (index !== -1) {
       recordingMetadatas.value[index] = {
         ...recordingMetadatas.value[index],
