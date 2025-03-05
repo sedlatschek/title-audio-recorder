@@ -26,5 +26,10 @@
       "matches": ["https://*/*"]
     }
   ],
-  "permissions": ["activeTab", "downloads", "tabCapture", "tabs"]
+  "permissions": [
+    "activeTab",
+    "downloads",
+    "tabCapture",
+    "tabs"
+  ]
 }

@@ -2,16 +2,18 @@
   <div
     class="max-w-196 rounded-3xl bg-black/5 p-2 outline outline-white/15 backdrop-blur-md dark:bg-white/10">
     <div
-      class="relative flex w-full flex-row items-center gap-6 rounded-2xl bg-white p-7 outline outline-black/5 dark:bg-gray-950">
+      :class="{ 'p-7': props.padding === 'lg', 'p-2': props.padding === 'sm' }"
+      class="relative flex w-full flex-row items-center gap-6 rounded-2xl bg-white outline outline-black/5 dark:bg-gray-950">
       <RecordingImage :recording="recording" />
       <div class="items-left flex flex-col">
-        <span class="text-2xl font-medium text-gray-950 dark:text-white">
+        <span
+          class="mb-2 text-2xl leading-none font-medium text-gray-950 dark:text-white">
           {{ recording.title }}
         </span>
         <div>
           <a
             target="_blank"
-            class="font-medium text-sky-500 dark:text-white"
+            class="leading-none font-medium break-all text-sky-500 dark:text-white"
             :href="recording.url">
             {{ recording.url }}
           </a>
@@ -43,45 +45,31 @@
           </BtnIcon>
         </div>
       </div>
-      <div class="bg" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import browser from 'webextension-polyfill';
 import BtnIcon from '../components/BtnIcon.vue';
 import DateText from '../components/DateText.vue';
 import DurationText from '../components/DurationText.vue';
 import IconDownload from '../components/IconDownload.vue';
 import IconStop from '../components/IconStop.vue';
-import {
-  MessageType,
-  DownloadRecordingMessage,
-  StopRecordingMessage,
-} from './Message';
+import { MessageBus } from './MessageBus';
 import RecordingImage from './RecordingImage.vue';
 import { RecordingMetadata } from './RecordingMetadata';
 
 const props = defineProps<{
+  messageBus: MessageBus;
+  padding: 'sm' | 'lg';
   recording: RecordingMetadata;
 }>();
 
-function download(): void {
-  const message: DownloadRecordingMessage = {
-    messageType: MessageType.DOWNLOAD_RECORDING,
-    recording: props.recording,
-  };
-  console.debug('>> [RecordingWidget]', message);
-  browser.runtime.sendMessage(message);
+function stop(): Promise<void> {
+  return props.messageBus.stopRecording(props.recording);
 }
 
-function stop(): void {
-  const message: StopRecordingMessage = {
-    messageType: MessageType.STOP_RECORDING,
-    recording: props.recording,
-  };
-  console.debug('>> [RecordingWidget]', message);
-  browser.runtime.sendMessage(message);
+async function download(): Promise<void> {
+  return props.messageBus.downloadRecording(props.recording);
 }
 </script>

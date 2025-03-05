@@ -8,6 +8,8 @@ export class TabCaptureRecordingSession
   private stream: MediaStream | undefined;
   private lastRecording: RecordingWrapper<TabCaptureRecording> | undefined;
 
+  public constructor(private readonly tabId: number) {}
+
   private async tabCapture(): Promise<MediaStream> {
     return new Promise((resolve, reject) => {
       const captureOptions: chrome.tabCapture.CaptureOptions = {
@@ -59,7 +61,7 @@ export class TabCaptureRecordingSession
     await this.ensureLastRecordingIsStopped();
 
     this.lastRecording = new RecordingWrapper(
-      new TabCaptureRecording(this.stream, title, url),
+      new TabCaptureRecording(this.tabId, this.stream, title, url),
     );
     this.lastRecording.start();
 

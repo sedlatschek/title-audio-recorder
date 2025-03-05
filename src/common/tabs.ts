@@ -16,3 +16,14 @@ export function getOptionsPageUrl(): string {
 export function getOptionPageTabs(): Promise<Tabs.Tab[]> {
   return browser.tabs.query({ url: getOptionsPageUrl() });
 }
+
+export async function getCurrentTabId(): Promise<number> {
+  const [tab] = await browser.tabs.query({
+    active: true,
+    lastFocusedWindow: true,
+  });
+  if (!tab?.id) {
+    throw new Error('Could not retrieve currently active tab');
+  }
+  return tab.id;
+}

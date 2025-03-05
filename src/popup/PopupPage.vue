@@ -1,31 +1,42 @@
-<script lang="ts" setup>
-import browser from 'webextension-polyfill';
-
-import { type StartRecordingMessage, MessageType } from '../common/Message';
-
-async function getCurrentTabId(): Promise<number> {
-  const [tab] = await browser.tabs.query({
-    active: true,
-    lastFocusedWindow: true,
-  });
-  if (!tab?.id) {
-    throw new Error('Could not retrieve currently active tab');
-  }
-  return tab.id;
-}
-
-async function start(): Promise<void> {
-  const message: StartRecordingMessage = {
-    messageType: MessageType.START_RECORDING,
-    tabId: await getCurrentTabId(),
-  };
-  console.debug('>> [PopupPage]', message);
-  browser.runtime.sendMessage(message);
-}
-</script>
-
 <template>
-  <div>
-    <button @click="start">Start</button>
+  <div class="w-96 p-2">
+    <BtnIcon
+      title="Start recording"
+      @click="start">
+      <IconStart />
+    </BtnIcon>
+    <div>
+      <RecordingWidget
+        v-for="recording in currentRecordings"
+        :key="recording.id"
+        :message-bus="messageBus"
+        padding="sm"
+        :recording="recording" />
+    </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import { MessageBus } from '../common/MessageBus';
+import { createRecordingsState } from '../common/recordingsState';
+import RecordingWidget from '../common/RecordingWidget.vue';
+import { getCurrentTabId } from '../common/tabs';
+import BtnIcon from '../components/BtnIcon.vue';
+import IconStart from '../components/IconStart.vue';
+
+const messageBus = new MessageBus('Popup');
+
+const tabId = ref(0);
+getCurrentTabId().then((id) => (tabId.value = id));
+
+function start(): Promise<void> {
+  return messageBus.startRecording(tabId.value);
+}
+
+const recordings = createRecordingsState(messageBus, true);
+
+const currentRecordings = computed(() =>
+  recordings.value.filter((r) => r.tabId === tabId.value && !r.stoppedAtTs),
+);
+</script>

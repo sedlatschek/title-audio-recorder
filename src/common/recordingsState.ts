@@ -1,46 +1,46 @@
 import { Ref, ref } from 'vue';
-import browser from 'webextension-polyfill';
-import {
-  isMessage,
-  isRecordingAddedMessage,
-  isRecordingStartedMessage,
-  isRecordingStoppedMessage,
-} from './Message';
+import { MessageBus } from './MessageBus';
 import { RecordingMetadata } from './RecordingMetadata';
 
-export function createRecordingsState(): Ref<RecordingMetadata[]> {
-  const recordings = ref<RecordingMetadata[]>([]);
+export function createRecordingsState(
+  messageBus: MessageBus,
+  startWithExistingRecordings?: true,
+): Ref<RecordingMetadata[]> {
+  const recordingMetadatas = ref<RecordingMetadata[]>([]);
 
-  browser.runtime.onMessage.addListener(async (message) => {
-    if (!isMessage(message) || !message.dispatched) {
-      return;
+  if (startWithExistingRecordings) {
+    messageBus.getRecordings().then((recordings) => {
+      console.debug('[recordingsState] got existing recordings', recordings);
+      recordingMetadatas.value.push(...recordings);
+    });
+  }
+
+  const handleAdded = (recording: RecordingMetadata): Promise<void> => {
+    console.debug('[recordingsState] recording was added', recording);
+    recordingMetadatas.value.push(recording);
+    return Promise.resolve();
+  };
+  const handleChanged = (recording: RecordingMetadata): Promise<void> => {
+    console.debug('[recordingsState] recording was updated', recording);
+
+    const index = recordingMetadatas.value.findIndex(
+      (r) => r.id === recording.id,
+    );
+    if (index !== -1) {
+      recordingMetadatas.value[index] = {
+        ...recordingMetadatas.value[index],
+        ...recording,
+      };
+    } else {
+      recordingMetadatas.value.push(recording);
     }
-    console.debug('<< [recordingsState]', message);
 
-    if (isRecordingAddedMessage(message)) {
-      recordings.value.push(message.recording);
-    } else if (
-      isRecordingStartedMessage(message) ||
-      isRecordingStoppedMessage(message)
-    ) {
-      console.debug(
-        '[recordingsState] recording was updated',
-        message.recording,
-      );
+    return Promise.resolve();
+  };
 
-      const index = recordings.value.findIndex(
-        (recording) => message.recording.id === recording.id,
-      );
-      if (index !== -1) {
-        recordings.value[index] = {
-          ...recordings.value[index],
-          ...message.recording,
-        };
-      } else {
-        recordings.value.push(message.recording);
-      }
-    }
-  });
+  messageBus.onRecordingAdded(handleAdded);
+  messageBus.onRecordingStarted(handleChanged);
+  messageBus.onRecordingStopped(handleChanged);
 
-  return recordings;
+  return recordingMetadatas;
 }

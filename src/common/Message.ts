@@ -1,6 +1,8 @@
 import { RecordingMetadata } from './RecordingMetadata';
 
 export enum MessageType {
+  DISCOVER_OPTIONS_TAB = 'DISCOVER_OPTIONS_TAB',
+  GET_RECORDINGS = 'GET_RECORDINGS',
   START_RECORDING = 'START_RECORDING',
   STOP_RECORDING = 'STOP_RECORDING',
   RECORDING_ADDED = 'RECORDING_ADDED',
@@ -8,13 +10,7 @@ export enum MessageType {
   RECORDING_STOPPED = 'RECORDING_STOPPED',
   DOWNLOAD_RECORDING = 'DOWNLOAD_RECORDING',
   TAB_TITLE_CHANGED = 'TAB_TITLE_CHANGED',
-  DISCOVER_OPTIONS_TAB = 'DISCOVER_OPTIONS_TAB',
 }
-
-type MessageBase = {
-  dispatched?: true;
-  tabId?: number;
-};
 
 export function isMessage(message: unknown): message is Message {
   return (
@@ -131,14 +127,26 @@ export function isDiscoverOptionsTabMessage(
   );
 }
 
-export type Message = MessageBase &
-  (
-    | StartRecordingMessage
-    | StopRecordingMessage
-    | RecordingAddedMessage
-    | RecordingStartedMessage
-    | RecordingStoppedMessage
-    | DownloadRecordingMessage
-    | TabTitleChangedMessage
-    | DiscoverOptionsTabMessage
+export type GetRecordingsMessage = {
+  messageType: MessageType.GET_RECORDINGS;
+  tabId: number;
+};
+
+export function isGetRecordingsMessage(
+  message: unknown,
+): message is GetRecordingsMessage {
+  return (
+    isMessage(message) && message.messageType === MessageType.GET_RECORDINGS
   );
+}
+
+export type Message =
+  | DiscoverOptionsTabMessage
+  | GetRecordingsMessage
+  | StartRecordingMessage
+  | StopRecordingMessage
+  | RecordingAddedMessage
+  | RecordingStartedMessage
+  | RecordingStoppedMessage
+  | DownloadRecordingMessage
+  | TabTitleChangedMessage;

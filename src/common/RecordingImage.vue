@@ -8,7 +8,7 @@
     height="32" />
   <div
     v-else
-    class="size-8" />
+    class="size-8 shrink-0" />
 </template>
 
 <script setup lang="ts">

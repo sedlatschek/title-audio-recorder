@@ -14,6 +14,7 @@ export class TabCaptureRecording implements Recording {
   public readonly id: UUID;
 
   public constructor(
+    private readonly tabId: number,
     private readonly stream: MediaStream,
     private readonly title: string,
     private readonly url: string,
@@ -85,6 +86,7 @@ export class TabCaptureRecording implements Recording {
   public getRecordingMetadata(): RecordingMetadata {
     return {
       id: this.id,
+      tabId: this.tabId,
       title: this.title,
       url: this.url,
       ...(this.startedAt !== undefined && {

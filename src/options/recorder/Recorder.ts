@@ -1,21 +1,21 @@
-import browser from 'webextension-polyfill';
 import { EventArray } from '../../common/EventArray';
-import {
-  isMessage,
-  isDownloadRecordingMessage,
-  isStartRecordingMessage,
-  isStopRecordingMessage,
-  isTabTitleChangedMessage,
-  Message,
-  MessageType,
-} from '../../common/Message';
 import { RecordingMetadata } from '../../common/RecordingMetadata';
 import { Recording } from './Recording';
 import { RecordingSession } from './RecordingSession';
 import { RecordingSessionWrapper } from './RecordingSessionWrapper';
 import { RecordingWrapper } from './RecordingWrapper';
 
+type RecorderEventType =
+  | 'recordingAdded'
+  | 'recordingStarted'
+  | 'recordingStopped';
+type RecorderEventSubscription = {
+  eventType: RecorderEventType;
+  callback: (recording: RecordingMetadata) => void;
+};
+
 export class Recorder<T extends RecordingSession<R>, R extends Recording> {
+  private subscriptions: RecorderEventSubscription[];
   private recordingSessionWrappers: Record<
     number,
     RecordingSessionWrapper<T, R>
@@ -25,6 +25,7 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
   public constructor(
     private readonly recordingSessionType: new (tabId: number) => T,
   ) {
+    this.subscriptions = [];
     this.recordingWrappers = new EventArray<RecordingWrapper<R>>();
 
     this.recordingWrappers.on('push', (items: RecordingWrapper<R>[]): void => {
@@ -32,32 +33,40 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
         this.initializeRecording(item);
       }
     });
+  }
 
-    browser.runtime.onMessage.addListener(async (message) => {
-      if (!isMessage(message) || !message.dispatched) {
-        return;
-      }
-      console.debug('<< [Recorder]', message);
+  on(
+    eventType: RecorderEventType,
+    callback: (recording: RecordingMetadata) => void,
+  ): void {
+    this.subscriptions.push({ eventType, callback });
+  }
 
-      if (isStartRecordingMessage(message)) {
-        this.startRecording(message.tabId);
-      } else if (isStopRecordingMessage(message)) {
-        this.stopRecording(message.recording);
-      } else if (isDownloadRecordingMessage(message)) {
-        this.downloadRecording(message.recording);
-      } else if (isTabTitleChangedMessage(message)) {
-        this.registerTitleChange(message.tabId, message.title, message.url);
-      }
-    });
+  private dispatch(
+    eventType: RecorderEventType,
+    recordingWrapper: RecordingWrapper<R>,
+  ): void {
+    const subscriptions = this.subscriptions.filter(
+      (s) => s.eventType === eventType,
+    );
+    for (const { callback } of subscriptions) {
+      callback(recordingWrapper.getRecordingMetadata());
+    }
+  }
+
+  public getRecordingMetadatas(): RecordingMetadata[] {
+    return Array.from(
+      this.recordingWrappers.map((r) => r.getRecordingMetadata()),
+    );
   }
 
   private initializeRecording(recordingWrapper: RecordingWrapper<R>): void {
-    this.sendMessage(MessageType.RECORDING_ADDED, recordingWrapper);
+    this.dispatch('recordingAdded', recordingWrapper);
     recordingWrapper.on('started', () => {
-      this.sendMessage(MessageType.RECORDING_STARTED, recordingWrapper);
+      this.dispatch('recordingStarted', recordingWrapper);
     });
     recordingWrapper.on('stopped', () => {
-      this.sendMessage(MessageType.RECORDING_STOPPED, recordingWrapper);
+      this.dispatch('recordingStopped', recordingWrapper);
     });
   }
 
@@ -79,7 +88,7 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
     return recordingSessionWrapper;
   }
 
-  private async startRecording(tabId: number): Promise<void> {
+  public async startRecording(tabId: number): Promise<void> {
     const recordingSessionWrapper =
       await this.getRecordingSessionWrapper(tabId);
     const recordingWrapper = await recordingSessionWrapper.record();
@@ -98,7 +107,7 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
     return recordingWrapper;
   }
 
-  private async stopRecording(
+  public async stopRecording(
     recordingMetadata: RecordingMetadata,
   ): Promise<void> {
     console.debug(`[Recorder] stop recording ${recordingMetadata.id}`);
@@ -106,13 +115,13 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
     await recordingWrapper.stop();
   }
 
-  private downloadRecording(recordingMetadata: RecordingMetadata): void {
+  public downloadRecording(recordingMetadata: RecordingMetadata): void {
     console.debug(`[Recorder] download recording ${recordingMetadata.id}`);
     const recordingWrapper = this.getRecordingWrapper(recordingMetadata);
     recordingWrapper.download();
   }
 
-  private async registerTitleChange(
+  public async registerTitleChange(
     tabId: number,
     title: string,
     url: string,
@@ -121,20 +130,5 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
       await this.getRecordingSessionWrapper(tabId);
     const recordingWrapper = await recordingSessionWrapper.record(title, url);
     this.recordingWrappers.push(recordingWrapper);
-  }
-
-  private sendMessage(
-    messageType:
-      | MessageType.RECORDING_ADDED
-      | MessageType.RECORDING_STARTED
-      | MessageType.RECORDING_STOPPED,
-    recordingWrapper: RecordingWrapper<R>,
-  ): void {
-    const message: Message = {
-      messageType,
-      recording: recordingWrapper.getRecordingMetadata(),
-    };
-    console.debug('>> [Recorder]', message);
-    browser.runtime.sendMessage(message);
   }
 }

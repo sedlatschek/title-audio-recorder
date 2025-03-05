@@ -1,13 +1,21 @@
 <template>
   <main
-    v-if="recordings.length > 0"
+    v-if="recordings && recordings.length > 0"
     class="p-4">
     <AlertBanner class="mx-auto w-180">
       <template #headline>Warning</template>
       Do not close this tab while recording. Closing the tab will cause all the
       recordings to be lost.
     </AlertBanner>
-    <RecordingTable :recordings="recordings" />
+    <div class="pt-5">
+      <RecordingWidget
+        v-for="recording in recordings"
+        :key="recording.id"
+        class="mx-auto my-4"
+        :message-bus="messageBus"
+        padding="lg"
+        :recording="recording" />
+    </div>
   </main>
   <main v-else>
     <div
@@ -30,10 +38,12 @@
 
 <script setup lang="ts">
 import { createRecordingsState } from '../common/recordingsState';
-import RecordingTable from '../common/RecordingTable.vue';
+import RecordingWidget from '../common/RecordingWidget.vue';
 import AlertBanner from '../components/AlertBanner.vue';
+import { getMessageBus } from './components';
 
-const recordings = createRecordingsState();
+const messageBus = getMessageBus();
+const recordings = createRecordingsState(messageBus);
 </script>
 
 <style lang="css">
