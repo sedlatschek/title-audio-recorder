@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import { MessageBus } from '../common/MessageBus';
-import { createRecordingsState } from '../common/recordingsState';
+import { createRecordingsRef } from '../common/recordingsRef';
 import RecordingWidget from '../common/RecordingWidget.vue';
 import { getCurrentTabId } from '../common/tabs';
 import BtnIcon from '../components/BtnIcon.vue';
@@ -34,7 +34,7 @@ function start(): Promise<void> {
   return messageBus.startRecording(tabId.value);
 }
 
-const recordings = createRecordingsState(messageBus, true);
+const recordings = createRecordingsRef(messageBus, true);
 
 const currentRecordings = computed(() =>
   recordings.value.filter((r) => r.tabId === tabId.value && !r.stoppedAtTs),

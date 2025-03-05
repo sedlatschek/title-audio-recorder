@@ -35,13 +35,13 @@
 </template>
 
 <script setup lang="ts">
-import { createRecordingsState } from '../common/recordingsState';
+import { createRecordingsRef } from '../common/recordingsRef';
 import RecordingWidget from '../common/RecordingWidget.vue';
 import AlertBanner from '../components/AlertBanner.vue';
 import { getMessageBus } from './components';
 
 const messageBus = getMessageBus();
-const recordings = createRecordingsState(messageBus);
+const recordings = createRecordingsRef(messageBus);
 </script>
 
 <style lang="css">

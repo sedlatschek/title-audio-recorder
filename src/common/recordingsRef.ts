@@ -2,7 +2,7 @@ import { Ref, ref } from 'vue';
 import { MessageBus } from './MessageBus';
 import { RecordingMetadata } from './RecordingMetadata';
 
-export function createRecordingsState(
+export function createRecordingsRef(
   messageBus: MessageBus,
   startWithExistingRecordings?: true,
 ): Ref<RecordingMetadata[]> {
