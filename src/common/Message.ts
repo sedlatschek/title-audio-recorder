@@ -99,11 +99,15 @@ export function isDownloadRecordingMessage(
   );
 }
 
-export type TabTitleChangedMessage = {
-  messageType: MessageType.TAB_TITLE_CHANGED;
+export type TabTitleChangedMessageTab = {
   tabId: number;
   title: string;
   url: string;
+};
+
+export type TabTitleChangedMessage = {
+  messageType: MessageType.TAB_TITLE_CHANGED;
+  tab: TabTitleChangedMessageTab;
 };
 
 export function isTabTitleChangedMessage(
@@ -129,7 +133,6 @@ export function isDiscoverOptionsTabMessage(
 
 export type GetRecordingsMessage = {
   messageType: MessageType.GET_RECORDINGS;
-  tabId: number;
 };
 
 export function isGetRecordingsMessage(

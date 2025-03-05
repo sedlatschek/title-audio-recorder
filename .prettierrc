@@ -7,5 +7,6 @@
   "singleAttributePerLine": true,
   "bracketSameLine": true,
   "htmlWhitespaceSensitivity": "ignore",
+  "printWidth": 100,
   "plugins": ["prettier-plugin-tailwindcss"]
 }

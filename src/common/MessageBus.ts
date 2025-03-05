@@ -9,36 +9,23 @@ import {
   isStartRecordingMessage,
   isStopRecordingMessage,
   isTabTitleChangedMessage,
+  Message,
   MessageType,
+  TabTitleChangedMessageTab,
 } from './Message';
 import { PubSub } from './PubSub';
 import { RecordingMetadata } from './RecordingMetadata';
 
 export class MessageBus {
   private readonly discoverOptionsTabPubSub = new PubSub<void, number>();
-  private readonly getRecordingsPubSub = new PubSub<
-    void,
-    RecordingMetadata[]
-  >();
+  private readonly getRecordingsPubSub = new PubSub<void, RecordingMetadata[]>();
   private readonly startRecordingPubSub = new PubSub<number, void>();
   private readonly stopRecordingPubSub = new PubSub<RecordingMetadata, void>();
-  private readonly downloadRecordingPubSub = new PubSub<
-    RecordingMetadata,
-    void
-  >();
+  private readonly downloadRecordingPubSub = new PubSub<RecordingMetadata, void>();
   private readonly recordingAddedPubSub = new PubSub<RecordingMetadata, void>();
-  private readonly recordingStartedPubSub = new PubSub<
-    RecordingMetadata,
-    void
-  >();
-  private readonly recordingStoppedPubSub = new PubSub<
-    RecordingMetadata,
-    void
-  >();
-  private readonly tabTitleChangedPubSub = new PubSub<
-    { tabId: number; title: string; url: string },
-    void
-  >();
+  private readonly recordingStartedPubSub = new PubSub<RecordingMetadata, void>();
+  private readonly recordingStoppedPubSub = new PubSub<RecordingMetadata, void>();
+  private readonly tabTitleChangedPubSub = new PubSub<TabTitleChangedMessageTab, void>();
 
   constructor(private readonly location: string) {
     console.debug(`[${this.location} MessageBus] initialized`);
@@ -71,8 +58,7 @@ export class MessageBus {
     } else if (isRecordingStoppedMessage(message)) {
       this.recordingStoppedPubSub.emit(message.recording);
     } else if (isTabTitleChangedMessage(message)) {
-      const { tabId, title, url } = message;
-      this.tabTitleChangedPubSub.emit({ tabId, title, url });
+      this.tabTitleChangedPubSub.emit(message.tab);
     } else {
       throw new Error(
         `[${this.location} MessageBus] received unknown message: ${JSON.stringify(message)}`,
@@ -80,10 +66,7 @@ export class MessageBus {
     }
   }
 
-  private respond(
-    promise: Promise<unknown>,
-    sendResponse: (message: unknown) => void,
-  ): true {
+  private respond(promise: Promise<unknown>, sendResponse: (message: unknown) => void): true {
     promise
       .then((response) => {
         console.debug(`>> [${this.location} MessageBus] response`, response);
@@ -91,40 +74,30 @@ export class MessageBus {
       })
       .catch((error) => {
         console.error(`>> [${this.location} MessageBus] error`, error);
-        sendResponse(null);
+        sendResponse(undefined);
       });
     return true;
+  }
+
+  private async request<EventType, ReturnType>(
+    pubSub: PubSub<EventType, ReturnType>,
+    argument: EventType,
+    message: Message,
+  ): Promise<ReturnType[]> {
+    const [runtimeResponse, pubSubResponse] = await Promise.all([
+      browser.runtime.sendMessage<Message, ReturnType>(message),
+      pubSub.emit(argument),
+    ]);
+    return [runtimeResponse, ...pubSubResponse];
   }
 
   public onDiscoverOptionsTab(callback: () => Promise<number>): void {
     this.discoverOptionsTabPubSub.on(callback);
   }
 
-  public async discoverOptionsTab(): Promise<number[]> {
-    return new Promise((resolve, reject) => {
-      browser.runtime
-        .sendMessage({
-          messageType: MessageType.DISCOVER_OPTIONS_TAB,
-        })
-        .then((messageResponse) => {
-          if (typeof messageResponse !== 'number') {
-            throw new Error(
-              `[${this.location} MessageBus] received invalid discoverOptionsTab response: ${JSON.stringify(messageResponse)}`,
-            );
-          }
-          this.discoverOptionsTabPubSub
-            .emit()
-            .then((busResponse) => {
-              if (typeof busResponse !== 'number') {
-                throw new Error(
-                  `[${this.location} MessageBus] received invalid discoverOptionsTab response: ${JSON.stringify(busResponse)}`,
-                );
-              }
-              resolve([busResponse, messageResponse]);
-            })
-            .catch(reject);
-        })
-        .catch(reject);
+  public discoverOptionsTab(): Promise<number[]> {
+    return this.request<void, number>(this.discoverOptionsTabPubSub, undefined, {
+      messageType: MessageType.DISCOVER_OPTIONS_TAB,
     });
   }
 
@@ -133,165 +106,89 @@ export class MessageBus {
   }
 
   public async getRecordings(): Promise<RecordingMetadata[]> {
-    return [
-      ...(await this.getRecordingsPubSub.emit()),
-      ...((await browser.runtime.sendMessage({
+    return (
+      await this.request<void, RecordingMetadata[]>(this.getRecordingsPubSub, undefined, {
         messageType: MessageType.GET_RECORDINGS,
-      })) as RecordingMetadata[][]),
-    ].flat();
+      })
+    ).flat();
   }
 
   public onStartRecording(callback: (tabId: number) => Promise<void>): void {
     this.startRecordingPubSub.on(callback);
   }
 
-  public startRecording(tabId: number): Promise<void> {
-    return new Promise((resolve, reject) => {
-      browser.runtime
-        .sendMessage({
-          messageType: MessageType.START_RECORDING,
-          tabId,
-        })
-        .then(() => {
-          this.startRecordingPubSub.emit(tabId);
-          resolve();
-        })
-        .catch(reject);
+  public async startRecording(tabId: number): Promise<void> {
+    await this.request<number, void>(this.startRecordingPubSub, tabId, {
+      messageType: MessageType.START_RECORDING,
+      tabId,
     });
   }
 
-  public onStopRecording(
-    callback: (recording: RecordingMetadata) => Promise<void>,
-  ): void {
+  public onStopRecording(callback: (recording: RecordingMetadata) => Promise<void>): void {
     this.stopRecordingPubSub.on(callback);
   }
 
-  public stopRecording(recording: RecordingMetadata): Promise<void> {
-    return new Promise((resolve, reject) => {
-      browser.runtime
-        .sendMessage({
-          messageType: MessageType.STOP_RECORDING,
-          recording,
-        })
-        .then(() => {
-          this.stopRecordingPubSub.emit(recording);
-          resolve();
-        })
-        .catch(reject);
+  public async stopRecording(recording: RecordingMetadata): Promise<void> {
+    await this.request<RecordingMetadata, void>(this.stopRecordingPubSub, recording, {
+      messageType: MessageType.STOP_RECORDING,
+      recording,
     });
   }
 
-  public onDownloadRecording(
-    callback: (recording: RecordingMetadata) => Promise<void>,
-  ): void {
+  public onDownloadRecording(callback: (recording: RecordingMetadata) => Promise<void>): void {
     this.downloadRecordingPubSub.on(callback);
   }
 
   public async downloadRecording(recording: RecordingMetadata): Promise<void> {
-    return new Promise((resolve, reject) => {
-      browser.runtime
-        .sendMessage({
-          messageType: MessageType.DOWNLOAD_RECORDING,
-          recording,
-        })
-        .then(() => {
-          this.downloadRecordingPubSub.emit(recording);
-          resolve();
-        })
-        .catch(reject);
+    await this.request<RecordingMetadata, void>(this.downloadRecordingPubSub, recording, {
+      messageType: MessageType.DOWNLOAD_RECORDING,
+      recording,
     });
   }
 
-  public onRecordingAdded(
-    callback: (recording: RecordingMetadata) => Promise<void>,
-  ): void {
+  public onRecordingAdded(callback: (recording: RecordingMetadata) => Promise<void>): void {
     this.recordingAddedPubSub.on(callback);
   }
 
-  public recordingAdded(recording: RecordingMetadata): Promise<void> {
-    return new Promise((resolve, reject) => {
-      browser.runtime
-        .sendMessage({
-          messageType: MessageType.RECORDING_ADDED,
-          recording,
-        })
-        .then(() => {
-          this.recordingAddedPubSub.emit(recording);
-          resolve();
-        })
-        .catch(reject);
+  public async recordingAdded(recording: RecordingMetadata): Promise<void> {
+    await this.request<RecordingMetadata, void>(this.recordingAddedPubSub, recording, {
+      messageType: MessageType.RECORDING_ADDED,
+      recording,
     });
   }
 
-  public onRecordingStarted(
-    callback: (recording: RecordingMetadata) => Promise<void>,
-  ): void {
+  public onRecordingStarted(callback: (recording: RecordingMetadata) => Promise<void>): void {
     this.recordingStartedPubSub.on(callback);
   }
 
-  public recordingStarted(recording: RecordingMetadata): Promise<void> {
-    return new Promise((resolve, reject) => {
-      browser.runtime
-        .sendMessage({
-          messageType: MessageType.RECORDING_STARTED,
-          recording,
-        })
-        .then(() => {
-          this.recordingStartedPubSub.emit(recording);
-          resolve();
-        })
-        .catch(reject);
+  public async recordingStarted(recording: RecordingMetadata): Promise<void> {
+    await this.request<RecordingMetadata, void>(this.recordingStartedPubSub, recording, {
+      messageType: MessageType.RECORDING_STARTED,
+      recording,
     });
   }
 
-  public onRecordingStopped(
-    callback: (recording: RecordingMetadata) => Promise<void>,
-  ): void {
+  public onRecordingStopped(callback: (recording: RecordingMetadata) => Promise<void>): void {
     this.recordingStoppedPubSub.on(callback);
   }
 
-  public recordingStopped(recording: RecordingMetadata): Promise<void> {
-    return new Promise((resolve, reject) => {
-      browser.runtime
-        .sendMessage({
-          messageType: MessageType.RECORDING_STOPPED,
-          recording,
-        })
-        .then(() => {
-          this.recordingStoppedPubSub.emit(recording);
-          resolve();
-        })
-        .catch(reject);
+  public async recordingStopped(recording: RecordingMetadata): Promise<void> {
+    await this.request<RecordingMetadata, void>(this.recordingStoppedPubSub, recording, {
+      messageType: MessageType.RECORDING_STOPPED,
+      recording,
     });
   }
 
   public onTabTitleChanged(
-    callback: (event: {
-      tabId: number;
-      title: string;
-      url: string;
-    }) => Promise<void>,
+    callback: (event: { tabId: number; title: string; url: string }) => Promise<void>,
   ): void {
     this.tabTitleChangedPubSub.on(callback);
   }
 
-  public tabTitleChanged(
-    tabId: number,
-    title: string,
-    url: string,
-  ): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const event = { tabId, title, url };
-      browser.runtime
-        .sendMessage({
-          messageType: MessageType.TAB_TITLE_CHANGED,
-          ...event,
-        })
-        .then(() => {
-          this.tabTitleChangedPubSub.emit(event);
-          resolve();
-        })
-        .catch(reject);
+  public async tabTitleChanged(tab: TabTitleChangedMessageTab): Promise<void> {
+    await this.request<TabTitleChangedMessageTab, void>(this.tabTitleChangedPubSub, tab, {
+      messageType: MessageType.TAB_TITLE_CHANGED,
+      tab,
     });
   }
 }

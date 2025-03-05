@@ -1,3 +1,4 @@
+import { TabTitleChangedMessageTab } from '../common/Message';
 import { MessageBus } from '../common/MessageBus';
 import { RecordingMetadata } from '../common/RecordingMetadata';
 import { Recorder } from './recorder/Recorder';
@@ -50,14 +51,10 @@ function createMessageBus(
     return Promise.resolve(recorder.downloadRecording(recordingMetadata));
   });
 
-  messageBus.onTabTitleChanged(
-    (event: { tabId: number; title: string; url: string }) => {
-      const { tabId, title, url } = event;
-      return Promise.resolve(
-        recorder.registerTitleChange(tabId, url, title).then(() => {}),
-      );
-    },
-  );
+  messageBus.onTabTitleChanged((tab: TabTitleChangedMessageTab) => {
+    const { tabId, title, url } = tab;
+    return Promise.resolve(recorder.registerTitleChange(tabId, url, title));
+  });
 
   recorder.on('recordingAdded', (recordingMetadata) => {
     messageBus.recordingAdded(recordingMetadata);
