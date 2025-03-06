@@ -1,5 +1,6 @@
 import filenamify from 'filenamify';
 import { DateTime } from 'luxon';
+import pRetry from 'p-retry';
 import browser from 'webextension-polyfill';
 import { RecordingMetadata } from '../../common/RecordingMetadata';
 import { UUID } from '../../common/types';
@@ -59,7 +60,7 @@ export class TabCaptureRecording implements Recording {
     this.mediaRecorder.start();
   }
 
-  public stop(): Promise<void> {
+  public async stop(): Promise<void> {
     if (this.stoppedAt) {
       throw new Error('Can not stop recording: Recording already stopped');
     }
@@ -70,7 +71,18 @@ export class TabCaptureRecording implements Recording {
 
     this.mediaRecorder.stop();
 
-    return Promise.resolve();
+    await pRetry(
+      () => {
+        if (this.mediaRecorder !== undefined) {
+          throw new Error('MediaRecorder did not stop');
+        }
+      },
+      {
+        retries: 100,
+        maxTimeout: 10,
+        minTimeout: 10,
+      },
+    );
   }
 
   public download(): void {
