@@ -8,8 +8,7 @@ import { RecordingWrapper } from './RecordingWrapper';
 
 export class Recorder<T extends RecordingSession<R>, R extends Recording> {
   private recordingAddedPubSub = new PubSub<RecordingMetadata, void>();
-  private recordingStartedPubSub = new PubSub<RecordingMetadata, void>();
-  private recordingStoppedPubSub = new PubSub<RecordingMetadata, void>();
+  private recordingUpdatedPubSub = new PubSub<RecordingMetadata, void>();
 
   private recordingSessionWrappers: Record<number, RecordingSessionWrapper<T, R>> = [];
   private recordingWrappers: EventArray<RecordingWrapper<R>>;
@@ -28,12 +27,8 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
     this.recordingAddedPubSub.on(callback);
   }
 
-  onRecordingStarted(callback: (recording: RecordingMetadata) => Promise<void>): void {
-    this.recordingStartedPubSub.on(callback);
-  }
-
-  onRecordingStopped(callback: (recording: RecordingMetadata) => Promise<void>): void {
-    this.recordingStoppedPubSub.on(callback);
+  onRecordingUpdated(callback: (recording: RecordingMetadata) => Promise<void>): void {
+    this.recordingUpdatedPubSub.on(callback);
   }
 
   public getRecordingMetadatas(): RecordingMetadata[] {
@@ -42,14 +37,12 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
 
   private initializeRecording(recordingWrapper: RecordingWrapper<R>): void {
     this.recordingAddedPubSub.emit(recordingWrapper.getRecordingMetadata());
-    recordingWrapper.onStarted(() => {
-      this.recordingStartedPubSub.emit(recordingWrapper.getRecordingMetadata());
+    const update = (): Promise<void> => {
+      this.recordingUpdatedPubSub.emit(recordingWrapper.getRecordingMetadata());
       return Promise.resolve();
-    });
-    recordingWrapper.onStopped(() => {
-      this.recordingStoppedPubSub.emit(recordingWrapper.getRecordingMetadata());
-      return Promise.resolve();
-    });
+    };
+    recordingWrapper.onStarted(update);
+    recordingWrapper.onStopped(update);
   }
 
   private async getRecordingSessionWrapper(tabId: number): Promise<RecordingSessionWrapper<T, R>> {

@@ -59,12 +59,10 @@ function createMessageBus(recorder: Recorder<RecordingSession<Recording>, Record
     return Promise.resolve();
   });
 
-  const update = (recordingMetadata: RecordingMetadata): Promise<void> => {
+  recorder.onRecordingUpdated((recordingMetadata) => {
     messageBus.recordingUpdated(recordingMetadata);
     return Promise.resolve();
-  };
-  recorder.onRecordingStarted(update);
-  recorder.onRecordingStopped(update);
+  });
 
   return messageBus;
 }
