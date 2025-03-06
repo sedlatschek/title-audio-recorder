@@ -56,9 +56,12 @@ export function isRecordingUpdatedMessage(message: unknown): message is Recordin
 }
 
 export type TabTitleChangedMessageTab = {
-  tabId: number;
   title: string;
   url: string;
+};
+
+export type EnrichedTabTitleChangeMessageTab = TabTitleChangedMessageTab & {
+  tabId: number;
 };
 
 export type TabTitleChangedMessage = {

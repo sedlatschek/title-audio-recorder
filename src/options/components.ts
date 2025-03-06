@@ -1,4 +1,4 @@
-import { TabTitleChangedMessageTab } from '../common/Message';
+import { EnrichedTabTitleChangeMessageTab } from '../common/Message';
 import { MessageBus } from '../common/MessageBus';
 import { RecordingMetadata } from '../common/RecordingMetadata';
 import { Converter } from './converter/Converter';
@@ -47,9 +47,9 @@ function createMessageBus(recorder: Recorder<RecordingSession<Recording>, Record
     return Promise.resolve(recorder.stopRecording(recordingMetadata));
   });
 
-  messageBus.onTabTitleChanged((tab: TabTitleChangedMessageTab) => {
+  messageBus.onTabTitleChanged((tab: EnrichedTabTitleChangeMessageTab) => {
     const { tabId, title, url } = tab;
-    return Promise.resolve(recorder.registerTitleChange(tabId, url, title));
+    return Promise.resolve(recorder.registerTitleChange(tabId, title, url));
   });
 
   recorder.onRecordingAdded((recordingMetadata) => {

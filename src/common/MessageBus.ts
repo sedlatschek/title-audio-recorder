@@ -1,5 +1,6 @@
 import browser from 'webextension-polyfill';
 import {
+  EnrichedTabTitleChangeMessageTab,
   isDiscoverOptionsTabMessage,
   isGetRecordingsMessage,
   isRecordingAddedMessage,
@@ -9,7 +10,6 @@ import {
   isTabTitleChangedMessage,
   Message,
   MessageType,
-  TabTitleChangedMessageTab,
 } from './Message';
 import { PubSub } from './PubSub';
 import { RecordingMetadata } from './RecordingMetadata';
@@ -21,7 +21,7 @@ export class MessageBus {
   private readonly stopRecordingPubSub = new PubSub<RecordingMetadata, void>();
   private readonly recordingAddedPubSub = new PubSub<RecordingMetadata, void>();
   private readonly recordingUpdatedPubSub = new PubSub<RecordingMetadata, void>();
-  private readonly tabTitleChangedPubSub = new PubSub<TabTitleChangedMessageTab, void>();
+  private readonly tabTitleChangedPubSub = new PubSub<EnrichedTabTitleChangeMessageTab, void>();
 
   constructor(private readonly location: string) {
     console.debug(`[${this.location} MessageBus] initialized`);
@@ -50,7 +50,15 @@ export class MessageBus {
     } else if (isRecordingUpdatedMessage(message)) {
       this.recordingUpdatedPubSub.emit(message.recording);
     } else if (isTabTitleChangedMessage(message)) {
-      this.tabTitleChangedPubSub.emit(message.tab);
+      if (sender.tab?.id === undefined) {
+        throw new Error(
+          `[${this.location} MessageBus] received TabTitleChangedMessage without tabId: ${JSON.stringify(message)}`,
+        );
+      }
+      this.tabTitleChangedPubSub.emit({
+        tabId: sender.tab.id,
+        ...message.tab,
+      });
     } else {
       throw new Error(
         `[${this.location} MessageBus] received unknown message: ${JSON.stringify(message)}`,
@@ -154,13 +162,13 @@ export class MessageBus {
   }
 
   public onTabTitleChanged(
-    callback: (event: { tabId: number; title: string; url: string }) => Promise<void>,
+    callback: (event: EnrichedTabTitleChangeMessageTab) => Promise<void>,
   ): void {
     this.tabTitleChangedPubSub.on(callback);
   }
 
-  public async tabTitleChanged(tab: TabTitleChangedMessageTab): Promise<void> {
-    await this.request<TabTitleChangedMessageTab, void>(this.tabTitleChangedPubSub, tab, {
+  public async tabTitleChanged(tab: EnrichedTabTitleChangeMessageTab): Promise<void> {
+    await this.request<EnrichedTabTitleChangeMessageTab, void>(this.tabTitleChangedPubSub, tab, {
       messageType: MessageType.TAB_TITLE_CHANGED,
       tab,
     });
