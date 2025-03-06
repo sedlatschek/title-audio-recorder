@@ -1,10 +1,5 @@
 import browser, { Tabs } from 'webextension-polyfill';
 
-export async function getThisTab(): Promise<Tabs.Tab> {
-  const [tab] = await browser.tabs.query({ currentWindow: true, active: true });
-  return tab;
-}
-
 export function getErrorPageUrl(): string {
   return browser.runtime.getURL('error.html');
 }
