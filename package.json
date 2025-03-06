@@ -1,5 +1,6 @@
 {
   "name": "title-audio-recorder",
+  "description": "Automatically record audio from the current tab based on the document title",
   "private": true,
   "version": "1.0.0",
   "type": "module",
