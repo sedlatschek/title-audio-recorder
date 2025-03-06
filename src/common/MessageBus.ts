@@ -1,7 +1,6 @@
 import browser from 'webextension-polyfill';
 import {
   isDiscoverOptionsTabMessage,
-  isDownloadRecordingMessage,
   isGetRecordingsMessage,
   isRecordingAddedMessage,
   isRecordingUpdatedMessage,
@@ -20,7 +19,6 @@ export class MessageBus {
   private readonly getRecordingsPubSub = new PubSub<void, RecordingMetadata[]>();
   private readonly startRecordingPubSub = new PubSub<number, void>();
   private readonly stopRecordingPubSub = new PubSub<RecordingMetadata, void>();
-  private readonly downloadRecordingPubSub = new PubSub<RecordingMetadata, void>();
   private readonly recordingAddedPubSub = new PubSub<RecordingMetadata, void>();
   private readonly recordingUpdatedPubSub = new PubSub<RecordingMetadata, void>();
   private readonly tabTitleChangedPubSub = new PubSub<TabTitleChangedMessageTab, void>();
@@ -47,8 +45,6 @@ export class MessageBus {
       this.startRecordingPubSub.emit(message.tabId);
     } else if (isStopRecordingMessage(message)) {
       this.stopRecordingPubSub.emit(message.recording);
-    } else if (isDownloadRecordingMessage(message)) {
-      this.downloadRecordingPubSub.emit(message.recording);
     } else if (isRecordingAddedMessage(message)) {
       this.recordingAddedPubSub.emit(message.recording);
     } else if (isRecordingUpdatedMessage(message)) {
@@ -131,17 +127,6 @@ export class MessageBus {
   public async stopRecording(recording: RecordingMetadata): Promise<void> {
     await this.request<RecordingMetadata, void>(this.stopRecordingPubSub, recording, {
       messageType: MessageType.STOP_RECORDING,
-      recording,
-    });
-  }
-
-  public onDownloadRecording(callback: (recording: RecordingMetadata) => Promise<void>): void {
-    this.downloadRecordingPubSub.on(callback);
-  }
-
-  public async downloadRecording(recording: RecordingMetadata): Promise<void> {
-    await this.request<RecordingMetadata, void>(this.downloadRecordingPubSub, recording, {
-      messageType: MessageType.DOWNLOAD_RECORDING,
       recording,
     });
   }

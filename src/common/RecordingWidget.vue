@@ -22,8 +22,8 @@
             <a
               target="_blank"
               class="leading-none font-medium break-all text-sky-500 dark:text-white"
-              :href="recording.url">
-              {{ recording.url }}
+              :href="recording.pageUrl">
+              {{ recording.pageUrl }}
             </a>
           </div>
           <span class="flex gap-2 font-medium text-gray-600 dark:text-gray-400">
@@ -47,7 +47,7 @@
             </BtnIcon>
             <BtnIcon
               title="Download recording"
-              :disabled="!recording.stoppedAtTs"
+              :disabled="!recordingDownload"
               @click="download">
               <IconArrowDown />
             </BtnIcon>
@@ -59,6 +59,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+import browser from 'webextension-polyfill';
 import BtnIcon from '../components/BtnIcon.vue';
 import DateText from '../components/DateText.vue';
 import DurationText from '../components/DurationText.vue';
@@ -66,7 +68,7 @@ import IconArrowDown from '../components/IconArrowDown.vue';
 import IconRectangle from '../components/IconRectangle.vue';
 import { MessageBus } from './MessageBus';
 import RecordingImage from './RecordingImage.vue';
-import { RecordingMetadata } from './RecordingMetadata';
+import { RecordingDownload, RecordingMetadata } from './RecordingMetadata';
 
 const props = defineProps<{
   messageBus: MessageBus;
@@ -78,8 +80,18 @@ function stop(): Promise<void> {
   return props.messageBus.stopRecording(props.recording);
 }
 
-async function download(): Promise<void> {
-  return props.messageBus.downloadRecording(props.recording);
+const recordingDownload = computed<RecordingDownload | undefined>(
+  () => props.recording.downloads[0],
+);
+
+function download(): Promise<number> {
+  if (!recordingDownload.value) {
+    throw new Error('No download available');
+  }
+  return browser.downloads.download({
+    url: recordingDownload.value.url,
+    filename: `${props.recording.title}.${recordingDownload.value.extension}`,
+  });
 }
 </script>
 

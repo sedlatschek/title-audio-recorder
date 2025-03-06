@@ -10,6 +10,7 @@
     "build": "vue-tsc && vite build"
   },
   "dependencies": {
+    "@ffmpeg/ffmpeg": "^0.12.15",
     "filenamify": "^6.0.0",
     "luxon": "^3.5.0",
     "p-retry": "^6.2.1",

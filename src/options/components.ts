@@ -1,10 +1,12 @@
 import { TabTitleChangedMessageTab } from '../common/Message';
 import { MessageBus } from '../common/MessageBus';
 import { RecordingMetadata } from '../common/RecordingMetadata';
+import { Converter } from './converter/Converter';
 import { Recorder } from './recorder/Recorder';
 import { Recording } from './recorder/Recording';
 import { RecordingSession } from './recorder/RecordingSession';
 import { TabCaptureRecordingSession } from './recorder/TabCaptureRecordingSession';
+import { Settings } from './settings/settings';
 
 type RecorderType = Recorder<RecordingSession<Recording>, Recording>;
 
@@ -45,10 +47,6 @@ function createMessageBus(recorder: Recorder<RecordingSession<Recording>, Record
     return Promise.resolve(recorder.stopRecording(recordingMetadata));
   });
 
-  messageBus.onDownloadRecording((recordingMetadata: RecordingMetadata) => {
-    return Promise.resolve(recorder.downloadRecording(recordingMetadata));
-  });
-
   messageBus.onTabTitleChanged((tab: TabTitleChangedMessageTab) => {
     const { tabId, title, url } = tab;
     return Promise.resolve(recorder.registerTitleChange(tabId, url, title));
@@ -65,4 +63,22 @@ function createMessageBus(recorder: Recorder<RecordingSession<Recording>, Record
   });
 
   return messageBus;
+}
+
+let settings: Settings | undefined;
+
+export function getSettings(): Settings {
+  if (settings === undefined) {
+    settings = new Settings();
+  }
+  return settings;
+}
+
+let converter: Converter | undefined;
+
+export function getConverter(): Converter {
+  if (converter === undefined) {
+    converter = new Converter(getSettings());
+  }
+  return converter;
 }

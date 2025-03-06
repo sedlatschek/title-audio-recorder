@@ -26,4 +26,13 @@ export default defineConfig({
       watchFilePaths: ['package.json', 'manifest.json'],
     }),
   ],
+  optimizeDeps: {
+    exclude: ['@ffmpeg/ffmpeg'],
+  },
+  server: {
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+    },
+  },
 });

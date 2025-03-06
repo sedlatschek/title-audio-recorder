@@ -19,5 +19,5 @@ const props = defineProps<{
   recording: RecordingMetadata;
 }>();
 
-const url = computed<URL>(() => new URL(props.recording.url));
+const url = computed<URL>(() => new URL(props.recording.pageUrl));
 </script>

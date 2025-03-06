@@ -43,6 +43,7 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
     };
     recordingWrapper.onStarted(update);
     recordingWrapper.onStopped(update);
+    recordingWrapper.onUpdated(update);
   }
 
   private async getRecordingSessionWrapper(tabId: number): Promise<RecordingSessionWrapper<T, R>> {
@@ -78,12 +79,6 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
     console.debug(`[Recorder] stop recording ${recordingMetadata.id}`);
     const recordingWrapper = this.getRecordingWrapper(recordingMetadata);
     await recordingWrapper.stop();
-  }
-
-  public downloadRecording(recordingMetadata: RecordingMetadata): void {
-    console.debug(`[Recorder] download recording ${recordingMetadata.id}`);
-    const recordingWrapper = this.getRecordingWrapper(recordingMetadata);
-    recordingWrapper.download();
   }
 
   public async registerTitleChange(tabId: number, title: string, url: string): Promise<void> {

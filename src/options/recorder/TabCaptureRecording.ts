@@ -1,10 +1,8 @@
-import filenamify from 'filenamify';
 import { DateTime } from 'luxon';
 import pRetry from 'p-retry';
-import browser from 'webextension-polyfill';
-import { RecordingMetadata } from '../../common/RecordingMetadata';
 import { UUID } from '../../common/types';
-import { Recording } from './Recording';
+import { Recording, RecordingMetadataWithoutDownloads } from './Recording';
+import { RecordingBlob } from './RecordingBlob';
 
 export class TabCaptureRecording implements Recording {
   private mediaRecorder: MediaRecorder | undefined;
@@ -12,6 +10,7 @@ export class TabCaptureRecording implements Recording {
   private startedAt?: DateTime;
   private stoppedAt?: DateTime;
   private blobUrl: string | undefined;
+  public blob: RecordingBlob | undefined;
   public readonly id: UUID;
 
   public constructor(
@@ -25,6 +24,10 @@ export class TabCaptureRecording implements Recording {
 
   public get state(): RecordingState {
     return this.mediaRecorder?.state ?? 'inactive';
+  }
+
+  public get recordingBlob(): RecordingBlob | undefined {
+    return this.blob;
   }
 
   public async start(): Promise<void> {
@@ -52,7 +55,7 @@ export class TabCaptureRecording implements Recording {
 
     this.mediaRecorder.onstop = (): void => {
       const audioBlob = new Blob(this.chunks, { type: 'audio/webm' });
-      this.blobUrl = URL.createObjectURL(audioBlob);
+      this.blob = new RecordingBlob(audioBlob);
       this.chunks = [];
       this.mediaRecorder = undefined;
     };
@@ -85,22 +88,12 @@ export class TabCaptureRecording implements Recording {
     );
   }
 
-  public download(): void {
-    if (!this.blobUrl) {
-      throw new Error('Recording without blobUrl can not be downloaded');
-    }
-    browser.downloads.download({
-      url: this.blobUrl,
-      filename: `${filenamify(this.title ?? this.id)}.webm`,
-    });
-  }
-
-  public getRecordingMetadata(): RecordingMetadata {
+  public getRecordingMetadata(): RecordingMetadataWithoutDownloads {
     return {
       id: this.id,
       tabId: this.tabId,
       title: this.title,
-      url: this.url,
+      pageUrl: this.url,
       ...(this.startedAt !== undefined && {
         startedAtTs: this.startedAt.toMillis(),
       }),
