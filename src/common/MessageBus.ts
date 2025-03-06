@@ -4,8 +4,7 @@ import {
   isDownloadRecordingMessage,
   isGetRecordingsMessage,
   isRecordingAddedMessage,
-  isRecordingStartedMessage,
-  isRecordingStoppedMessage,
+  isRecordingUpdatedMessage,
   isStartRecordingMessage,
   isStopRecordingMessage,
   isTabTitleChangedMessage,
@@ -23,8 +22,7 @@ export class MessageBus {
   private readonly stopRecordingPubSub = new PubSub<RecordingMetadata, void>();
   private readonly downloadRecordingPubSub = new PubSub<RecordingMetadata, void>();
   private readonly recordingAddedPubSub = new PubSub<RecordingMetadata, void>();
-  private readonly recordingStartedPubSub = new PubSub<RecordingMetadata, void>();
-  private readonly recordingStoppedPubSub = new PubSub<RecordingMetadata, void>();
+  private readonly recordingUpdatedPubSub = new PubSub<RecordingMetadata, void>();
   private readonly tabTitleChangedPubSub = new PubSub<TabTitleChangedMessageTab, void>();
 
   constructor(private readonly location: string) {
@@ -53,10 +51,8 @@ export class MessageBus {
       this.downloadRecordingPubSub.emit(message.recording);
     } else if (isRecordingAddedMessage(message)) {
       this.recordingAddedPubSub.emit(message.recording);
-    } else if (isRecordingStartedMessage(message)) {
-      this.recordingStartedPubSub.emit(message.recording);
-    } else if (isRecordingStoppedMessage(message)) {
-      this.recordingStoppedPubSub.emit(message.recording);
+    } else if (isRecordingUpdatedMessage(message)) {
+      this.recordingUpdatedPubSub.emit(message.recording);
     } else if (isTabTitleChangedMessage(message)) {
       this.tabTitleChangedPubSub.emit(message.tab);
     } else {
@@ -161,24 +157,13 @@ export class MessageBus {
     });
   }
 
-  public onRecordingStarted(callback: (recording: RecordingMetadata) => Promise<void>): void {
-    this.recordingStartedPubSub.on(callback);
+  public onRecordingUpdated(callback: (recording: RecordingMetadata) => Promise<void>): void {
+    this.recordingUpdatedPubSub.on(callback);
   }
 
-  public async recordingStarted(recording: RecordingMetadata): Promise<void> {
-    await this.request<RecordingMetadata, void>(this.recordingStartedPubSub, recording, {
-      messageType: MessageType.RECORDING_STARTED,
-      recording,
-    });
-  }
-
-  public onRecordingStopped(callback: (recording: RecordingMetadata) => Promise<void>): void {
-    this.recordingStoppedPubSub.on(callback);
-  }
-
-  public async recordingStopped(recording: RecordingMetadata): Promise<void> {
-    await this.request<RecordingMetadata, void>(this.recordingStoppedPubSub, recording, {
-      messageType: MessageType.RECORDING_STOPPED,
+  public async recordingUpdated(recording: RecordingMetadata): Promise<void> {
+    await this.request<RecordingMetadata, void>(this.recordingUpdatedPubSub, recording, {
+      messageType: MessageType.RECORDING_UPDATED,
       recording,
     });
   }

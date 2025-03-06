@@ -15,12 +15,13 @@ export function createRecordingsRef(
     });
   }
 
-  const handleAdded = (recording: RecordingMetadata): Promise<void> => {
+  messageBus.onRecordingAdded((recording: RecordingMetadata): Promise<void> => {
     console.debug('[recordingsState] recording was added', recording);
     recordingMetadatas.value.push(recording);
     return Promise.resolve();
-  };
-  const handleChanged = (recording: RecordingMetadata): Promise<void> => {
+  });
+
+  messageBus.onRecordingUpdated((recording: RecordingMetadata): Promise<void> => {
     console.debug('[recordingsState] recording was updated', recording);
 
     const index = recordingMetadatas.value.findIndex((r) => r.id === recording.id);
@@ -34,11 +35,7 @@ export function createRecordingsRef(
     }
 
     return Promise.resolve();
-  };
-
-  messageBus.onRecordingAdded(handleAdded);
-  messageBus.onRecordingStarted(handleChanged);
-  messageBus.onRecordingStopped(handleChanged);
+  });
 
   return recordingMetadatas;
 }
