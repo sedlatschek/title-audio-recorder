@@ -85,10 +85,11 @@ export class MessageBus {
     message: Message,
   ): Promise<ReturnType[]> {
     const [runtimeResponse, pubSubResponse] = await Promise.all([
-      browser.runtime.sendMessage<Message, ReturnType>(message),
+      browser.runtime.sendMessage<Message, ReturnType[] | undefined>(message),
       pubSub.emit(argument),
     ]);
-    return [runtimeResponse, ...pubSubResponse];
+
+    return [...(runtimeResponse ?? []), ...pubSubResponse];
   }
 
   public onDiscoverOptionsTab(callback: () => Promise<number>): void {
@@ -106,11 +107,14 @@ export class MessageBus {
   }
 
   public async getRecordings(): Promise<RecordingMetadata[]> {
-    return (
-      await this.request<void, RecordingMetadata[]>(this.getRecordingsPubSub, undefined, {
+    const recordings = await this.request<void, RecordingMetadata[]>(
+      this.getRecordingsPubSub,
+      undefined,
+      {
         messageType: MessageType.GET_RECORDINGS,
-      })
-    ).flat();
+      },
+    );
+    return recordings.flat();
   }
 
   public onStartRecording(callback: (tabId: number) => Promise<void>): void {

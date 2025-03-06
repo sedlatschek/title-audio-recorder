@@ -10,7 +10,6 @@
         <span class="ms-2">{{ buttonTitle }}</span>
       </BtnIcon>
     </div>
-
     <div
       v-if="currentRecordings.length > 0"
       class="mt-4">
@@ -25,29 +24,29 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import { MessageBus } from '../common/MessageBus';
 import { createRecordingsRef } from '../common/recordingsRef';
 import RecordingWidget from '../common/RecordingWidget.vue';
-import { getCurrentTabId } from '../common/tabs';
 import BtnIcon from '../components/BtnIcon.vue';
 import IconCaretLeft from '../components/IconCaretLeft.vue';
 import IconCircle from '../components/IconCircle.vue';
 
-const messageBus = new MessageBus('Popup');
-
-const tabId = ref(0);
-getCurrentTabId().then((id) => (tabId.value = id));
+const props = defineProps<{
+  messageBus: MessageBus;
+  tabId: number;
+}>();
 
 function start(): Promise<void> {
-  return messageBus.startRecording(tabId.value);
+  return props.messageBus.startRecording(props.tabId);
 }
 
-const recordings = createRecordingsRef(messageBus, true);
+const recordings = createRecordingsRef(props.messageBus, true);
 
 const currentRecordings = computed(() =>
-  recordings.value.filter((r) => r.tabId === tabId.value && !r.stoppedAtTs),
+  recordings.value.filter((r) => r.tabId === props.tabId && !r.stoppedAtTs),
 );
+
 const buttonTitle = computed(() =>
   currentRecordings.value.length > 0 ? 'Restart recording' : 'Start recording',
 );
