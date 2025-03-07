@@ -51,7 +51,7 @@ import RecordingWidget from '../../common/RecordingWidget.vue';
 import AlertBanner from '../../components/AlertBanner.vue';
 import BtnIcon from '../../components/BtnIcon.vue';
 import IconCode from '../../components/IconCode.vue';
-import { getMessageBus } from '../components';
+import { getMessageBus } from '../components/messageBus';
 import LicenseModal from './LicenseModal.vue';
 
 const messageBus = getMessageBus();

@@ -3,7 +3,8 @@ import { getExtension } from '../../common/MimeType';
 import { PubSub } from '../../common/PubSub';
 import { RecordingMetadata } from '../../common/RecordingMetadata';
 import { UUID } from '../../common/types';
-import { getConverter, getSettings } from '../components';
+import { getConverter } from '../components/converter';
+import { getSettings } from '../components/settings';
 import { Recording } from './Recording';
 import { RecordingBlob } from './RecordingBlob';
 

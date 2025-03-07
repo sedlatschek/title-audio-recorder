@@ -1,4 +1,4 @@
-import { getFFmpeg } from '../components';
+import { getFFmpeg } from '../components/ffmpeg';
 import { fetchFile } from '../util';
 import { Conversion } from './Conversion';
 
