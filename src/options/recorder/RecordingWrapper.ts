@@ -64,13 +64,15 @@ export class RecordingWrapper<T extends Recording> {
     const settings = getSettings().get();
     return {
       ...this.recording.getRecordingMetadata(),
-      downloads: this.recordingBlobs
-        .filter((blob) => settings.mimeTypes.includes(blob.mimeType))
-        .map((blob) => ({
-          mimeType: blob.mimeType,
-          url: blob.url,
-          extension: getExtension(blob.mimeType),
-        })),
+      downloads: Array.from(
+        this.recordingBlobs
+          .filter((blob) => settings.mimeTypes.includes(blob.mimeType))
+          .map((blob) => ({
+            mimeType: blob.mimeType,
+            url: blob.url,
+            extension: getExtension(blob.mimeType),
+          })),
+      ),
     };
   }
 }
