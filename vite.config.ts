@@ -1,7 +1,10 @@
+import { join } from 'path';
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
+import { normalizePath } from 'vite';
 import { defineConfig } from 'vite';
 import eslint from 'vite-plugin-eslint';
+import { viteStaticCopy } from 'vite-plugin-static-copy';
 import webExtension, { readJsonFile } from 'vite-plugin-web-extension';
 
 function generateManifest(): void {
@@ -20,6 +23,14 @@ export default defineConfig({
   plugins: [
     eslint(),
     tailwindcss(),
+    viteStaticCopy({
+      targets: [
+        {
+          src: normalizePath(join(import.meta.dirname, 'node_modules/@ffmpeg/core/dist/esm/*')),
+          dest: 'lib',
+        },
+      ],
+    }),
     vue(),
     webExtension({
       manifest: generateManifest,

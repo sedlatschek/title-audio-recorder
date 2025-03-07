@@ -1,4 +1,4 @@
-import { FFmpeg } from '@ffmpeg/ffmpeg';
+import { getFFmpeg } from '../components';
 import { fetchFile } from '../util';
 import { Conversion } from './Conversion';
 
@@ -15,10 +15,7 @@ export class WebmToMp3Conversion implements Conversion {
     const inputFile = `input-${id}.webm`;
     const outputFile = `output-${id}.mp3`;
 
-    const ffmpeg = new FFmpeg();
-    if (!ffmpeg.loaded) {
-      await ffmpeg.load();
-    }
+    const ffmpeg = await getFFmpeg();
     await ffmpeg.writeFile(inputFile, await fetchFile(webmBlob));
 
     await ffmpeg.exec([
