@@ -2,6 +2,7 @@
   <div class="w-96 p-2">
     <div class="flex w-full justify-center">
       <BtnText
+        tag="button"
         color="primary"
         :title="buttonTitle"
         @click="start">

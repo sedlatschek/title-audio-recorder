@@ -10,6 +10,7 @@
 import BaseBtn from './BaseBtn.vue';
 
 defineProps<{
+  tag: 'button' | 'a';
   color: 'primary' | 'secondary';
 }>();
 </script>

@@ -1,5 +1,6 @@
 <template>
-  <button
+  <component
+    :is="tag"
     :class="{
       'from-amber-500 to-yellow-400 text-white hover:from-amber-600 hover:to-yellow-500 focus:ring-amber-300 active:from-amber-700 active:to-yellow-600 disabled:hover:from-amber-500 disabled:hover:to-yellow-400 disabled:active:from-amber-500 disabled:active:to-yellow-400 dark:shadow-amber-900/30 dark:hover:shadow-amber-900/40 dark:focus:ring-amber-500':
         color === 'primary',
@@ -7,13 +8,15 @@
         color === 'secondary',
     }"
     class="flex h-8 cursor-pointer items-center justify-center rounded-md bg-gradient-to-r p-2 font-semibold shadow-md transition-all duration-200 hover:shadow-lg focus:ring-2 focus:outline-none active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
-    type="button">
+    :type="tag === 'button' ? 'button' : undefined"
+    :target="tag === 'a' ? '_blank' : undefined">
     <slot />
-  </button>
+  </component>
 </template>
 
 <script setup lang="ts">
 defineProps<{
   color: 'primary' | 'secondary';
+  tag: 'button' | 'a';
 }>();
 </script>

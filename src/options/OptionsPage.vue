@@ -9,12 +9,13 @@
     </div>
     <div class="flex flex-row justify-center gap-2 rounded-b-lg bg-white p-3">
       <LicenseModal />
-      <AnchorIcon
+      <BtnIcon
+        tag="a"
         title="Source Code"
         alt="Source Code"
         href="https://github.com/sedlatschek/title-audio-recorder">
         <IconCode />
-      </AnchorIcon>
+      </BtnIcon>
     </div>
   </header>
   <main v-if="hasRecordings">
@@ -48,7 +49,7 @@ import { computed } from 'vue';
 import { createRecordingsRef } from '../common/recordingsRef';
 import RecordingWidget from '../common/RecordingWidget.vue';
 import AlertBanner from '../components/AlertBanner.vue';
-import AnchorIcon from '../components/AnchorIcon.vue';
+import BtnIcon from '../components/BtnIcon.vue';
 import IconCode from '../components/IconCode.vue';
 import { getMessageBus } from './components';
 import LicenseModal from './OptionsPage/LicenseModal.vue';

@@ -40,12 +40,14 @@
         <div class="flex grow flex-row justify-end">
           <div class="flex flex-col gap-1">
             <BtnIcon
+              tag="button"
               title="Stop recording"
               :disabled="recording.stoppedAtTs"
               @click="stop">
               <IconRectangle />
             </BtnIcon>
             <BtnIcon
+              tag="button"
               title="Download recording"
               :disabled="!recordingDownload"
               @click="download">

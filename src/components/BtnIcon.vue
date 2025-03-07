@@ -9,4 +9,8 @@
 
 <script setup lang="ts">
 import BaseBtn from './BaseBtn.vue';
+
+defineProps<{
+  tag: 'button' | 'a';
+}>();
 </script>

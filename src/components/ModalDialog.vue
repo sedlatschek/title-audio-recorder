@@ -21,12 +21,14 @@
           class="flex justify-end space-x-2 p-4">
           <BtnText
             v-if="!hideCloseButton"
+            tag="button"
             color="secondary"
             @click="close">
             {{ closeButtonText }}
           </BtnText>
           <BtnText
             v-if="!hideConfirmButton"
+            tag="button"
             color="primary"
             @click="confirm">
             {{ confirmButtonText }}
