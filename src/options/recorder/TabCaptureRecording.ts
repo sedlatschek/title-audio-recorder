@@ -9,7 +9,6 @@ export class TabCaptureRecording implements Recording {
   private chunks: BlobPart[] = [];
   private startedAt?: DateTime;
   private stoppedAt?: DateTime;
-  private blobUrl: string | undefined;
   public blob: RecordingBlob | undefined;
   public readonly id: UUID;
 
