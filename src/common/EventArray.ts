@@ -1,41 +1,20 @@
-export type EventArrayEventType = 'push';
-
-export type EventArraySubscription<T> = {
-  eventType: EventArrayEventType;
-  callback: (items: T[]) => void;
-};
+import { PubSub } from './PubSub';
 
 export class EventArray<T> extends Array<T> {
-  private subscriptions: EventArraySubscription<T>[];
+  private pushPubSub = new PubSub<T[], void>();
 
   public constructor(...items: T[]) {
     super(...items);
     Object.setPrototypeOf(this, EventArray.prototype);
-    this.subscriptions = [];
   }
 
-  public on(eventType: EventArrayEventType, callback: (items: T[]) => void): void {
-    const subscription: EventArraySubscription<T> = {
-      eventType,
-      callback,
-    };
-    this.subscriptions.push(subscription);
-  }
-
-  private dispatch(eventType: EventArrayEventType, items: T[]): void {
-    const subscriptions = this.subscriptions.filter((s) => s.eventType === eventType);
-    for (const subscription of subscriptions) {
-      try {
-        subscription.callback(items);
-      } catch (error) {
-        console.error(error);
-      }
-    }
+  public onPush(callback: (items: T[]) => Promise<void>): void {
+    this.pushPubSub.on(callback);
   }
 
   push(...items: T[]): number {
     const result = super.push(...items);
-    this.dispatch('push', items);
+    this.pushPubSub.emit(items);
     return result;
   }
 }

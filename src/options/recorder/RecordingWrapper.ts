@@ -18,9 +18,10 @@ export class RecordingWrapper<T extends Recording> {
   public constructor(private readonly recording: T) {
     this.id = recording.id;
 
-    this.recordingBlobs.on('push', () => {
+    this.recordingBlobs.onPush((): Promise<void> => {
       console.debug(`[RecordingWrapper]: recording ${this.id} gained a blob`);
       this.updatedPubSub.emit();
+      return Promise.resolve();
     });
 
     this.onStopped(async () => {

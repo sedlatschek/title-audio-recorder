@@ -16,10 +16,11 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
   public constructor(private readonly recordingSessionType: new (tabId: number) => T) {
     this.recordingWrappers = new EventArray<RecordingWrapper<R>>();
 
-    this.recordingWrappers.on('push', (items: RecordingWrapper<R>[]): void => {
+    this.recordingWrappers.onPush((items: RecordingWrapper<R>[]): Promise<void> => {
       for (const item of items) {
         this.initializeRecording(item);
       }
+      return Promise.resolve();
     });
   }
 
