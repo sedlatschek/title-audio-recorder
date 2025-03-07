@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
 import { getErrorPageUrl, getOptionPageTabs } from '../common/tabs';
-import OptionsPage from './OptionsPage.vue';
+import OptionsPage from './OptionsPage/OptionsPage.vue';
 import '../index.css';
 
 initialize();

@@ -46,13 +46,13 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { createRecordingsRef } from '../common/recordingsRef';
-import RecordingWidget from '../common/RecordingWidget.vue';
-import AlertBanner from '../components/AlertBanner.vue';
-import BtnIcon from '../components/BtnIcon.vue';
-import IconCode from '../components/IconCode.vue';
-import { getMessageBus } from './components';
-import LicenseModal from './OptionsPage/LicenseModal.vue';
+import { createRecordingsRef } from '../../common/recordingsRef';
+import RecordingWidget from '../../common/RecordingWidget.vue';
+import AlertBanner from '../../components/AlertBanner.vue';
+import BtnIcon from '../../components/BtnIcon.vue';
+import IconCode from '../../components/IconCode.vue';
+import { getMessageBus } from '../components';
+import LicenseModal from './LicenseModal.vue';
 
 const messageBus = getMessageBus();
 const recordings = createRecordingsRef(messageBus);
