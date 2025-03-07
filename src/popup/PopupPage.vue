@@ -1,14 +1,14 @@
 <template>
   <div class="w-96 p-2">
     <div class="flex w-full justify-center">
-      <BtnIcon
-        class="w-38"
+      <BtnText
+        color="primary"
         :title="buttonTitle"
         @click="start">
         <IconCaretLeft v-if="currentRecordings.length > 0" />
         <IconCircle v-else />
         <span class="ms-2">{{ buttonTitle }}</span>
-      </BtnIcon>
+      </BtnText>
     </div>
     <div
       v-if="currentRecordings.length > 0"
@@ -28,7 +28,7 @@ import { computed } from 'vue';
 import { MessageBus } from '../common/MessageBus';
 import { createRecordingsRef } from '../common/recordingsRef';
 import RecordingWidget from '../common/RecordingWidget.vue';
-import BtnIcon from '../components/BtnIcon.vue';
+import BtnText from '../components/BtnText.vue';
 import IconCaretLeft from '../components/IconCaretLeft.vue';
 import IconCircle from '../components/IconCircle.vue';
 

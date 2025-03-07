@@ -7,6 +7,7 @@
     <pre class="max-h-128 overflow-y-scroll">{{ license }}</pre>
   </ModalDialog>
   <BtnIcon
+    color="primary"
     title="Licenses"
     @click="isOpen = true">
     <IconLabel />
