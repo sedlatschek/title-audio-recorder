@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import filenamify from 'filenamify';
+import sanitize from 'sanitize-filename';
 import { computed } from 'vue';
 import browser from 'webextension-polyfill';
 import BtnIcon from '../components/BtnIcon.vue';
@@ -93,7 +93,7 @@ function download(): Promise<number> {
   }
   return browser.downloads.download({
     url: recordingDownload.value.url,
-    filename: `${filenamify(props.recording.title)}.${recordingDownload.value.extension}`,
+    filename: `${sanitize(props.recording.title)}.${recordingDownload.value.extension}`,
   });
 }
 </script>
