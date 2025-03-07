@@ -1,4 +1,4 @@
-import { MimeType } from '../MimeType';
+import { MimeType } from '../../common/MimeType';
 import { Settings } from '../settings/settings';
 import { Conversion } from './Conversion';
 import { WebmToMp3Conversion } from './WebmToMp3Conversion';

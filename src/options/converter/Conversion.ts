@@ -1,4 +1,4 @@
-import { MimeType } from '../MimeType';
+import { MimeType } from '../../common/MimeType';
 
 export interface Conversion {
   readonly inputMimeType: MimeType;

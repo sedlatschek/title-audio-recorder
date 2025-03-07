@@ -1,4 +1,4 @@
-import { isMimeType, MimeType } from '../MimeType';
+import { isMimeType, MimeType } from '../../common/MimeType';
 
 export class RecordingBlob {
   public readonly mimeType: MimeType;

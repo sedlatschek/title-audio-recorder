@@ -1,9 +1,9 @@
 import { EventArray } from '../../common/EventArray';
+import { getExtension } from '../../common/MimeType';
 import { PubSub } from '../../common/PubSub';
 import { RecordingMetadata } from '../../common/RecordingMetadata';
 import { UUID } from '../../common/types';
 import { getConverter, getSettings } from '../components';
-import { getExtension } from '../MimeType';
 import { Recording } from './Recording';
 import { RecordingBlob } from './RecordingBlob';
 

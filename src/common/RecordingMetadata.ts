@@ -1,4 +1,4 @@
-import { MimeType } from '../options/MimeType';
+import { MimeType } from './MimeType';
 import { UUID } from './types';
 
 export type RecordingDownload = {
