@@ -1,6 +1,6 @@
 {
   "name": "title-audio-recorder",
-  "description": "Automatically record audio from the current tab based on the document title",
+  "description": "Record audio from a browser tab and automatically stop and restart when the window title changes",
   "private": true,
   "version": "1.0.0",
   "type": "module",
