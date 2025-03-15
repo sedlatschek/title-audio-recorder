@@ -52,3 +52,15 @@ const buttonTitle = computed(() =>
   currentRecordings.value.length > 0 ? 'Restart recording' : 'Start recording',
 );
 </script>
+
+<style lang="css">
+body {
+  background-color: #f4f4f4;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #222020;
+  }
+}
+</style>

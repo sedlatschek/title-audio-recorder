@@ -6,20 +6,21 @@
     title="Settings"
     @confirm="onConfirm">
     <form
-      class="p-4"
+      class="p-4 text-gray-600 dark:text-gray-200"
       autocomplete="off">
       <label
         for="file-format"
-        class="block text-sm font-bold text-gray-600 dark:text-gray-400">
+        class="block text-sm font-bold">
         File Format
       </label>
       <select
         id="file-format"
         v-model="mimeTypeSetting"
-        class="mt-1 block w-full rounded-md border-1 border-gray-300 px-3 py-2 text-base focus:border-gray-500 focus:ring-amber-500 focus:outline-none">
+        class="mt-1 block w-full rounded-md border-1 border-gray-300 px-3 py-2 text-base focus:border-gray-500 focus:ring-amber-500 focus:outline-none dark:focus:border-stone-500">
         <option
           v-for="[mimeType, format] in Object.entries(mimeTypeToExtensionMap)"
           :key="mimeType"
+          class="bg-white dark:bg-stone-800"
           :value="mimeType">
           {{ format }}
         </option>

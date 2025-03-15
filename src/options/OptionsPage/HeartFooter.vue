@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <p class="p-4 text-center text-sm font-extralight text-gray-600 dark:text-gray-400">
+    <p class="p-4 text-center text-xs font-extralight text-gray-600 dark:text-stone-400">
       Made with ❤️ by
       <a
         target="_blank"

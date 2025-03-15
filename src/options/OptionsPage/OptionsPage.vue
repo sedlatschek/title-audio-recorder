@@ -1,5 +1,5 @@
 <template>
-  <header class="mx-auto flex w-180 flex-row items-center justify-between rounded py-1">
+  <header class="mx-auto flex w-180 flex-row items-center justify-between rounded">
     <div>
       <AlertBanner v-if="hasRecordings">
         <template #headline>Warning</template>
@@ -7,7 +7,7 @@
         lost.
       </AlertBanner>
     </div>
-    <div class="flex flex-row justify-center gap-2 rounded-b-lg bg-white p-3">
+    <div class="flex flex-row justify-center gap-2 rounded-b-lg bg-white p-3 dark:bg-stone-700">
       <SettingsModal />
       <LicenseModal />
       <BtnIcon
@@ -32,7 +32,7 @@
     </TransitionGroup>
   </main>
   <main v-else>
-    <div class="py-8 text-center text-2xl font-bold text-gray-600 dark:text-gray-400">
+    <div class="py-8 text-center text-2xl font-bold text-gray-600 dark:text-stone-300">
       Waiting for you to start recording 👀
     </div>
     <HeartFooter />
@@ -71,6 +71,18 @@ body {
     linear-gradient(225deg, #ffffff 25%, transparent 25%) -16px 0/ 32px 32px,
     linear-gradient(315deg, #ffffff55 25%, transparent 25%) 0px 0/ 32px 32px,
     linear-gradient(45deg, #ffffff 25%, #f4f4f4 25%) 0px 0/ 32px 32px;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #222020;
+    opacity: 1;
+    background:
+      linear-gradient(135deg, #14131355 25%, transparent 25%) -16px 0/ 32px 32px,
+      linear-gradient(225deg, #222020 25%, transparent 25%) -16px 0/ 32px 32px,
+      linear-gradient(315deg, #14131355 25%, transparent 25%) 0px 0/ 32px 32px,
+      linear-gradient(45deg, #222020 25%, #201f1f 25%) 0px 0/ 32px 32px;
+  }
 }
 
 .list-move,

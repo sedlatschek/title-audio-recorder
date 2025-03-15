@@ -4,7 +4,7 @@
     <div
       :class="{
         barberpole: !props.recording.stoppedAtTs,
-        'bg-white dark:bg-gray-950': props.recording.stoppedAtTs,
+        'bg-white dark:bg-stone-900': props.recording.stoppedAtTs,
       }"
       class="relative rounded-2xl p-1 outline outline-black/5">
       <div
@@ -12,21 +12,21 @@
           'p-6': props.padding === 'lg',
           'p-4': props.padding === 'sm',
         }"
-        class="flex w-full flex-row items-center gap-6 rounded-2xl bg-white dark:bg-gray-950">
+        class="flex w-full flex-row items-center gap-6 rounded-2xl bg-white dark:bg-stone-900">
         <RecordingImage :recording="recording" />
         <div class="items-left flex flex-col">
-          <span class="mb-2 text-2xl leading-none font-medium text-gray-950 dark:text-white">
+          <span class="mb-2 text-2xl leading-none font-medium text-gray-950 dark:text-stone-100">
             {{ recording.title }}
           </span>
           <div>
             <a
               target="_blank"
-              class="leading-none font-medium break-all text-sky-500 dark:text-white"
+              class="leading-none font-medium break-all text-sky-500 dark:text-sky-300"
               :href="recording.pageUrl">
               {{ recording.pageUrl }}
             </a>
           </div>
-          <span class="flex gap-2 font-medium text-gray-600 dark:text-gray-400">
+          <span class="flex gap-2 font-medium text-gray-600 dark:text-stone-300">
             <DateText
               v-if="recording.startedAtTs"
               :timestamp="recording.startedAtTs" />
