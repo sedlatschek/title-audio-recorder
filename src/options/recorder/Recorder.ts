@@ -84,6 +84,15 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
     await recordingWrapper.stop();
   }
 
+  public stopRecordingSessionByTabId(tabId: number): Promise<void> {
+    console.debug(`[Recorder] stop recording session by tabId ${tabId}`);
+    const recordingSessionWrapper = this.recordingSessionWrappers[tabId];
+    if (!recordingSessionWrapper) {
+      throw new Error(`No recording session found for tabId ${tabId}`);
+    }
+    return recordingSessionWrapper.stop();
+  }
+
   public async registerTitleChange(tabId: number, title: string, url: string): Promise<void> {
     const recordingSessionWrapper = await this.getRecordingSessionWrapper(tabId);
     const recordingWrapper = await recordingSessionWrapper.record(title, url);
