@@ -8,6 +8,7 @@
       </AlertBanner>
     </div>
     <div class="flex flex-row justify-center gap-2 rounded-b-lg bg-white p-3">
+      <SettingsModal />
       <LicenseModal />
       <BtnIcon
         tag="a"
@@ -52,6 +53,7 @@ import AlertBanner from '../../components/AlertBanner.vue';
 import BtnIcon from '../../components/BtnIcon.vue';
 import IconCode from '../../components/IconCode.vue';
 import { getMessageBus } from '../components/messageBus';
+import SettingsModal from './ConfiguratonModal.vue';
 import LicenseModal from './LicenseModal.vue';
 
 const messageBus = getMessageBus();

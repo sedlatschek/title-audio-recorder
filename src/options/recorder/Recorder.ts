@@ -32,14 +32,16 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
     this.recordingUpdatedPubSub.on(callback);
   }
 
-  public getRecordingMetadatas(): RecordingMetadata[] {
-    return Array.from(this.recordingWrappers.map((r) => r.getRecordingMetadata()));
+  public async getRecordingMetadatas(): Promise<RecordingMetadata[]> {
+    return Array.from(
+      await Promise.all(this.recordingWrappers.map((r) => r.getRecordingMetadata())),
+    );
   }
 
-  private initializeRecording(recordingWrapper: RecordingWrapper<R>): void {
-    this.recordingAddedPubSub.emit(recordingWrapper.getRecordingMetadata());
-    const update = (): Promise<void> => {
-      this.recordingUpdatedPubSub.emit(recordingWrapper.getRecordingMetadata());
+  private async initializeRecording(recordingWrapper: RecordingWrapper<R>): Promise<void> {
+    this.recordingAddedPubSub.emit(await recordingWrapper.getRecordingMetadata());
+    const update = async (): Promise<void> => {
+      this.recordingUpdatedPubSub.emit(await recordingWrapper.getRecordingMetadata());
       return Promise.resolve();
     };
     recordingWrapper.onStarted(update);

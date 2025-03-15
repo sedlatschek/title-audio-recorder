@@ -29,6 +29,7 @@
   ],
   "permissions": [
     "downloads",
+    "storage",
     "tabCapture",
     "tabs"
   ],

@@ -1,4 +1,4 @@
-const mimeTypeToExtensionMap = {
+export const mimeTypeToExtensionMap = {
   'audio/webm': 'webm',
   'audio/mpeg': 'mp3',
 } as const;

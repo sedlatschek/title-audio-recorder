@@ -3,8 +3,8 @@ import { getExtension } from '../../common/MimeType';
 import { PubSub } from '../../common/PubSub';
 import { RecordingMetadata } from '../../common/RecordingMetadata';
 import { UUID } from '../../common/types';
+import { getConfigurationHandler } from '../components/configurationHandler';
 import { getConverter } from '../components/converter';
-import { getSettings } from '../components/settings';
 import { Recording } from './Recording';
 import { RecordingBlob } from './RecordingBlob';
 
@@ -62,13 +62,13 @@ export class RecordingWrapper<T extends Recording> {
     this.stoppedPubSub.emit();
   }
 
-  public getRecordingMetadata(): RecordingMetadata {
-    const settings = getSettings().get();
+  public async getRecordingMetadata(): Promise<RecordingMetadata> {
+    const { downloadMimeTypes } = await getConfigurationHandler().getSettings();
     return {
       ...this.recording.getRecordingMetadata(),
       downloads: Array.from(
         this.recordingBlobs
-          .filter((blob) => settings.mimeTypes.includes(blob.mimeType))
+          .filter((blob) => downloadMimeTypes.includes(blob.mimeType))
           .map((blob) => ({
             mimeType: blob.mimeType,
             url: blob.url,

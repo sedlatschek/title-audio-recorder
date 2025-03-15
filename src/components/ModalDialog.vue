@@ -10,8 +10,8 @@
         class="fixed inset-0 bg-black opacity-50"
         @click="close" />
       <div class="z-30 w-11/12 overflow-hidden rounded-lg bg-white shadow-lg lg:w-1/2 xl:w-1/3">
-        <div class="p-4">
-          <h3 class="text-lg font-bold">{{ title }}</h3>
+        <div class="px-6 py-4">
+          <h2 class="text-2xl font-medium">{{ title }}</h2>
         </div>
         <div class="p-4">
           <slot />

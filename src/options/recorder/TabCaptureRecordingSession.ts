@@ -61,8 +61,8 @@ export class TabCaptureRecordingSession implements RecordingSession<TabCaptureRe
     return this.lastRecording;
   }
 
-  private ensureLastRecordingIsStopped(): Promise<void> {
-    if (!this.lastRecording || this.lastRecording.getRecordingMetadata().stoppedAtTs) {
+  private async ensureLastRecordingIsStopped(): Promise<void> {
+    if (!this.lastRecording || (await this.lastRecording.getRecordingMetadata()).stoppedAtTs) {
       return Promise.resolve();
     }
     console.debug('[TabCaptureRecordingSession] stop last recording', this.lastRecording);
