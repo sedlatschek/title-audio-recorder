@@ -38,10 +38,6 @@ export class TabCaptureRecording implements Recording {
     }
     this.startedAt = DateTime.now();
 
-    const audioContext = new AudioContext();
-    const mediaStreamSource = audioContext.createMediaStreamSource(this.stream);
-    mediaStreamSource.connect(audioContext.destination);
-
     this.mediaRecorder = new MediaRecorder(this.stream, {
       mimeType: 'audio/webm',
     });
