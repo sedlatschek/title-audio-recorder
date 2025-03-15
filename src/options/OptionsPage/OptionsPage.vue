@@ -1,6 +1,7 @@
 <template>
-  <header class="mx-auto flex w-180 flex-row items-center justify-between rounded">
-    <div>
+  <header
+    class="mx-auto flex flex-col-reverse items-center justify-between rounded lg:w-180 lg:flex-row">
+    <div class="mt-4 lg:mt-0">
       <AlertBanner v-if="hasRecordings">
         <template #headline>Warning</template>
         Do not close this tab while recording. Closing the tab will cause all the recordings to be
