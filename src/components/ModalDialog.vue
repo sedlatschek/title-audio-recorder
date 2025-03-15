@@ -5,7 +5,7 @@
     <div
       v-if="modelValue"
       key="modal"
-      class="fixed inset-0 z-20 flex items-center justify-center text-gray-600 dark:text-gray-200">
+      class="fixed inset-0 z-20 flex items-center justify-center text-gray-950 dark:text-gray-200">
       <div
         class="fixed inset-0 bg-black opacity-50 dark:bg-stone-900"
         @click="close" />

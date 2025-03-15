@@ -6,7 +6,7 @@
     title="Settings"
     @confirm="onConfirm">
     <form
-      class="p-4 text-gray-600 dark:text-gray-200"
+      class="p-4 text-gray-950 dark:text-gray-200"
       autocomplete="off">
       <label
         for="file-format"
