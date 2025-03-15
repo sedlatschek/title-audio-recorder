@@ -21,7 +21,7 @@
   </header>
   <main v-if="hasRecordings">
     <RecordingWidget
-      v-for="recording in recordings"
+      v-for="recording in sortedRecordings"
       :key="recording.id"
       class="mx-auto my-4"
       :message-bus="messageBus"
@@ -60,6 +60,11 @@ const messageBus = getMessageBus();
 const recordings = createRecordingsRef(messageBus);
 
 const hasRecordings = computed(() => recordings.value.length > 0);
+const sortedRecordings = computed(() => {
+  const array = Array.from(recordings.value);
+  array.sort((a, b) => (b.startedAtTs ?? 0) - (a.startedAtTs ?? 0));
+  return array;
+});
 </script>
 
 <style lang="css">
