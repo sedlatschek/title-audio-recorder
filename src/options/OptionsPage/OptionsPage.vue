@@ -20,29 +20,23 @@
     </div>
   </header>
   <main v-if="hasRecordings">
-    <RecordingWidget
-      v-for="recording in sortedRecordings"
-      :key="recording.id"
-      class="mx-auto my-4"
-      :message-bus="messageBus"
-      padding="lg"
-      :recording="recording" />
+    <TransitionGroup name="list">
+      <RecordingWidget
+        v-for="recording in sortedRecordings"
+        :key="recording.id"
+        class="mx-auto my-4"
+        :message-bus="messageBus"
+        padding="lg"
+        :recording="recording" />
+      <HeartFooter />
+    </TransitionGroup>
   </main>
   <main v-else>
     <div class="py-8 text-center text-2xl font-bold text-gray-600 dark:text-gray-400">
       Waiting for you to start recording 👀
     </div>
+    <HeartFooter />
   </main>
-  <footer>
-    <p class="p-4 text-center text-sm font-extralight text-gray-600 dark:text-gray-400">
-      Made with ❤️ by
-      <a
-        target="_blank"
-        href="https://github.com/sedlatschek">
-        Simon Sedlatschek
-      </a>
-    </p>
-  </footer>
 </template>
 
 <script setup lang="ts">
@@ -54,6 +48,7 @@ import BtnIcon from '../../components/BtnIcon.vue';
 import IconCode from '../../components/IconCode.vue';
 import { getMessageBus } from '../components/messageBus';
 import SettingsModal from './ConfiguratonModal.vue';
+import HeartFooter from './HeartFooter.vue';
 import LicenseModal from './LicenseModal.vue';
 
 const messageBus = getMessageBus();
@@ -76,5 +71,21 @@ body {
     linear-gradient(225deg, #ffffff 25%, transparent 25%) -16px 0/ 32px 32px,
     linear-gradient(315deg, #ffffff55 25%, transparent 25%) 0px 0/ 32px 32px,
     linear-gradient(45deg, #ffffff 25%, #f4f4f4 25%) 0px 0/ 32px 32px;
+}
+
+.list-move,
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+
+.list-enter-from,
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+
+.list-leave-active {
+  position: absolute;
 }
 </style>
