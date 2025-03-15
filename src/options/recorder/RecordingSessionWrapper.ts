@@ -1,32 +1,40 @@
 import { Recording } from './Recording';
 import { RecordingSession } from './RecordingSession';
+import { RecordingState } from './RecordingState';
 import { RecordingWrapper } from './RecordingWrapper';
 
 export class RecordingSessionWrapper<T extends RecordingSession<R>, R extends Recording> {
+  private recordingState: RecordingState = 'idle';
   private recordingSession: T | undefined;
 
   public constructor(
     private readonly recordingSessionType: new (tabId: number) => T,
-    private readonly tabId: number,
+    public readonly tabId: number,
   ) {}
 
-  public start(): Promise<void> {
-    if (this.recordingSession) {
+  public get state(): RecordingState {
+    return this.recordingState;
+  }
+
+  public async start(): Promise<void> {
+    if (this.recordingState === 'started') {
       throw new Error('Can not start session: Session is already running');
     }
     console.debug(`[RecordingSessionWrapper] started for tab ${this.tabId}`);
 
     this.recordingSession = new this.recordingSessionType(this.tabId);
-    return this.recordingSession.start();
+    await this.recordingSession.start();
+    this.recordingState = 'started';
   }
 
-  public stop(): Promise<void> {
-    if (!this.recordingSession) {
+  public async stop(): Promise<void> {
+    if (this.recordingState !== 'started' || !this.recordingSession) {
       throw new Error('Can not stop session: Session was not running');
     }
     console.debug(`[RecordingSessionWrapper] stopped for tab ${this.tabId}`);
 
-    return this.recordingSession.stop();
+    await this.recordingSession.stop();
+    this.recordingState = 'stopped';
   }
 
   private async getTabTitle(): Promise<string> {

@@ -10,7 +10,7 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
   private recordingAddedPubSub = new PubSub<RecordingMetadata, void>();
   private recordingUpdatedPubSub = new PubSub<RecordingMetadata, void>();
 
-  private recordingSessionWrappers: Map<number, RecordingSessionWrapper<T, R>> = new Map();
+  private recordingSessionWrappers: RecordingSessionWrapper<T, R>[] = [];
   private recordingWrappers: EventArray<RecordingWrapper<R>>;
 
   public constructor(private readonly recordingSessionType: new (tabId: number) => T) {
@@ -49,10 +49,16 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
     recordingWrapper.onUpdated(update);
   }
 
-  private async getOrCreateRecordingSessionWrapper(
+  private getRunningRecordingSessionWrapper(
+    tabId: number,
+  ): RecordingSessionWrapper<T, R> | undefined {
+    return this.recordingSessionWrappers.find((r) => r.state === 'started' && r.tabId === tabId);
+  }
+
+  private async getOrCreateStartedRecordingSessionWrapper(
     tabId: number,
   ): Promise<RecordingSessionWrapper<T, R>> {
-    const existingRecordingSessionWrapper = this.recordingSessionWrappers.get(tabId);
+    const existingRecordingSessionWrapper = this.getRunningRecordingSessionWrapper(tabId);
     if (existingRecordingSessionWrapper) {
       return existingRecordingSessionWrapper;
     }
@@ -61,15 +67,22 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
       this.recordingSessionType,
       tabId,
     );
-    this.recordingSessionWrappers.set(tabId, recordingSessionWrapper);
+    this.recordingSessionWrappers.push(recordingSessionWrapper);
     await recordingSessionWrapper.start();
     return recordingSessionWrapper;
   }
 
-  public async startRecording(tabId: number): Promise<void> {
-    const recordingSessionWrapper = await this.getOrCreateRecordingSessionWrapper(tabId);
+  public async startRecordingSession(tabId: number): Promise<void> {
+    const recordingSessionWrapper = await this.getOrCreateStartedRecordingSessionWrapper(tabId);
     const recordingWrapper = await recordingSessionWrapper.record();
     this.recordingWrappers.push(recordingWrapper);
+  }
+
+  public async stopRecordingSessions(tabId: number): Promise<void> {
+    const startedRecordingSessionWrappers = this.recordingSessionWrappers.filter(
+      (r) => r.state === 'started' && r.tabId === tabId,
+    );
+    await Promise.all(startedRecordingSessionWrappers.map((r) => r.stop()));
   }
 
   private getRecordingWrapper(recordingMetadata: RecordingMetadata): RecordingWrapper<R> {
@@ -84,19 +97,11 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
     console.debug(`[Recorder] stop recording ${recordingMetadata.id}`);
     const recordingWrapper = this.getRecordingWrapper(recordingMetadata);
     await recordingWrapper.stop();
-  }
-
-  public stopRecordingSessionByTabId(tabId: number): Promise<void> {
-    console.debug(`[Recorder] stop recording session by tabId ${tabId}`);
-    const recordingSessionWrapper = this.recordingSessionWrappers.get(tabId);
-    if (!recordingSessionWrapper) {
-      throw new Error(`No recording session found for tabId ${tabId}`);
-    }
-    return recordingSessionWrapper.stop();
+    await this.stopRecordingSessions(recordingMetadata.tabId);
   }
 
   public async registerTitleChange(tabId: number, title: string, url: string): Promise<void> {
-    const recordingSessionWrapper = this.recordingSessionWrappers.get(tabId);
+    const recordingSessionWrapper = this.getRunningRecordingSessionWrapper(tabId);
     if (!recordingSessionWrapper) {
       console.debug(
         `[Recorder] Not registering title change: No recording session found for tabId ${tabId}`,

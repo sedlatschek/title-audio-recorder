@@ -5,6 +5,6 @@ import { RecordingSession } from './recorder/RecordingSession';
 
 export function observeTabs(recorder: Recorder<RecordingSession<Recording>, Recording>): void {
   browser.tabs.onRemoved.addListener((tabId) => {
-    recorder.stopRecordingSessionByTabId(tabId);
+    recorder.stopRecordingSessions(tabId);
   });
 }

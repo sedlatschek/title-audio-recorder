@@ -27,7 +27,7 @@ function createMessageBus(recorder: Recorder<RecordingSession<Recording>, Record
   });
 
   messageBus.onStartRecording((tabId: number) => {
-    return Promise.resolve(recorder.startRecording(tabId));
+    return Promise.resolve(recorder.startRecordingSession(tabId));
   });
 
   messageBus.onStopRecording((recordingMetadata: RecordingMetadata) => {
