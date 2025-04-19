@@ -6,7 +6,7 @@ import { WebmToMp3Conversion } from './WebmToMp3Conversion';
 export class Converter {
   private readonly conversions: Conversion[] = [new WebmToMp3Conversion()];
 
-  public constructor(private readonly settingsHandler: ConfigurationHandler) {}
+  public constructor(private readonly configurationHandler: ConfigurationHandler) {}
 
   private getConversion(inputMimeType: MimeType, outputMimeType: MimeType): Conversion | undefined {
     return this.conversions.find(
@@ -15,7 +15,7 @@ export class Converter {
   }
 
   public async convert(blob: Blob): Promise<Blob[]> {
-    const { downloadMimeTypes: mimeTypes } = await this.settingsHandler.getSettings();
+    const { downloadMimeTypes: mimeTypes } = await this.configurationHandler.getSettings();
     console.debug(`[Converter] Converting blob with type ${blob.type} to ${mimeTypes.join(', ')}`);
     return Promise.all(
       mimeTypes
