@@ -40,12 +40,12 @@ export function isStopRecordingMessage(message: unknown): message is StopRecordi
   return isMessage(message) && message.messageType === MessageType.STOP_RECORDING;
 }
 
-export type RemoveRecording = {
+export type RemoveRecordingMessage = {
   messageType: MessageType.REMOVE_RECORDING;
   recording: RecordingMetadata;
 };
 
-export function isRemoveRecordingMessage(message: unknown): message is RemoveRecording {
+export function isRemoveRecordingMessage(message: unknown): message is RemoveRecordingMessage {
   return isMessage(message) && message.messageType === MessageType.REMOVE_RECORDING;
 }
 
@@ -129,7 +129,7 @@ export type Message =
   | GetRecordingsMessage
   | StartRecordingMessage
   | StopRecordingMessage
-  | RemoveRecording
+  | RemoveRecordingMessage
   | RecordingAddedMessage
   | RecordingUpdatedMessage
   | RecordingDownloadAddedMessage
