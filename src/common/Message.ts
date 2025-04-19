@@ -1,5 +1,5 @@
-import { RecordingBlob } from '../options/recorder/RecordingBlob';
 import { RecordingMetadata } from './RecordingMetadata';
+import { RecordingBlobAdded } from './types';
 
 export enum MessageType {
   DISCOVER_OPTIONS_TAB = 'DISCOVER_OPTIONS_TAB',
@@ -80,9 +80,7 @@ export function isRecordingUpdatedMessage(message: unknown): message is Recordin
 
 export type RecordingBlobAddedMessage = {
   messageType: MessageType.RECORDING_BLOB_ADDED;
-  recording: RecordingMetadata;
-  recordingBlob: RecordingBlob;
-};
+} & RecordingBlobAdded;
 
 export function isRecordingBlobAddedMessage(
   message: unknown,

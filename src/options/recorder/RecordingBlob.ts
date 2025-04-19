@@ -1,6 +1,7 @@
 import { isMimeType, MimeType } from '../../common/MimeType';
+import { RecordingBlob as IRecordingBlob } from '../../common/RecordingBlob';
 
-export class RecordingBlob {
+export class RecordingBlob implements IRecordingBlob {
   public readonly mimeType: MimeType;
   public readonly url: string;
 
