@@ -29,7 +29,7 @@
         :message-bus="messageBus"
         padding="lg"
         :recording="recording" />
-      <HeartFooter />
+      <HeartFooter key="footer" />
     </TransitionGroup>
   </main>
   <main v-else>
