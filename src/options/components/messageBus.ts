@@ -23,30 +23,31 @@ function createMessageBus(recorder: Recorder<RecordingSession<Recording>, Record
   });
 
   messageBus.onGetRecordings(() => {
-    return Promise.resolve(recorder.getRecordingMetadatas());
+    return recorder.getRecordingMetadatas();
   });
 
   messageBus.onStartRecording((tabId: number) => {
-    return Promise.resolve(recorder.startRecordingSession(tabId));
+    return recorder.startRecordingSession(tabId);
   });
 
   messageBus.onStopRecording((recordingMetadata: RecordingMetadata) => {
-    return Promise.resolve(recorder.stopRecording(recordingMetadata));
+    return recorder.stopRecording(recordingMetadata);
+  });
   });
 
   messageBus.onTabTitleChanged((tab: EnrichedTabTitleChangeMessageTab) => {
     const { tabId, title, url } = tab;
-    return Promise.resolve(recorder.registerTitleChange(tabId, title, url));
+    return recorder.registerTitleChange(tabId, title, url);
   });
 
-  recorder.onRecordingAdded((recordingMetadata) => {
-    messageBus.recordingAdded(recordingMetadata);
-    return Promise.resolve();
+  recorder.onRecordingAdded(async (recordingMetadata) => {
+    await messageBus.recordingAdded(recordingMetadata);
   });
 
-  recorder.onRecordingUpdated((recordingMetadata) => {
-    messageBus.recordingUpdated(recordingMetadata);
-    return Promise.resolve();
+  recorder.onRecordingUpdated(async (recordingMetadata) => {
+    await messageBus.recordingUpdated(recordingMetadata);
+  });
+
   });
 
   return messageBus;
