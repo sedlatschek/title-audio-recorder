@@ -57,7 +57,7 @@
               tag="button"
               :color="downloadCounter <= 0 ? 'primary' : 'secondary'"
               title="Download recording"
-              :disabled="!recordingDownload"
+              :disabled="props.recording.downloads.length < 1"
               @click="download">
               <IconArrowDown />
             </BtnIcon>
@@ -69,18 +69,17 @@
 </template>
 
 <script setup lang="ts">
-import sanitize from 'sanitize-filename';
-import { computed, ref } from 'vue';
-import browser from 'webextension-polyfill';
+import { ref } from 'vue';
 import BtnIcon from '../components/BtnIcon.vue';
 import DateText from '../components/DateText.vue';
 import DurationText from '../components/DurationText.vue';
 import IconArrowDown from '../components/IconArrowDown.vue';
 import IconRectangle from '../components/IconRectangle.vue';
 import IconTrash from '../components/IconTrash.vue';
+import { downloadRecording } from './download';
 import { MessageBus } from './MessageBus';
 import RecordingImage from './RecordingImage.vue';
-import { RecordingDownload, RecordingMetadata } from './RecordingMetadata';
+import { RecordingMetadata } from './RecordingMetadata';
 
 const props = defineProps<{
   messageBus: MessageBus;
@@ -97,20 +96,9 @@ function stop(): Promise<void> {
 }
 
 const downloadCounter = ref(0);
-
-const recordingDownload = computed<RecordingDownload | undefined>(
-  () => props.recording.downloads[0],
-);
-
-function download(): Promise<number> {
-  if (!recordingDownload.value) {
-    throw new Error('No download available');
-  }
+async function download(): Promise<void> {
+  await downloadRecording(props.recording);
   downloadCounter.value++;
-  return browser.downloads.download({
-    url: recordingDownload.value.url,
-    filename: `${sanitize(props.recording.title)}.${recordingDownload.value.extension}`,
-  });
 }
 </script>
 

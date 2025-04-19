@@ -1,6 +1,6 @@
 <template>
   <header
-    class="mx-auto flex flex-col-reverse items-center justify-between rounded lg:w-180 lg:flex-row">
+    class="mx-auto flex flex-col-reverse items-center justify-between gap-2 rounded lg:w-188 lg:flex-row">
     <div class="mt-4 lg:mt-0">
       <AlertBanner v-if="hasRecordings">
         <template #headline>Warning</template>
@@ -11,7 +11,15 @@
     <div class="flex flex-row justify-center gap-2 rounded-b-lg bg-white p-3 dark:bg-stone-700">
       <BtnIcon
         tag="button"
+        title="Download all recordings"
+        :disabled="!hasDownloads"
+        @click="downloadAllRecordings">
+        <IconArrowDown />
+      </BtnIcon>
+      <BtnIcon
+        tag="button"
         title="Remove all recordings"
+        :disabled="!hasRecordings"
         @click="removeAllRecordings">
         <IconTrash />
       </BtnIcon>
@@ -48,10 +56,12 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import { downloadRecording } from '../../common/download';
 import { createRecordingsRef } from '../../common/recordingsRef';
 import RecordingWidget from '../../common/RecordingWidget.vue';
 import AlertBanner from '../../components/AlertBanner.vue';
 import BtnIcon from '../../components/BtnIcon.vue';
+import IconArrowDown from '../../components/IconArrowDown.vue';
 import IconCode from '../../components/IconCode.vue';
 import IconTrash from '../../components/IconTrash.vue';
 import { getMessageBus } from '../components/messageBus';
@@ -63,11 +73,22 @@ const messageBus = getMessageBus();
 const recordings = createRecordingsRef(messageBus);
 
 const hasRecordings = computed(() => recordings.value.length > 0);
+
+const hasDownloads = computed(
+  () =>
+    hasRecordings.value &&
+    sortedRecordings.value.some((recording) => recording.downloads.length > 0),
+);
+
 const sortedRecordings = computed(() => {
   const array = Array.from(recordings.value);
   array.sort((a, b) => (b.startedAtTs ?? 0) - (a.startedAtTs ?? 0));
   return array;
 });
+
+async function downloadAllRecordings(): Promise<void> {
+  await Promise.all(sortedRecordings.value.map((recording) => downloadRecording(recording)));
+}
 
 async function removeAllRecordings(): Promise<void> {
   if (confirm('Are you sure you want to delete all recordings?')) {
