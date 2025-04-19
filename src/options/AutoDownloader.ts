@@ -26,6 +26,11 @@ export class AutoDownloader {
       console.debug(`[AutoDownloader] downloading recording ${recording.id}`);
 
       await this.recorder.downloadRecording(recording);
+
+      if (settings.removeAfterDownloadingAutomatically) {
+        console.debug(`[AutoDownloader] deleting recording ${recording.id}`);
+        await this.recorder.removeRecording(recording);
+      }
     });
   }
 }

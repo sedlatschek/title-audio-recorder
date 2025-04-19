@@ -31,8 +31,15 @@
         <h3 class="block text-sm font-bold">Downloads</h3>
         <BaseCheckbox
           id="download-automatically"
-          v-model="downloadAutomaticallySetting">
+          v-model="downloadAutomaticallySetting"
+          class="mt-1">
           Download recordings automatically after finishing
+        </BaseCheckbox>
+        <BaseCheckbox
+          id="download-automatically-delete"
+          v-model="removeAfterDownloadingAutomaticallySetting"
+          class="mt-1">
+          Delete recordings after downloading automatically
         </BaseCheckbox>
       </div>
     </form>
@@ -62,25 +69,31 @@ const configurationHandler = getConfigurationHandler();
 
 const mimeTypeSetting = ref<MimeType | undefined>(undefined);
 const downloadAutomaticallySetting = ref<boolean>(false);
+const removeAfterDownloadingAutomaticallySetting = ref<boolean>(false);
 
 async function loadSettings(): Promise<void> {
   const settings = await configurationHandler.getSettings();
   console.debug('[ConfigurationModal] Loaded settings', settings);
   mimeTypeSetting.value = settings.downloadMimeTypes[0];
   downloadAutomaticallySetting.value = settings.downloadAutomatically;
+  removeAfterDownloadingAutomaticallySetting.value = settings.removeAfterDownloadingAutomatically;
 }
 
 function buildSettings(): ConfigurationSettings {
   if (!mimeTypeSetting.value) {
-    throw new Error('Mime type is not set');
+    throw new Error('mimeTypeSetting is not set');
   }
   if (downloadAutomaticallySetting.value === undefined) {
-    throw new Error('Download automatically is not set');
+    throw new Error('downloadAutomaticallySetting is not set');
+  }
+  if (removeAfterDownloadingAutomaticallySetting.value === undefined) {
+    throw new Error('removeAfterDownloadingAutomatically is not set');
   }
 
   return {
     downloadMimeTypes: [mimeTypeSetting.value],
     downloadAutomatically: downloadAutomaticallySetting.value,
+    removeAfterDownloadingAutomatically: removeAfterDownloadingAutomaticallySetting.value,
   };
 }
 
