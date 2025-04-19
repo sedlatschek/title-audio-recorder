@@ -1,3 +1,4 @@
+import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { MessageBus } from '../../common/MessageBus';
 import { createRecordingsRef, RecordingsRef } from '../../common/RecordingsRef';
 import { createTosHandler } from '../../common/tos/tosHandler';
@@ -12,6 +13,7 @@ import { RecordingSession } from '../recorder/RecordingSession';
 import { TabCaptureRecordingSession } from '../recorder/TabCaptureRecordingSession';
 import { observeTabs } from '../tabObserver';
 import { TosHandler } from '../tos/TosHandler';
+import { createFFmpeg } from './ffmpeg';
 import { createMessageBus } from './messageBus';
 
 type OptionsComponents = {
@@ -19,6 +21,7 @@ type OptionsComponents = {
   messageBus: MessageBus;
   recorder: Recorder<RecordingSession<Recording>, Recording>;
   recordings: RecordingsRef;
+  ffmpeg: FFmpeg;
   converter: Converter;
   autoDownloader: AutoDownloader;
   tosHandler: TosHandler;
@@ -32,7 +35,9 @@ export async function initializeOptionsComponents(): Promise<void> {
   const recorder = new Recorder(TabCaptureRecordingSession);
   const messageBus = createMessageBus(recorder);
   const recordings = createRecordingsRef(messageBus, true);
+  const ffmpeg = await createFFmpeg();
   const converter = new Converter(configurationHandler);
+  const autoDownloader = new AutoDownloader(configurationHandler, recorder);
   const tosHandler = createTosHandler();
   const tosAccepted = await createTosAcceptedRef(tosHandler);
 
@@ -41,8 +46,9 @@ export async function initializeOptionsComponents(): Promise<void> {
     messageBus,
     recorder,
     recordings,
+    ffmpeg,
     converter,
-    autoDownloader: new AutoDownloader(configurationHandler, recorder),
+    autoDownloader,
     tosHandler,
     tosAccepted,
   };
