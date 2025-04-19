@@ -9,6 +9,12 @@
       </AlertBanner>
     </div>
     <div class="flex flex-row justify-center gap-2 rounded-b-lg bg-white p-3 dark:bg-stone-700">
+      <BtnIcon
+        tag="button"
+        title="Remove all recordings"
+        @click="removeAllRecordings">
+        <IconTrash />
+      </BtnIcon>
       <SettingsModal />
       <LicenseModal />
       <BtnIcon
@@ -47,6 +53,7 @@ import RecordingWidget from '../../common/RecordingWidget.vue';
 import AlertBanner from '../../components/AlertBanner.vue';
 import BtnIcon from '../../components/BtnIcon.vue';
 import IconCode from '../../components/IconCode.vue';
+import IconTrash from '../../components/IconTrash.vue';
 import { getMessageBus } from '../components/messageBus';
 import SettingsModal from './ConfiguratonModal.vue';
 import HeartFooter from './HeartFooter.vue';
@@ -61,6 +68,14 @@ const sortedRecordings = computed(() => {
   array.sort((a, b) => (b.startedAtTs ?? 0) - (a.startedAtTs ?? 0));
   return array;
 });
+
+async function removeAllRecordings(): Promise<void> {
+  if (confirm('Are you sure you want to delete all recordings?')) {
+    await Promise.all(
+      sortedRecordings.value.map((recording) => messageBus.removeRecording(recording)),
+    );
+  }
+}
 </script>
 
 <style lang="css">
