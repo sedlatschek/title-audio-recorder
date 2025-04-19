@@ -40,9 +40,16 @@
         <div class="flex grow flex-row justify-end">
           <div class="flex flex-col gap-1">
             <BtnIcon
+              v-if="recording.stoppedAtTs"
+              tag="button"
+              title="Remove recording"
+              @click="remove">
+              <IconTrash />
+            </BtnIcon>
+            <BtnIcon
+              v-else
               tag="button"
               title="Stop recording"
-              :disabled="recording.stoppedAtTs"
               @click="stop">
               <IconRectangle />
             </BtnIcon>
@@ -69,6 +76,7 @@ import DateText from '../components/DateText.vue';
 import DurationText from '../components/DurationText.vue';
 import IconArrowDown from '../components/IconArrowDown.vue';
 import IconRectangle from '../components/IconRectangle.vue';
+import IconTrash from '../components/IconTrash.vue';
 import { MessageBus } from './MessageBus';
 import RecordingImage from './RecordingImage.vue';
 import { RecordingDownload, RecordingMetadata } from './RecordingMetadata';
@@ -78,6 +86,10 @@ const props = defineProps<{
   padding: 'sm' | 'lg';
   recording: RecordingMetadata;
 }>();
+
+function remove(): Promise<void> {
+  return props.messageBus.removeRecording(props.recording);
+}
 
 function stop(): Promise<void> {
   return props.messageBus.stopRecording(props.recording);

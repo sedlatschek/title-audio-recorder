@@ -5,8 +5,10 @@ export enum MessageType {
   GET_RECORDINGS = 'GET_RECORDINGS',
   START_RECORDING = 'START_RECORDING',
   STOP_RECORDING = 'STOP_RECORDING',
+  REMOVE_RECORDING = 'REMOVE_RECORDING',
   RECORDING_ADDED = 'RECORDING_ADDED',
   RECORDING_UPDATED = 'RECORDING_UPDATED',
+  RECORDING_REMOVED = 'RECORDING_REMOVED',
   TAB_TITLE_CHANGED = 'TAB_TITLE_CHANGED',
 }
 
@@ -37,6 +39,15 @@ export function isStopRecordingMessage(message: unknown): message is StopRecordi
   return isMessage(message) && message.messageType === MessageType.STOP_RECORDING;
 }
 
+export type RemoveRecording = {
+  messageType: MessageType.REMOVE_RECORDING;
+  recording: RecordingMetadata;
+};
+
+export function isRemoveRecordingMessage(message: unknown): message is RemoveRecording {
+  return isMessage(message) && message.messageType === MessageType.REMOVE_RECORDING;
+}
+
 export type RecordingAddedMessage = {
   messageType: MessageType.RECORDING_ADDED;
   recording: RecordingMetadata;
@@ -53,6 +64,15 @@ export type RecordingUpdatedMessage = {
 
 export function isRecordingUpdatedMessage(message: unknown): message is RecordingUpdatedMessage {
   return isMessage(message) && message.messageType === MessageType.RECORDING_UPDATED;
+}
+
+export type RecordingRemovedMessage = {
+  messageType: MessageType.RECORDING_REMOVED;
+  recording: RecordingMetadata;
+};
+
+export function isRecordingRemovedMessage(message: unknown): message is RecordingRemovedMessage {
+  return isMessage(message) && message.messageType === MessageType.RECORDING_REMOVED;
 }
 
 export type TabTitleChangedMessageTab = {
@@ -96,6 +116,8 @@ export type Message =
   | GetRecordingsMessage
   | StartRecordingMessage
   | StopRecordingMessage
+  | RemoveRecording
   | RecordingAddedMessage
   | RecordingUpdatedMessage
+  | RecordingRemovedMessage
   | TabTitleChangedMessage;

@@ -33,6 +33,9 @@ function createMessageBus(recorder: Recorder<RecordingSession<Recording>, Record
   messageBus.onStopRecording((recordingMetadata: RecordingMetadata) => {
     return recorder.stopRecording(recordingMetadata);
   });
+
+  messageBus.onRemoveRecording((recordingMetadata: RecordingMetadata) => {
+    return recorder.removeRecording(recordingMetadata);
   });
 
   messageBus.onTabTitleChanged((tab: EnrichedTabTitleChangeMessageTab) => {
@@ -48,6 +51,8 @@ function createMessageBus(recorder: Recorder<RecordingSession<Recording>, Record
     await messageBus.recordingUpdated(recordingMetadata);
   });
 
+  recorder.onRecordingRemoved(async (recordingMetadata) => {
+    await messageBus.recordingRemoved(recordingMetadata);
   });
 
   return messageBus;

@@ -4,7 +4,9 @@ import {
   isDiscoverOptionsTabMessage,
   isGetRecordingsMessage,
   isRecordingAddedMessage,
+  isRecordingRemovedMessage,
   isRecordingUpdatedMessage,
+  isRemoveRecordingMessage,
   isStartRecordingMessage,
   isStopRecordingMessage,
   isTabTitleChangedMessage,
@@ -19,8 +21,10 @@ export class MessageBus {
   private readonly getRecordingsPubSub = new PubSub<void, RecordingMetadata[]>();
   private readonly startRecordingPubSub = new PubSub<number, void>();
   private readonly stopRecordingPubSub = new PubSub<RecordingMetadata, void>();
+  private readonly removeRecordingPubSub = new PubSub<RecordingMetadata, void>();
   private readonly recordingAddedPubSub = new PubSub<RecordingMetadata, void>();
   private readonly recordingUpdatedPubSub = new PubSub<RecordingMetadata, void>();
+  private readonly recordingRemovedPubSub = new PubSub<RecordingMetadata, void>();
   private readonly tabTitleChangedPubSub = new PubSub<EnrichedTabTitleChangeMessageTab, void>();
 
   constructor(private readonly location: string) {
@@ -45,10 +49,14 @@ export class MessageBus {
       this.startRecordingPubSub.emit(message.tabId);
     } else if (isStopRecordingMessage(message)) {
       this.stopRecordingPubSub.emit(message.recording);
+    } else if (isRemoveRecordingMessage(message)) {
+      this.removeRecordingPubSub.emit(message.recording);
     } else if (isRecordingAddedMessage(message)) {
       this.recordingAddedPubSub.emit(message.recording);
     } else if (isRecordingUpdatedMessage(message)) {
       this.recordingUpdatedPubSub.emit(message.recording);
+    } else if (isRecordingRemovedMessage(message)) {
+      this.recordingRemovedPubSub.emit(message.recording);
     } else if (isTabTitleChangedMessage(message)) {
       if (sender.tab?.id === undefined) {
         throw new Error(
@@ -139,6 +147,17 @@ export class MessageBus {
     });
   }
 
+  public onRemoveRecording(callback: (recording: RecordingMetadata) => Promise<void>): void {
+    this.removeRecordingPubSub.on(callback);
+  }
+
+  public async removeRecording(recording: RecordingMetadata): Promise<void> {
+    await this.request<RecordingMetadata, void>(this.removeRecordingPubSub, recording, {
+      messageType: MessageType.REMOVE_RECORDING,
+      recording,
+    });
+  }
+
   public onRecordingAdded(callback: (recording: RecordingMetadata) => Promise<void>): void {
     this.recordingAddedPubSub.on(callback);
   }
@@ -157,6 +176,17 @@ export class MessageBus {
   public async recordingUpdated(recording: RecordingMetadata): Promise<void> {
     await this.request<RecordingMetadata, void>(this.recordingUpdatedPubSub, recording, {
       messageType: MessageType.RECORDING_UPDATED,
+      recording,
+    });
+  }
+
+  public onRecordingRemoved(callback: (recording: RecordingMetadata) => Promise<void>): void {
+    this.recordingRemovedPubSub.on(callback);
+  }
+
+  public async recordingRemoved(recording: RecordingMetadata): Promise<void> {
+    await this.request<RecordingMetadata, void>(this.recordingRemovedPubSub, recording, {
+      messageType: MessageType.RECORDING_REMOVED,
       recording,
     });
   }

@@ -62,6 +62,13 @@ export class RecordingWrapper<T extends Recording> {
     this.stoppedPubSub.emit();
   }
 
+  public clear(): void {
+    for (const blob of this.recordingBlobs) {
+      blob.revoke();
+    }
+    this.recordingBlobs.length = 0;
+  }
+
   public async getRecordingMetadata(): Promise<RecordingMetadata> {
     const { downloadMimeTypes } = await getConfigurationHandler().getSettings();
     return {

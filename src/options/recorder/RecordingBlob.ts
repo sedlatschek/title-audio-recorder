@@ -11,4 +11,8 @@ export class RecordingBlob {
     this.mimeType = blob.type;
     this.url = URL.createObjectURL(blob);
   }
+
+  public revoke(): void {
+    URL.revokeObjectURL(this.url);
+  }
 }

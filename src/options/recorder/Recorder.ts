@@ -9,6 +9,7 @@ import { RecordingWrapper } from './RecordingWrapper';
 export class Recorder<T extends RecordingSession<R>, R extends Recording> {
   private recordingAddedPubSub = new PubSub<RecordingMetadata, void>();
   private recordingUpdatedPubSub = new PubSub<RecordingMetadata, void>();
+  private recordingRemovedPubSub = new PubSub<RecordingMetadata, void>();
 
   private recordingSessionWrappers: RecordingSessionWrapper<T, R>[] = [];
   private recordingWrappers: EventArray<RecordingWrapper<R>>;
@@ -30,6 +31,10 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
 
   onRecordingUpdated(callback: (recording: RecordingMetadata) => Promise<void>): void {
     this.recordingUpdatedPubSub.on(callback);
+  }
+
+  onRecordingRemoved(callback: (recording: RecordingMetadata) => Promise<void>): void {
+    this.recordingRemovedPubSub.on(callback);
   }
 
   public async getRecordingMetadatas(): Promise<RecordingMetadata[]> {
@@ -98,6 +103,23 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
     const recordingWrapper = this.getRecordingWrapper(recordingMetadata);
     await recordingWrapper.stop();
     await this.stopRecordingSessions(recordingMetadata.tabId);
+  }
+
+  public async removeRecording(recordingMetadata: RecordingMetadata): Promise<void> {
+    console.debug(`[Recorder] remove recording ${recordingMetadata.id}`);
+
+    const recordingWrapperIndex = this.recordingWrappers.findIndex(
+      (r) => r.id === recordingMetadata.id,
+    );
+    const recordingWrapper = this.recordingWrappers[recordingWrapperIndex];
+    if (!recordingWrapper) {
+      throw new Error(`Recording with id ${recordingMetadata.id} not found`);
+    }
+
+    recordingWrapper.clear();
+    this.recordingWrappers.slice(recordingWrapperIndex, 1);
+
+    await this.recordingRemovedPubSub.emit(recordingMetadata);
   }
 
   public async registerTitleChange(tabId: number, title: string, url: string): Promise<void> {

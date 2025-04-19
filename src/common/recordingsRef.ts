@@ -37,5 +37,16 @@ export function createRecordingsRef(
     return Promise.resolve();
   });
 
+  messageBus.onRecordingRemoved((recording: RecordingMetadata): Promise<void> => {
+    console.debug('[recordingsRef] recording was removed', recording);
+
+    const index = recordingMetadatas.value.findIndex((r) => r.id === recording.id);
+    if (index !== -1) {
+      recordingMetadatas.value.splice(index, 1);
+    }
+
+    return Promise.resolve();
+  });
+
   return recordingMetadatas;
 }
