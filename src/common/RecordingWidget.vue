@@ -55,6 +55,7 @@
             </BtnIcon>
             <BtnIcon
               tag="button"
+              :color="downloadCounter <= 0 ? 'primary' : 'secondary'"
               title="Download recording"
               :disabled="!recordingDownload"
               @click="download">
@@ -69,7 +70,7 @@
 
 <script setup lang="ts">
 import sanitize from 'sanitize-filename';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import browser from 'webextension-polyfill';
 import BtnIcon from '../components/BtnIcon.vue';
 import DateText from '../components/DateText.vue';
@@ -95,6 +96,8 @@ function stop(): Promise<void> {
   return props.messageBus.stopRecording(props.recording);
 }
 
+const downloadCounter = ref(0);
+
 const recordingDownload = computed<RecordingDownload | undefined>(
   () => props.recording.downloads[0],
 );
@@ -103,6 +106,7 @@ function download(): Promise<number> {
   if (!recordingDownload.value) {
     throw new Error('No download available');
   }
+  downloadCounter.value++;
   return browser.downloads.download({
     url: recordingDownload.value.url,
     filename: `${sanitize(props.recording.title)}.${recordingDownload.value.extension}`,
