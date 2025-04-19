@@ -60,12 +60,12 @@ import BaseCheckbox from '../../components/BaseCheckbox.vue';
 import BtnIcon from '../../components/BtnIcon.vue';
 import IconCog from '../../components/IconCog.vue';
 import ModalDialog from '../../components/ModalDialog.vue';
-import { getConfigurationHandler } from '../components/configurationHandler';
+import { getOptionsComponents } from '../components/optionsComponents';
 import { ConfigurationSettings } from '../configuration/ConfigurationSettings';
 
 const isOpen = ref(false);
 
-const configurationHandler = getConfigurationHandler();
+const { configurationHandler } = getOptionsComponents();
 
 const mimeTypeSetting = ref<MimeType | undefined>(undefined);
 const downloadAutomaticallySetting = ref<boolean>(false);

@@ -2,10 +2,12 @@ import { Ref, ref } from 'vue';
 import { MessageBus } from './MessageBus';
 import { RecordingMetadata } from './RecordingMetadata';
 
+export type RecordingsRef = Ref<RecordingMetadata[]>;
+
 export function createRecordingsRef(
   messageBus: MessageBus,
   startWithExistingRecordings?: true,
-): Ref<RecordingMetadata[]> {
+): RecordingsRef {
   const recordingMetadatas = ref<RecordingMetadata[]>([]);
 
   if (startWithExistingRecordings) {

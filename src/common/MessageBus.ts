@@ -16,8 +16,8 @@ import {
   MessageType,
 } from './Message';
 import { PubSub } from './PubSub';
+import { RecordingBlobAdded } from './RecordingBlobAdded';
 import { RecordingMetadata } from './RecordingMetadata';
-import { RecordingBlobAdded } from './types';
 
 export class MessageBus {
   private readonly discoverOptionsTabPubSub = new PubSub<void, number>();

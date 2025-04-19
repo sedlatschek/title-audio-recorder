@@ -1,5 +1,5 @@
+import { RecordingBlobAdded } from './RecordingBlobAdded';
 import { RecordingMetadata } from './RecordingMetadata';
-import { RecordingBlobAdded } from './types';
 
 export enum MessageType {
   DISCOVER_OPTIONS_TAB = 'DISCOVER_OPTIONS_TAB',

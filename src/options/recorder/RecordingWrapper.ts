@@ -5,8 +5,7 @@ import { getExtension } from '../../common/MimeType';
 import { PubSub } from '../../common/PubSub';
 import { RecordingMetadata } from '../../common/RecordingMetadata';
 import { UUID } from '../../common/types';
-import { getConfigurationHandler } from '../components/configurationHandler';
-import { getConverter } from '../components/converter';
+import { getOptionsComponents } from '../components/optionsComponents';
 import { Recording } from './Recording';
 import { RecordingBlob } from './RecordingBlob';
 
@@ -36,12 +35,12 @@ export class RecordingWrapper<T extends Recording> {
         throw Error('Recording blob is not available after it stopped');
       }
 
-      // add original blob
       this.recordingBlobs.push(this.recording.recordingBlob);
 
-      // convert to every available format and also add resulting blobs
+      const { converter } = getOptionsComponents();
+
       const blobs = await Promise.all(
-        this.recordingBlobs.map((blob) => getConverter().convert(blob.blob)),
+        this.recordingBlobs.map((blob) => converter.convert(blob.blob)),
       );
       this.recordingBlobs.push(...blobs.flat().map((blob) => new RecordingBlob(blob)));
     });
@@ -74,7 +73,8 @@ export class RecordingWrapper<T extends Recording> {
   }
 
   public async download(): Promise<void> {
-    const { downloadMimeTypes } = await getConfigurationHandler().getSettings();
+    const { configurationHandler } = getOptionsComponents();
+    const { downloadMimeTypes } = await configurationHandler.getSettings();
 
     await Promise.all(
       this.recordingBlobs
@@ -98,7 +98,8 @@ export class RecordingWrapper<T extends Recording> {
   }
 
   public async getRecordingMetadata(): Promise<RecordingMetadata> {
-    const { downloadMimeTypes } = await getConfigurationHandler().getSettings();
+    const { configurationHandler } = getOptionsComponents();
+    const { downloadMimeTypes } = await configurationHandler.getSettings();
     return {
       ...this.recording.getRecordingMetadata(),
       download: {

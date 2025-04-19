@@ -1,7 +1,7 @@
 import { EventArray } from '../../common/EventArray';
 import { PubSub } from '../../common/PubSub';
+import { RecordingBlobAdded } from '../../common/RecordingBlobAdded';
 import { RecordingMetadata } from '../../common/RecordingMetadata';
-import { RecordingBlobAdded } from '../../common/types';
 import { Recording } from './Recording';
 import { RecordingBlob } from './RecordingBlob';
 import { RecordingSession } from './RecordingSession';

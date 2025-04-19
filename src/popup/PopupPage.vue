@@ -5,18 +5,18 @@
         tag="button"
         color="primary"
         :title="buttonTitle"
-        :disabled="!tosLatestVersionAccepted.value"
+        :disabled="!tosAccepted"
         @click="start">
-        <IconCaretLeft v-if="currentRecordings.length > 0" />
+        <IconCaretLeft v-if="currentTabRecordings.length > 0" />
         <IconCircle v-else />
         <span class="ms-2">{{ buttonTitle }}</span>
       </BtnText>
     </div>
     <div
-      v-if="currentRecordings.length > 0"
+      v-if="currentTabRecordings.length > 0"
       class="mt-4">
       <RecordingWidget
-        v-for="recording in currentRecordings"
+        v-for="recording in currentTabRecordings"
         :key="recording.id"
         :message-bus="messageBus"
         padding="sm"
@@ -31,20 +31,22 @@ import RecordingWidget from '../common/RecordingWidget.vue';
 import BtnText from '../components/BtnText.vue';
 import IconCaretLeft from '../components/IconCaretLeft.vue';
 import IconCircle from '../components/IconCircle.vue';
+import { getPopupComponents } from './popupComponents';
 import { PopupPageProps } from './PopupPageProps';
 
+const { messageBus, recordings, tosAccepted } = getPopupComponents();
 const props = defineProps<PopupPageProps>();
 
 function start(): Promise<void> {
-  return props.messageBus.startRecording(props.tabId);
+  return messageBus.startRecording(props.tabId);
 }
 
-const currentRecordings = computed(() =>
-  props.recordings.value.filter((r) => r.tabId === props.tabId && !r.stoppedAtTs),
+const currentTabRecordings = computed(() =>
+  recordings.value.filter((r) => r.tabId === props.tabId && !r.stoppedAtTs),
 );
 
 const buttonTitle = computed(() =>
-  currentRecordings.value.length > 0 ? 'Restart recording' : 'Start recording',
+  currentTabRecordings.value.length > 0 ? 'Restart recording' : 'Start recording',
 );
 </script>
 

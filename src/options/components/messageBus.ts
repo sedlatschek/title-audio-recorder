@@ -4,18 +4,10 @@ import { RecordingMetadata } from '../../common/RecordingMetadata';
 import { Recorder } from '../recorder/Recorder';
 import { Recording } from '../recorder/Recording';
 import { RecordingSession } from '../recorder/RecordingSession';
-import { getRecorder } from './recorder';
 
-let messageBus: MessageBus | undefined;
-
-export function getMessageBus(): MessageBus {
-  if (messageBus === undefined) {
-    messageBus = createMessageBus(getRecorder());
-  }
-  return messageBus;
-}
-
-function createMessageBus(recorder: Recorder<RecordingSession<Recording>, Recording>): MessageBus {
+export function createMessageBus(
+  recorder: Recorder<RecordingSession<Recording>, Recording>,
+): MessageBus {
   const messageBus = new MessageBus('Options');
 
   messageBus.onDiscoverOptionsTab(() => {

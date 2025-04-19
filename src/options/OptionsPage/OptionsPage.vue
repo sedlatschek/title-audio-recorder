@@ -57,24 +57,19 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { createRecordingsRef } from '../../common/recordingsRef';
 import RecordingWidget from '../../common/RecordingWidget.vue';
 import AlertBanner from '../../components/AlertBanner.vue';
 import BtnIcon from '../../components/BtnIcon.vue';
 import IconArrowDown from '../../components/IconArrowDown.vue';
 import IconCode from '../../components/IconCode.vue';
 import IconTrash from '../../components/IconTrash.vue';
-import { getAutoDownloader } from '../components/autoDownloader';
-import { getMessageBus } from '../components/messageBus';
+import { getOptionsComponents } from '../components/optionsComponents';
 import SettingsModal from './ConfiguratonModal.vue';
 import HeartFooter from './HeartFooter.vue';
 import LicenseModal from './LicenseModal.vue';
 import TosModal from './TosModal.vue';
 
-const messageBus = getMessageBus();
-getAutoDownloader();
-
-const recordings = createRecordingsRef(messageBus);
+const { messageBus, recordings } = getOptionsComponents();
 
 const hasRecordings = computed(() => recordings.value.length > 0);
 

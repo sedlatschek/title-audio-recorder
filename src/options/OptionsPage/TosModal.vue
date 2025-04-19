@@ -13,10 +13,10 @@
 
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
-import { getTosHandler } from '../../common/components/tos/tosHandler';
 import ModalDialog from '../../components/ModalDialog.vue';
+import { getOptionsComponents } from '../components/optionsComponents';
 
-const tosHandler = getTosHandler();
+const { tosHandler } = getOptionsComponents();
 const latestVersion = tosHandler.getLatestTosVersion();
 const LatestTosVersion = latestVersion.component;
 

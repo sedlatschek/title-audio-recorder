@@ -1,9 +1,9 @@
 import { ref, Ref } from 'vue';
-import { TosHandler } from '../../../options/tos/TosHandler';
+import { TosHandler } from '../options/tos/TosHandler';
 
-export async function createTosLatestVersionAcceptedRef(
-  tosHandler: TosHandler,
-): Promise<Ref<boolean>> {
+export type TosAcceptedRef = Ref<boolean>;
+
+export async function createTosAcceptedRef(tosHandler: TosHandler): Promise<TosAcceptedRef> {
   const latestTosVersion = tosHandler.getLatestTosVersion();
   const latestTosVersionAccepted = ref(await tosHandler.isAccepted(latestTosVersion));
 
