@@ -10,19 +10,19 @@ export function createRecordingsRef(
 
   if (startWithExistingRecordings) {
     messageBus.getRecordings().then((recordings) => {
-      console.debug('[recordingsState] got existing recordings', recordings);
+      console.debug('[recordingsRef] got existing recordings', recordings);
       recordingMetadatas.value.push(...recordings);
     });
   }
 
   messageBus.onRecordingAdded((recording: RecordingMetadata): Promise<void> => {
-    console.debug('[recordingsState] recording was added', recording);
+    console.debug('[recordingsRef] recording was added', recording);
     recordingMetadatas.value.push(recording);
     return Promise.resolve();
   });
 
   messageBus.onRecordingUpdated((recording: RecordingMetadata): Promise<void> => {
-    console.debug('[recordingsState] recording was updated', recording);
+    console.debug('[recordingsRef] recording was updated', recording);
 
     const index = recordingMetadatas.value.findIndex((r) => r.id === recording.id);
     if (index !== -1) {
