@@ -34,6 +34,7 @@
       </BtnIcon>
     </div>
   </header>
+  <TosModal />
   <main v-if="hasRecordings">
     <TransitionGroup name="list">
       <RecordingWidget
@@ -68,6 +69,7 @@ import { getMessageBus } from '../components/messageBus';
 import SettingsModal from './ConfiguratonModal.vue';
 import HeartFooter from './HeartFooter.vue';
 import LicenseModal from './LicenseModal.vue';
+import TosModal from './TosModal.vue';
 
 const messageBus = getMessageBus();
 getAutoDownloader();

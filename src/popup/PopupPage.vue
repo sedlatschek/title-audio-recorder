@@ -5,6 +5,7 @@
         tag="button"
         color="primary"
         :title="buttonTitle"
+        :disabled="!tosLatestVersionAccepted.value"
         @click="start">
         <IconCaretLeft v-if="currentRecordings.length > 0" />
         <IconCircle v-else />
@@ -26,26 +27,20 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { MessageBus } from '../common/MessageBus';
-import { createRecordingsRef } from '../common/recordingsRef';
 import RecordingWidget from '../common/RecordingWidget.vue';
 import BtnText from '../components/BtnText.vue';
 import IconCaretLeft from '../components/IconCaretLeft.vue';
 import IconCircle from '../components/IconCircle.vue';
+import { PopupPageProps } from './PopupPageProps';
 
-const props = defineProps<{
-  messageBus: MessageBus;
-  tabId: number;
-}>();
+const props = defineProps<PopupPageProps>();
 
 function start(): Promise<void> {
   return props.messageBus.startRecording(props.tabId);
 }
 
-const recordings = createRecordingsRef(props.messageBus, true);
-
 const currentRecordings = computed(() =>
-  recordings.value.filter((r) => r.tabId === props.tabId && !r.stoppedAtTs),
+  props.recordings.value.filter((r) => r.tabId === props.tabId && !r.stoppedAtTs),
 );
 
 const buttonTitle = computed(() =>
