@@ -2,7 +2,7 @@ import { RecordingMetadata } from '../../common/RecordingMetadata';
 import { UUID } from '../../common/types';
 import { RecordingBlob } from './RecordingBlob';
 
-export type RecordingMetadataWithoutDownloads = Omit<RecordingMetadata, 'downloads'>;
+export type RecordingMetadataWithoutDownload = Omit<RecordingMetadata, 'download'>;
 
 export interface Recording {
   readonly id: UUID;
@@ -10,5 +10,5 @@ export interface Recording {
   readonly recordingBlob: RecordingBlob | undefined;
   start(): Promise<void>;
   stop(): Promise<void>;
-  getRecordingMetadata(): RecordingMetadataWithoutDownloads;
+  getRecordingMetadata(): RecordingMetadataWithoutDownload;
 }

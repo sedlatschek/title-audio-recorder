@@ -55,9 +55,9 @@
             </BtnIcon>
             <BtnIcon
               tag="button"
-              :color="downloadCounter <= 0 ? 'primary' : 'secondary'"
+              :color="props.recording.download.count <= 0 ? 'primary' : 'secondary'"
               title="Download recording"
-              :disabled="props.recording.downloads.length < 1"
+              :disabled="!props.recording.download.available"
               @click="download">
               <IconArrowDown />
             </BtnIcon>
@@ -69,14 +69,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 import BtnIcon from '../components/BtnIcon.vue';
 import DateText from '../components/DateText.vue';
 import DurationText from '../components/DurationText.vue';
 import IconArrowDown from '../components/IconArrowDown.vue';
 import IconRectangle from '../components/IconRectangle.vue';
 import IconTrash from '../components/IconTrash.vue';
-import { downloadRecording } from './download';
 import { MessageBus } from './MessageBus';
 import RecordingImage from './RecordingImage.vue';
 import { RecordingMetadata } from './RecordingMetadata';
@@ -95,10 +93,8 @@ function stop(): Promise<void> {
   return props.messageBus.stopRecording(props.recording);
 }
 
-const downloadCounter = ref(0);
 async function download(): Promise<void> {
-  await downloadRecording(props.recording);
-  downloadCounter.value++;
+  return props.messageBus.downloadRecording(props.recording);
 }
 </script>
 

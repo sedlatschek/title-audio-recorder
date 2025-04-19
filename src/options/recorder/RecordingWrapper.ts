@@ -1,10 +1,12 @@
+import sanitize from 'sanitize-filename';
+import browser from 'webextension-polyfill';
 import { EventArray } from '../../common/EventArray';
+import { getExtension } from '../../common/MimeType';
 import { PubSub } from '../../common/PubSub';
-import { RecordingDownload, RecordingMetadata } from '../../common/RecordingMetadata';
+import { RecordingMetadata } from '../../common/RecordingMetadata';
 import { UUID } from '../../common/types';
 import { getConfigurationHandler } from '../components/configurationHandler';
 import { getConverter } from '../components/converter';
-import { getDownloadFromBlob } from './mapper';
 import { Recording } from './Recording';
 import { RecordingBlob } from './RecordingBlob';
 
@@ -13,8 +15,10 @@ export class RecordingWrapper<T extends Recording> {
   private readonly startedPubSub = new PubSub<void, void>();
   private readonly stoppedPubSub = new PubSub<void, void>();
   private readonly updatedPubSub = new PubSub<void, void>();
-  private readonly downloadAddedPubSub = new PubSub<RecordingDownload, void>();
+  private readonly blobAddedPubSub = new PubSub<RecordingBlob, void>();
+
   public readonly id: UUID;
+  private downloadCount = 0;
 
   public constructor(private readonly recording: T) {
     this.id = recording.id;
@@ -23,7 +27,7 @@ export class RecordingWrapper<T extends Recording> {
       console.debug(`[RecordingWrapper]: recording ${this.id} has gained a blob`);
       await Promise.all([
         this.updatedPubSub.emit(),
-        ...recordingsBlobs.map((blob) => this.downloadAddedPubSub.emit(getDownloadFromBlob(blob))),
+        ...recordingsBlobs.map((blob) => this.blobAddedPubSub.emit(blob)),
       ]);
     });
 
@@ -55,8 +59,8 @@ export class RecordingWrapper<T extends Recording> {
     this.updatedPubSub.on(callback);
   }
 
-  public onDownloadAdded(callback: (download: RecordingDownload) => Promise<void>): void {
-    this.downloadAddedPubSub.on(callback);
+  public onBlobAdded(callback: (recordingBlob: RecordingBlob) => Promise<void>): void {
+    this.blobAddedPubSub.on(callback);
   }
 
   public async start(): Promise<void> {
@@ -67,6 +71,23 @@ export class RecordingWrapper<T extends Recording> {
   public async stop(): Promise<void> {
     await this.recording.stop();
     this.stoppedPubSub.emit();
+  }
+
+  public async download(): Promise<void> {
+    const { downloadMimeTypes } = await getConfigurationHandler().getSettings();
+
+    await Promise.all(
+      this.recordingBlobs
+        .filter((recordingBlob) => downloadMimeTypes.includes(recordingBlob.mimeType))
+        .map(async (recordingBlob) => {
+          this.downloadCount++;
+          await browser.downloads.download({
+            url: recordingBlob.url,
+            filename: `${sanitize(this.recording.getRecordingMetadata().title)}.${getExtension(recordingBlob.mimeType)}`,
+          });
+          await this.updatedPubSub.emit();
+        }),
+    );
   }
 
   public clear(): void {
@@ -80,11 +101,10 @@ export class RecordingWrapper<T extends Recording> {
     const { downloadMimeTypes } = await getConfigurationHandler().getSettings();
     return {
       ...this.recording.getRecordingMetadata(),
-      downloads: Array.from(
-        this.recordingBlobs
-          .filter((recordingBlob) => downloadMimeTypes.includes(recordingBlob.mimeType))
-          .map((recordingBlob) => getDownloadFromBlob(recordingBlob)),
-      ),
+      download: {
+        available: this.recordingBlobs.some((blob) => downloadMimeTypes.includes(blob.mimeType)),
+        count: this.downloadCount,
+      },
     };
   }
 }

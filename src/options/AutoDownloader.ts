@@ -1,4 +1,3 @@
-import { downloadRecording } from '../common/download';
 import { ConfigurationHandler } from './configuration/ConfigurationHandler';
 import { Recorder } from './recorder/Recorder';
 import { Recording } from './recorder/Recording';
@@ -13,19 +12,20 @@ export class AutoDownloader {
   }
 
   private listenForAutoDownload(): void {
-    this.recorder.onRecordingDownloadAdded(async ({ recording, recordingDownload }) => {
+    this.recorder.onRecordingBlobAdded(async ({ recording, recordingBlob }) => {
       const settings = await this.configurationHandler.getSettings();
 
       if (!settings.downloadAutomatically) {
         return;
       }
 
-      if (!settings.downloadMimeTypes.includes(recordingDownload.mimeType)) {
+      if (!settings.downloadMimeTypes.includes(recordingBlob.mimeType)) {
         return;
       }
 
       console.debug(`[AutoDownloader] downloading recording ${recording.id}`);
-      await downloadRecording(recording, recordingDownload);
+
+      await this.recorder.downloadRecording(recording);
     });
   }
 }

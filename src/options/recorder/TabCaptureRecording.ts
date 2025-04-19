@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
 import pRetry from 'p-retry';
 import { UUID } from '../../common/types';
-import { Recording, RecordingMetadataWithoutDownloads } from './Recording';
+import { Recording, RecordingMetadataWithoutDownload } from './Recording';
 import { RecordingBlob } from './RecordingBlob';
 
 export class TabCaptureRecording implements Recording {
@@ -83,7 +83,7 @@ export class TabCaptureRecording implements Recording {
     );
   }
 
-  public getRecordingMetadata(): RecordingMetadataWithoutDownloads {
+  public getRecordingMetadata(): RecordingMetadataWithoutDownload {
     return {
       id: this.id,
       tabId: this.tabId,

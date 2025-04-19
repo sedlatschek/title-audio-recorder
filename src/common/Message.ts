@@ -1,14 +1,16 @@
-import { RecordingDownload, RecordingMetadata } from './RecordingMetadata';
+import { RecordingBlob } from '../options/recorder/RecordingBlob';
+import { RecordingMetadata } from './RecordingMetadata';
 
 export enum MessageType {
   DISCOVER_OPTIONS_TAB = 'DISCOVER_OPTIONS_TAB',
   GET_RECORDINGS = 'GET_RECORDINGS',
   START_RECORDING = 'START_RECORDING',
   STOP_RECORDING = 'STOP_RECORDING',
+  DOWNLOAD_RECORDING = 'DOWNLOAD_RECORDING',
   REMOVE_RECORDING = 'REMOVE_RECORDING',
   RECORDING_ADDED = 'RECORDING_ADDED',
   RECORDING_UPDATED = 'RECORDING_UPDATED',
-  RECORDING_DOWNLOAD_ADDED = 'RECORDING_DOWNLOAD_ADDED',
+  RECORDING_BLOB_ADDED = 'RECORDING_BLOB_ADDED',
   RECORDING_REMOVED = 'RECORDING_REMOVED',
   TAB_TITLE_CHANGED = 'TAB_TITLE_CHANGED',
 }
@@ -40,6 +42,15 @@ export function isStopRecordingMessage(message: unknown): message is StopRecordi
   return isMessage(message) && message.messageType === MessageType.STOP_RECORDING;
 }
 
+export type DownloadRecordingMessage = {
+  messageType: MessageType.DOWNLOAD_RECORDING;
+  recording: RecordingMetadata;
+};
+
+export function isDownloadRecordingMessage(message: unknown): message is DownloadRecordingMessage {
+  return isMessage(message) && message.messageType === MessageType.DOWNLOAD_RECORDING;
+}
+
 export type RemoveRecordingMessage = {
   messageType: MessageType.REMOVE_RECORDING;
   recording: RecordingMetadata;
@@ -67,16 +78,16 @@ export function isRecordingUpdatedMessage(message: unknown): message is Recordin
   return isMessage(message) && message.messageType === MessageType.RECORDING_UPDATED;
 }
 
-export type RecordingDownloadAddedMessage = {
-  messageType: MessageType.RECORDING_DOWNLOAD_ADDED;
+export type RecordingBlobAddedMessage = {
+  messageType: MessageType.RECORDING_BLOB_ADDED;
   recording: RecordingMetadata;
-  recordingDownload: RecordingDownload;
+  recordingBlob: RecordingBlob;
 };
 
-export function isRecordingDownloadAddedMessage(
+export function isRecordingBlobAddedMessage(
   message: unknown,
-): message is RecordingDownloadAddedMessage {
-  return isMessage(message) && message.messageType === MessageType.RECORDING_DOWNLOAD_ADDED;
+): message is RecordingBlobAddedMessage {
+  return isMessage(message) && message.messageType === MessageType.RECORDING_BLOB_ADDED;
 }
 
 export type RecordingRemovedMessage = {
@@ -129,9 +140,10 @@ export type Message =
   | GetRecordingsMessage
   | StartRecordingMessage
   | StopRecordingMessage
+  | DownloadRecordingMessage
   | RemoveRecordingMessage
   | RecordingAddedMessage
   | RecordingUpdatedMessage
-  | RecordingDownloadAddedMessage
+  | RecordingBlobAddedMessage
   | RecordingRemovedMessage
   | TabTitleChangedMessage;

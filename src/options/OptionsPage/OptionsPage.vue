@@ -56,7 +56,6 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { downloadRecording } from '../../common/download';
 import { createRecordingsRef } from '../../common/recordingsRef';
 import RecordingWidget from '../../common/RecordingWidget.vue';
 import AlertBanner from '../../components/AlertBanner.vue';
@@ -79,8 +78,7 @@ const hasRecordings = computed(() => recordings.value.length > 0);
 
 const hasDownloads = computed(
   () =>
-    hasRecordings.value &&
-    sortedRecordings.value.some((recording) => recording.downloads.length > 0),
+    hasRecordings.value && sortedRecordings.value.some((recording) => recording.download.available),
 );
 
 const sortedRecordings = computed(() => {
@@ -90,7 +88,9 @@ const sortedRecordings = computed(() => {
 });
 
 async function downloadAllRecordings(): Promise<void> {
-  await Promise.all(sortedRecordings.value.map((recording) => downloadRecording(recording)));
+  await Promise.all(
+    sortedRecordings.value.map((recording) => messageBus.downloadRecording(recording)),
+  );
 }
 
 async function removeAllRecordings(): Promise<void> {

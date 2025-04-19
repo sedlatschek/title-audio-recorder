@@ -1,8 +1,9 @@
 import { EventArray } from '../../common/EventArray';
 import { PubSub } from '../../common/PubSub';
-import { RecordingDownload, RecordingMetadata } from '../../common/RecordingMetadata';
-import { RecordingDownloadAdded } from '../../common/types';
+import { RecordingMetadata } from '../../common/RecordingMetadata';
+import { RecordingBlobAdded } from '../../common/types';
 import { Recording } from './Recording';
+import { RecordingBlob } from './RecordingBlob';
 import { RecordingSession } from './RecordingSession';
 import { RecordingSessionWrapper } from './RecordingSessionWrapper';
 import { RecordingWrapper } from './RecordingWrapper';
@@ -10,7 +11,7 @@ import { RecordingWrapper } from './RecordingWrapper';
 export class Recorder<T extends RecordingSession<R>, R extends Recording> {
   private recordingAddedPubSub = new PubSub<RecordingMetadata, void>();
   private recordingUpdatedPubSub = new PubSub<RecordingMetadata, void>();
-  private recordingBlobAddedPubSub = new PubSub<RecordingDownloadAdded, void>();
+  private recordingBlobAddedPubSub = new PubSub<RecordingBlobAdded, void>();
   private recordingRemovedPubSub = new PubSub<RecordingMetadata, void>();
 
   private recordingSessionWrappers: RecordingSessionWrapper<T, R>[] = [];
@@ -35,12 +36,7 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
     this.recordingUpdatedPubSub.on(callback);
   }
 
-  onRecordingDownloadAdded(
-    callback: (args: {
-      recording: RecordingMetadata;
-      recordingDownload: RecordingDownload;
-    }) => Promise<void>,
-  ): void {
+  onRecordingBlobAdded(callback: (recordingBlobAdded: RecordingBlobAdded) => Promise<void>): void {
     this.recordingBlobAddedPubSub.on(callback);
   }
 
@@ -66,15 +62,13 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
     recordingWrapper.onStopped(update);
     recordingWrapper.onUpdated(update);
 
-    recordingWrapper.onDownloadAdded(
-      async (recordingDownload: RecordingDownload): Promise<void> => {
-        const recordingMetadata = await recordingWrapper.getRecordingMetadata();
-        this.recordingBlobAddedPubSub.emit({
-          recording: recordingMetadata,
-          recordingDownload,
-        });
-      },
-    );
+    recordingWrapper.onBlobAdded(async (recordingBlob: RecordingBlob): Promise<void> => {
+      const recordingMetadata = await recordingWrapper.getRecordingMetadata();
+      this.recordingBlobAddedPubSub.emit({
+        recording: recordingMetadata,
+        recordingBlob,
+      });
+    });
   }
 
   private getRunningRecordingSessionWrapper(
@@ -126,6 +120,12 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
     const recordingWrapper = this.getRecordingWrapper(recordingMetadata);
     await recordingWrapper.stop();
     await this.stopRecordingSessions(recordingMetadata.tabId);
+  }
+
+  public async downloadRecording(recordingMetadata: RecordingMetadata): Promise<void> {
+    console.debug(`[Recorder] download recording ${recordingMetadata.id}`);
+    const recordingWrapper = this.getRecordingWrapper(recordingMetadata);
+    await recordingWrapper.download();
   }
 
   public async removeRecording(recordingMetadata: RecordingMetadata): Promise<void> {

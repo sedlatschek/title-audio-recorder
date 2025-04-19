@@ -34,6 +34,10 @@ function createMessageBus(recorder: Recorder<RecordingSession<Recording>, Record
     return recorder.stopRecording(recordingMetadata);
   });
 
+  messageBus.onDownloadRecording((recordingMetadata: RecordingMetadata) => {
+    return recorder.downloadRecording(recordingMetadata);
+  });
+
   messageBus.onRemoveRecording((recordingMetadata: RecordingMetadata) => {
     return recorder.removeRecording(recordingMetadata);
   });
@@ -51,8 +55,8 @@ function createMessageBus(recorder: Recorder<RecordingSession<Recording>, Record
     await messageBus.recordingUpdated(recordingMetadata);
   });
 
-  recorder.onRecordingDownloadAdded(async ({ recording, recordingDownload }) => {
-    await messageBus.recordingDownloadAdded({ recording, recordingDownload });
+  recorder.onRecordingBlobAdded(async ({ recording, recordingBlob }) => {
+    await messageBus.recordingBlobAdded({ recording, recordingBlob });
   });
 
   recorder.onRecordingRemoved(async (recordingMetadata) => {

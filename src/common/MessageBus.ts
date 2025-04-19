@@ -2,9 +2,10 @@ import browser from 'webextension-polyfill';
 import {
   EnrichedTabTitleChangeMessageTab,
   isDiscoverOptionsTabMessage,
+  isDownloadRecordingMessage,
   isGetRecordingsMessage,
   isRecordingAddedMessage,
-  isRecordingDownloadAddedMessage,
+  isRecordingBlobAddedMessage,
   isRecordingRemovedMessage,
   isRecordingUpdatedMessage,
   isRemoveRecordingMessage,
@@ -16,17 +17,18 @@ import {
 } from './Message';
 import { PubSub } from './PubSub';
 import { RecordingMetadata } from './RecordingMetadata';
-import { RecordingDownloadAdded } from './types';
+import { RecordingBlobAdded } from './types';
 
 export class MessageBus {
   private readonly discoverOptionsTabPubSub = new PubSub<void, number>();
   private readonly getRecordingsPubSub = new PubSub<void, RecordingMetadata[]>();
   private readonly startRecordingPubSub = new PubSub<number, void>();
   private readonly stopRecordingPubSub = new PubSub<RecordingMetadata, void>();
+  private readonly downloadRecordingPubSub = new PubSub<RecordingMetadata, void>();
   private readonly removeRecordingPubSub = new PubSub<RecordingMetadata, void>();
   private readonly recordingAddedPubSub = new PubSub<RecordingMetadata, void>();
   private readonly recordingUpdatedPubSub = new PubSub<RecordingMetadata, void>();
-  private readonly recordingDownloadAddedPubSub = new PubSub<RecordingDownloadAdded, void>();
+  private readonly recordingBlobAddedPubSub = new PubSub<RecordingBlobAdded, void>();
   private readonly recordingRemovedPubSub = new PubSub<RecordingMetadata, void>();
   private readonly tabTitleChangedPubSub = new PubSub<EnrichedTabTitleChangeMessageTab, void>();
 
@@ -52,14 +54,16 @@ export class MessageBus {
       this.startRecordingPubSub.emit(message.tabId);
     } else if (isStopRecordingMessage(message)) {
       this.stopRecordingPubSub.emit(message.recording);
+    } else if (isDownloadRecordingMessage(message)) {
+      this.downloadRecordingPubSub.emit(message.recording);
     } else if (isRemoveRecordingMessage(message)) {
       this.removeRecordingPubSub.emit(message.recording);
     } else if (isRecordingAddedMessage(message)) {
       this.recordingAddedPubSub.emit(message.recording);
     } else if (isRecordingUpdatedMessage(message)) {
       this.recordingUpdatedPubSub.emit(message.recording);
-    } else if (isRecordingDownloadAddedMessage(message)) {
-      this.recordingDownloadAddedPubSub.emit(message);
+    } else if (isRecordingBlobAddedMessage(message)) {
+      this.recordingBlobAddedPubSub.emit(message);
     } else if (isRecordingRemovedMessage(message)) {
       this.recordingRemovedPubSub.emit(message.recording);
     } else if (isTabTitleChangedMessage(message)) {
@@ -152,6 +156,17 @@ export class MessageBus {
     });
   }
 
+  public onDownloadRecording(callback: (recording: RecordingMetadata) => Promise<void>): void {
+    this.downloadRecordingPubSub.on(callback);
+  }
+
+  public async downloadRecording(recording: RecordingMetadata): Promise<void> {
+    await this.request<RecordingMetadata, void>(this.downloadRecordingPubSub, recording, {
+      messageType: MessageType.DOWNLOAD_RECORDING,
+      recording,
+    });
+  }
+
   public onRemoveRecording(callback: (recording: RecordingMetadata) => Promise<void>): void {
     this.removeRecordingPubSub.on(callback);
   }
@@ -185,23 +200,23 @@ export class MessageBus {
     });
   }
 
-  public async recordingDownloadAdded(recordingAdded: RecordingDownloadAdded): Promise<void> {
-    const { recording, recordingDownload } = recordingAdded;
-    await this.request<RecordingDownloadAdded, void>(
-      this.recordingDownloadAddedPubSub,
-      recordingAdded,
+  public async recordingBlobAdded(recordingBlobAdded: RecordingBlobAdded): Promise<void> {
+    const { recording, recordingBlob } = recordingBlobAdded;
+    await this.request<RecordingBlobAdded, void>(
+      this.recordingBlobAddedPubSub,
+      recordingBlobAdded,
       {
-        messageType: MessageType.RECORDING_DOWNLOAD_ADDED,
+        messageType: MessageType.RECORDING_BLOB_ADDED,
         recording,
-        recordingDownload,
+        recordingBlob,
       },
     );
   }
 
   public onRecordingDownloadAdded(
-    callback: (downloadAdded: RecordingDownloadAdded) => Promise<void>,
+    callback: (downloadAdded: RecordingBlobAdded) => Promise<void>,
   ): void {
-    this.recordingDownloadAddedPubSub.on(callback);
+    this.recordingBlobAddedPubSub.on(callback);
   }
 
   public onRecordingRemoved(callback: (recording: RecordingMetadata) => Promise<void>): void {
