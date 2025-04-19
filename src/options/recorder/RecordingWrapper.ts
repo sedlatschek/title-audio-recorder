@@ -1,10 +1,10 @@
 import { EventArray } from '../../common/EventArray';
-import { getExtension } from '../../common/MimeType';
 import { PubSub } from '../../common/PubSub';
-import { RecordingMetadata } from '../../common/RecordingMetadata';
+import { RecordingDownload, RecordingMetadata } from '../../common/RecordingMetadata';
 import { UUID } from '../../common/types';
 import { getConfigurationHandler } from '../components/configurationHandler';
 import { getConverter } from '../components/converter';
+import { getDownloadFromBlob } from './mapper';
 import { Recording } from './Recording';
 import { RecordingBlob } from './RecordingBlob';
 
@@ -13,15 +13,18 @@ export class RecordingWrapper<T extends Recording> {
   private readonly startedPubSub = new PubSub<void, void>();
   private readonly stoppedPubSub = new PubSub<void, void>();
   private readonly updatedPubSub = new PubSub<void, void>();
+  private readonly downloadAddedPubSub = new PubSub<RecordingDownload, void>();
   public readonly id: UUID;
 
   public constructor(private readonly recording: T) {
     this.id = recording.id;
 
-    this.recordingBlobs.onPush((): Promise<void> => {
-      console.debug(`[RecordingWrapper]: recording ${this.id} gained a blob`);
-      this.updatedPubSub.emit();
-      return Promise.resolve();
+    this.recordingBlobs.onPush(async (recordingsBlobs: RecordingBlob[]): Promise<void> => {
+      console.debug(`[RecordingWrapper]: recording ${this.id} has gained a blob`);
+      await Promise.all([
+        this.updatedPubSub.emit(),
+        ...recordingsBlobs.map((blob) => this.downloadAddedPubSub.emit(getDownloadFromBlob(blob))),
+      ]);
     });
 
     this.onStopped(async () => {
@@ -52,6 +55,10 @@ export class RecordingWrapper<T extends Recording> {
     this.updatedPubSub.on(callback);
   }
 
+  public onDownloadAdded(callback: (download: RecordingDownload) => Promise<void>): void {
+    this.downloadAddedPubSub.on(callback);
+  }
+
   public async start(): Promise<void> {
     await this.recording.start();
     this.startedPubSub.emit();
@@ -75,12 +82,8 @@ export class RecordingWrapper<T extends Recording> {
       ...this.recording.getRecordingMetadata(),
       downloads: Array.from(
         this.recordingBlobs
-          .filter((blob) => downloadMimeTypes.includes(blob.mimeType))
-          .map((blob) => ({
-            mimeType: blob.mimeType,
-            url: blob.url,
-            extension: getExtension(blob.mimeType),
-          })),
+          .filter((recordingBlob) => downloadMimeTypes.includes(recordingBlob.mimeType))
+          .map((recordingBlob) => getDownloadFromBlob(recordingBlob)),
       ),
     };
   }

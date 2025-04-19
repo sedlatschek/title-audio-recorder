@@ -4,6 +4,7 @@ import {
   isDiscoverOptionsTabMessage,
   isGetRecordingsMessage,
   isRecordingAddedMessage,
+  isRecordingDownloadAddedMessage,
   isRecordingRemovedMessage,
   isRecordingUpdatedMessage,
   isRemoveRecordingMessage,
@@ -15,6 +16,7 @@ import {
 } from './Message';
 import { PubSub } from './PubSub';
 import { RecordingMetadata } from './RecordingMetadata';
+import { RecordingDownloadAdded } from './types';
 
 export class MessageBus {
   private readonly discoverOptionsTabPubSub = new PubSub<void, number>();
@@ -24,6 +26,7 @@ export class MessageBus {
   private readonly removeRecordingPubSub = new PubSub<RecordingMetadata, void>();
   private readonly recordingAddedPubSub = new PubSub<RecordingMetadata, void>();
   private readonly recordingUpdatedPubSub = new PubSub<RecordingMetadata, void>();
+  private readonly recordingDownloadAddedPubSub = new PubSub<RecordingDownloadAdded, void>();
   private readonly recordingRemovedPubSub = new PubSub<RecordingMetadata, void>();
   private readonly tabTitleChangedPubSub = new PubSub<EnrichedTabTitleChangeMessageTab, void>();
 
@@ -55,6 +58,8 @@ export class MessageBus {
       this.recordingAddedPubSub.emit(message.recording);
     } else if (isRecordingUpdatedMessage(message)) {
       this.recordingUpdatedPubSub.emit(message.recording);
+    } else if (isRecordingDownloadAddedMessage(message)) {
+      this.recordingDownloadAddedPubSub.emit(message);
     } else if (isRecordingRemovedMessage(message)) {
       this.recordingRemovedPubSub.emit(message.recording);
     } else if (isTabTitleChangedMessage(message)) {
@@ -178,6 +183,25 @@ export class MessageBus {
       messageType: MessageType.RECORDING_UPDATED,
       recording,
     });
+  }
+
+  public async recordingDownloadAdded(recordingAdded: RecordingDownloadAdded): Promise<void> {
+    const { recording, recordingDownload } = recordingAdded;
+    await this.request<RecordingDownloadAdded, void>(
+      this.recordingDownloadAddedPubSub,
+      recordingAdded,
+      {
+        messageType: MessageType.RECORDING_DOWNLOAD_ADDED,
+        recording,
+        recordingDownload,
+      },
+    );
+  }
+
+  public onRecordingDownloadAdded(
+    callback: (downloadAdded: RecordingDownloadAdded) => Promise<void>,
+  ): void {
+    this.recordingDownloadAddedPubSub.on(callback);
   }
 
   public onRecordingRemoved(callback: (recording: RecordingMetadata) => Promise<void>): void {

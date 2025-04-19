@@ -1,9 +1,12 @@
 import sanitize from 'sanitize-filename';
 import browser from 'webextension-polyfill';
-import { RecordingMetadata } from './RecordingMetadata';
+import { RecordingDownload, RecordingMetadata } from './RecordingMetadata';
 
-export function downloadRecording(recording: RecordingMetadata): Promise<number> {
-  const download = recording.downloads[0];
+export function downloadRecording(
+  recording: RecordingMetadata,
+  recordingDownload?: RecordingDownload,
+): Promise<number> {
+  const download = recordingDownload ?? recording.downloads[0];
   if (!download) {
     throw new Error(`Recording ${recording.id} has no downloads`);
   }

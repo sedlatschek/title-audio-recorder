@@ -64,12 +64,15 @@ import BtnIcon from '../../components/BtnIcon.vue';
 import IconArrowDown from '../../components/IconArrowDown.vue';
 import IconCode from '../../components/IconCode.vue';
 import IconTrash from '../../components/IconTrash.vue';
+import { getAutoDownloader } from '../components/autoDownloader';
 import { getMessageBus } from '../components/messageBus';
 import SettingsModal from './ConfiguratonModal.vue';
 import HeartFooter from './HeartFooter.vue';
 import LicenseModal from './LicenseModal.vue';
 
 const messageBus = getMessageBus();
+getAutoDownloader();
+
 const recordings = createRecordingsRef(messageBus);
 
 const hasRecordings = computed(() => recordings.value.length > 0);

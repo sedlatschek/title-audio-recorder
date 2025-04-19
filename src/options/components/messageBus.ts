@@ -51,6 +51,10 @@ function createMessageBus(recorder: Recorder<RecordingSession<Recording>, Record
     await messageBus.recordingUpdated(recordingMetadata);
   });
 
+  recorder.onRecordingDownloadAdded(async ({ recording, recordingDownload }) => {
+    await messageBus.recordingDownloadAdded({ recording, recordingDownload });
+  });
+
   recorder.onRecordingRemoved(async (recordingMetadata) => {
     await messageBus.recordingRemoved(recordingMetadata);
   });

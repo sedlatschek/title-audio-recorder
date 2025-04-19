@@ -1,4 +1,4 @@
-import { RecordingMetadata } from './RecordingMetadata';
+import { RecordingDownload, RecordingMetadata } from './RecordingMetadata';
 
 export enum MessageType {
   DISCOVER_OPTIONS_TAB = 'DISCOVER_OPTIONS_TAB',
@@ -8,6 +8,7 @@ export enum MessageType {
   REMOVE_RECORDING = 'REMOVE_RECORDING',
   RECORDING_ADDED = 'RECORDING_ADDED',
   RECORDING_UPDATED = 'RECORDING_UPDATED',
+  RECORDING_DOWNLOAD_ADDED = 'RECORDING_DOWNLOAD_ADDED',
   RECORDING_REMOVED = 'RECORDING_REMOVED',
   TAB_TITLE_CHANGED = 'TAB_TITLE_CHANGED',
 }
@@ -66,6 +67,18 @@ export function isRecordingUpdatedMessage(message: unknown): message is Recordin
   return isMessage(message) && message.messageType === MessageType.RECORDING_UPDATED;
 }
 
+export type RecordingDownloadAddedMessage = {
+  messageType: MessageType.RECORDING_DOWNLOAD_ADDED;
+  recording: RecordingMetadata;
+  recordingDownload: RecordingDownload;
+};
+
+export function isRecordingDownloadAddedMessage(
+  message: unknown,
+): message is RecordingDownloadAddedMessage {
+  return isMessage(message) && message.messageType === MessageType.RECORDING_DOWNLOAD_ADDED;
+}
+
 export type RecordingRemovedMessage = {
   messageType: MessageType.RECORDING_REMOVED;
   recording: RecordingMetadata;
@@ -119,5 +132,6 @@ export type Message =
   | RemoveRecording
   | RecordingAddedMessage
   | RecordingUpdatedMessage
+  | RecordingDownloadAddedMessage
   | RecordingRemovedMessage
   | TabTitleChangedMessage;
