@@ -1,4 +1,4 @@
-import { AutoDownloader } from '../autoDownloader';
+import { AutoDownloader } from '../AutoDownloader';
 import { getConfigurationHandler } from './configurationHandler';
 import { getRecorder } from './recorder';
 
