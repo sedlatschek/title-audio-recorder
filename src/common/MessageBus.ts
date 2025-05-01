@@ -14,6 +14,7 @@ import {
   isTabTitleChangedMessage,
   Message,
   MessageType,
+  StartRecordingMessagePayload,
 } from './Message';
 import { PubSub } from './PubSub';
 import { RecordingBlobAdded } from './RecordingBlobAdded';
@@ -22,7 +23,7 @@ import { RecordingMetadata } from './RecordingMetadata';
 export class MessageBus {
   private readonly discoverOptionsTabPubSub = new PubSub<void, number>();
   private readonly getRecordingsPubSub = new PubSub<void, RecordingMetadata[]>();
-  private readonly startRecordingPubSub = new PubSub<number, void>();
+  private readonly startRecordingPubSub = new PubSub<StartRecordingMessagePayload, void>();
   private readonly stopRecordingPubSub = new PubSub<RecordingMetadata, void>();
   private readonly downloadRecordingPubSub = new PubSub<RecordingMetadata, void>();
   private readonly removeRecordingPubSub = new PubSub<RecordingMetadata, void>();
@@ -51,7 +52,7 @@ export class MessageBus {
     } else if (isGetRecordingsMessage(message)) {
       return this.respond(this.getRecordingsPubSub.emit(), sendResponse);
     } else if (isStartRecordingMessage(message)) {
-      this.startRecordingPubSub.emit(message.tabId);
+      this.startRecordingPubSub.emit(message);
     } else if (isStopRecordingMessage(message)) {
       this.stopRecordingPubSub.emit(message.recording);
     } else if (isDownloadRecordingMessage(message)) {
@@ -134,14 +135,17 @@ export class MessageBus {
     return recordings.flat();
   }
 
-  public onStartRecording(callback: (tabId: number) => Promise<void>): void {
+  public onStartRecording(
+    callback: (payload: StartRecordingMessagePayload) => Promise<void>,
+  ): void {
     this.startRecordingPubSub.on(callback);
   }
 
-  public async startRecording(tabId: number): Promise<void> {
-    await this.request<number, void>(this.startRecordingPubSub, tabId, {
+  public async startRecording(tabId: number, numberRecordings: boolean): Promise<void> {
+    const payload: StartRecordingMessagePayload = { tabId, numberRecordings };
+    await this.request<StartRecordingMessagePayload, void>(this.startRecordingPubSub, payload, {
       messageType: MessageType.START_RECORDING,
-      tabId,
+      ...payload,
     });
   }
 

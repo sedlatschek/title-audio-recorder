@@ -6,10 +6,12 @@ import { RecordingWrapper } from './RecordingWrapper';
 export class RecordingSessionWrapper<T extends RecordingSession<R>, R extends Recording> {
   private recordingState: RecordingState = 'idle';
   private recordingSession: T | undefined;
+  private recordingNumber: number = 0;
 
   public constructor(
     private readonly recordingSessionType: new (tabId: number) => T,
     public readonly tabId: number,
+    private readonly numberRecordings: boolean,
   ) {}
 
   public get state(): RecordingState {
@@ -53,9 +55,12 @@ export class RecordingSessionWrapper<T extends RecordingSession<R>, R extends Re
     }
     console.debug(`[RecordingSessionWrapper] registering title "${title}"`);
 
-    return this.recordingSession.record(
-      title ?? (await this.getTabTitle()),
-      url ?? (await this.getTabUrl()),
-    );
+    const recordingTitle = title ?? (await this.getTabTitle());
+
+    const numberedTitle = this.numberRecordings
+      ? `${(++this.recordingNumber).toString().padStart(2, '0')} - ${recordingTitle}`
+      : recordingTitle;
+
+    return this.recordingSession.record(numberedTitle, url ?? (await this.getTabUrl()));
   }
 }

@@ -24,10 +24,14 @@ export function isMessage(message: unknown): message is Message {
   );
 }
 
+export type StartRecordingMessagePayload = {
+  tabId: number;
+  numberRecordings: boolean;
+};
+
 export type StartRecordingMessage = {
   messageType: MessageType.START_RECORDING;
-  tabId: number;
-};
+} & StartRecordingMessagePayload;
 
 export function isStartRecordingMessage(message: unknown): message is StartRecordingMessage {
   return isMessage(message) && message.messageType === MessageType.START_RECORDING;

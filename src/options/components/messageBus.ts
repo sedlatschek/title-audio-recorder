@@ -1,4 +1,7 @@
-import { EnrichedTabTitleChangeMessageTab } from '../../common/Message';
+import {
+  EnrichedTabTitleChangeMessageTab,
+  StartRecordingMessagePayload,
+} from '../../common/Message';
 import { MessageBus } from '../../common/MessageBus';
 import { RecordingMetadata } from '../../common/RecordingMetadata';
 import { Recorder } from '../recorder/Recorder';
@@ -18,8 +21,8 @@ export function createMessageBus(
     return recorder.getRecordingMetadatas();
   });
 
-  messageBus.onStartRecording((tabId: number) => {
-    return recorder.startRecordingSession(tabId);
+  messageBus.onStartRecording(({ tabId, numberRecordings }: StartRecordingMessagePayload) => {
+    return recorder.startRecordingSession(tabId, numberRecordings);
   });
 
   messageBus.onStopRecording((recordingMetadata: RecordingMetadata) => {

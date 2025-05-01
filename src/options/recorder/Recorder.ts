@@ -79,6 +79,7 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
 
   private async getOrCreateStartedRecordingSessionWrapper(
     tabId: number,
+    numberRecordings: boolean,
   ): Promise<RecordingSessionWrapper<T, R>> {
     const existingRecordingSessionWrapper = this.getRunningRecordingSessionWrapper(tabId);
     if (existingRecordingSessionWrapper) {
@@ -88,14 +89,18 @@ export class Recorder<T extends RecordingSession<R>, R extends Recording> {
     const recordingSessionWrapper = new RecordingSessionWrapper<T, R>(
       this.recordingSessionType,
       tabId,
+      numberRecordings,
     );
     this.recordingSessionWrappers.push(recordingSessionWrapper);
     await recordingSessionWrapper.start();
     return recordingSessionWrapper;
   }
 
-  public async startRecordingSession(tabId: number): Promise<void> {
-    const recordingSessionWrapper = await this.getOrCreateStartedRecordingSessionWrapper(tabId);
+  public async startRecordingSession(tabId: number, numberRecordings: boolean): Promise<void> {
+    const recordingSessionWrapper = await this.getOrCreateStartedRecordingSessionWrapper(
+      tabId,
+      numberRecordings,
+    );
     const recordingWrapper = await recordingSessionWrapper.record();
     this.recordingWrappers.push(recordingWrapper);
   }
