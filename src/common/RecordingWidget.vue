@@ -69,12 +69,12 @@
 </template>
 
 <script setup lang="ts">
-import BtnIcon from '../common/components/BtnIcon.vue';
-import DateText from '../common/components/DateText.vue';
-import DurationText from '../common/components/DurationText.vue';
-import IconArrowDown from '../common/components/IconArrowDown.vue';
-import IconRectangle from '../common/components/IconRectangle.vue';
-import IconTrash from '../common/components/IconTrash.vue';
+import BtnIcon from '../common/views/BtnIcon.vue';
+import DateText from '../common/views/DateText.vue';
+import DurationText from '../common/views/DurationText.vue';
+import IconArrowDown from '../common/views/IconArrowDown.vue';
+import IconRectangle from '../common/views/IconRectangle.vue';
+import IconTrash from '../common/views/IconTrash.vue';
 import { MessageBus } from './MessageBus';
 import RecordingImage from './RecordingImage.vue';
 import { RecordingMetadata } from './RecordingMetadata';

@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
-import ModalDialog from '../../common/components/ModalDialog.vue';
+import ModalDialog from '../../common/views/ModalDialog.vue';
 import { getOptionsComponents } from '../components/optionsComponents';
 
 const { tosHandler } = getOptionsComponents();
