@@ -1,8 +1,8 @@
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { BrowserStorageConfigurationHandler } from '../../common/configuration/browserStorageConfigurationHandler';
 import { ConfigurationHandler } from '../../common/configuration/ConfigurationHandler';
+import { createRecordingsRef, RecordingsRef } from '../../common/createRecordingsRef';
 import { MessageBus } from '../../common/MessageBus';
-import { createRecordingsRef, RecordingsRef } from '../../common/RecordingsRef';
 import { createTosAcceptedRef, TosAcceptedRef } from '../../common/tos/createTosAcceptedRef';
 import { createTosHandler } from '../../common/tos/createTosHandler';
 import { TosHandler } from '../../common/tos/TosHandler';
