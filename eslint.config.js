@@ -49,6 +49,25 @@ export default [
   {
     rules: {
       '@typescript-eslint/explicit-function-return-type': 'error',
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            'src/background/*',
+            '../background/*',
+            '../../background/*',
+            'src/content/*',
+            '../content/*',
+            '../../content/*',
+            'src/options/*',
+            '../options/*',
+            '../../options/*',
+            'src/popup/*',
+            '../popup/*',
+            '../../popup/*',
+          ],
+        },
+      ],
     },
   },
 ];
