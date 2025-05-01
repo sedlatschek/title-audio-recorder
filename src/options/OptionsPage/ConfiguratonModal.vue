@@ -59,9 +59,9 @@ import BaseCheckbox from '../../common/components/BaseCheckbox.vue';
 import BtnIcon from '../../common/components/BtnIcon.vue';
 import IconCog from '../../common/components/IconCog.vue';
 import ModalDialog from '../../common/components/ModalDialog.vue';
+import { ConfigurationSettings } from '../../common/configuration/ConfigurationSettings';
 import { MimeType, mimeTypeToExtensionMap } from '../../common/MimeType';
 import { getOptionsComponents } from '../components/optionsComponents';
-import { ConfigurationSettings } from '../configuration/ConfigurationSettings';
 
 const isOpen = ref(false);
 

@@ -1,4 +1,4 @@
-import { ConfigurationHandler } from './configuration/ConfigurationHandler';
+import { ConfigurationHandler } from '../common/configuration/ConfigurationHandler';
 import { Recorder } from './recorder/Recorder';
 import { Recording } from './recorder/Recording';
 import { RecordingSession } from './recorder/RecordingSession';

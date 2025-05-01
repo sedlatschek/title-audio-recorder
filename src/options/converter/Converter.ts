@@ -1,5 +1,5 @@
+import { ConfigurationHandler } from '../../common/configuration/ConfigurationHandler';
 import { MimeType } from '../../common/MimeType';
-import { ConfigurationHandler } from '../configuration/ConfigurationHandler';
 import { Conversion } from './Conversion';
 import { WebmToMp3Conversion } from './WebmToMp3Conversion';
 

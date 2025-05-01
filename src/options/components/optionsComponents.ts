@@ -1,12 +1,12 @@
 import { FFmpeg } from '@ffmpeg/ffmpeg';
+import { BrowserStorageConfigurationHandler } from '../../common/configuration/browserStorageConfigurationHandler';
+import { ConfigurationHandler } from '../../common/configuration/ConfigurationHandler';
 import { MessageBus } from '../../common/MessageBus';
 import { createRecordingsRef, RecordingsRef } from '../../common/RecordingsRef';
 import { createTosAcceptedRef, TosAcceptedRef } from '../../common/tos/createTosAcceptedRef';
 import { createTosHandler } from '../../common/tos/createTosHandler';
 import { TosHandler } from '../../common/tos/TosHandler';
 import { AutoDownloader } from '../AutoDownloader';
-import { BrowserStorageConfigurationHandler } from '../configuration/browserStorageConfigurationHandler';
-import { ConfigurationHandler } from '../configuration/ConfigurationHandler';
 import { Converter } from '../converter/Converter';
 import { Recorder } from '../recorder/Recorder';
 import { Recording } from '../recorder/Recording';
