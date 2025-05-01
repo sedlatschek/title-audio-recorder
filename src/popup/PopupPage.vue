@@ -38,11 +38,11 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import BaseCheckbox from '../common/components/BaseCheckbox.vue';
+import BtnText from '../common/components/BtnText.vue';
+import IconCaretLeft from '../common/components/IconCaretLeft.vue';
+import IconCircle from '../common/components/IconCircle.vue';
 import RecordingWidget from '../common/RecordingWidget.vue';
-import BaseCheckbox from '../components/BaseCheckbox.vue';
-import BtnText from '../components/BtnText.vue';
-import IconCaretLeft from '../components/IconCaretLeft.vue';
-import IconCircle from '../components/IconCircle.vue';
 import { getPopupComponents } from './popupComponents';
 import { PopupPageProps } from './PopupPageProps';
 

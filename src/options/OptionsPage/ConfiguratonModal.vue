@@ -55,11 +55,11 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
+import BaseCheckbox from '../../common/components/BaseCheckbox.vue';
+import BtnIcon from '../../common/components/BtnIcon.vue';
+import IconCog from '../../common/components/IconCog.vue';
+import ModalDialog from '../../common/components/ModalDialog.vue';
 import { MimeType, mimeTypeToExtensionMap } from '../../common/MimeType';
-import BaseCheckbox from '../../components/BaseCheckbox.vue';
-import BtnIcon from '../../components/BtnIcon.vue';
-import IconCog from '../../components/IconCog.vue';
-import ModalDialog from '../../components/ModalDialog.vue';
 import { getOptionsComponents } from '../components/optionsComponents';
 import { ConfigurationSettings } from '../configuration/ConfigurationSettings';
 

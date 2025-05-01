@@ -18,9 +18,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import browser from 'webextension-polyfill';
-import BtnIcon from '../../components/BtnIcon.vue';
-import IconLabel from '../../components/IconLabel.vue';
-import ModalDialog from '../../components/ModalDialog.vue';
+import BtnIcon from '../../common/components/BtnIcon.vue';
+import IconLabel from '../../common/components/IconLabel.vue';
+import ModalDialog from '../../common/components/ModalDialog.vue';
 
 const isOpen = ref(false);
 
