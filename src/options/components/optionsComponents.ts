@@ -8,11 +8,11 @@ import { createTosHandler } from '../../common/tos/createTosHandler';
 import { TosHandler } from '../../common/tos/TosHandler';
 import { AutoDownloader } from '../AutoDownloader';
 import { Converter } from '../converter/Converter';
+import { observeTabs } from '../observeTabs';
 import { Recorder } from '../recorder/Recorder';
 import { Recording } from '../recorder/Recording';
 import { RecordingSession } from '../recorder/RecordingSession';
 import { TabCaptureRecordingSession } from '../recorder/TabCaptureRecordingSession';
-import { observeTabs } from '../tabObserver';
 import { createFFmpeg } from './ffmpeg';
 import { createMessageBus } from './messageBus';
 
