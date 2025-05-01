@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { RecordingMetadata } from './RecordingMetadata';
+import { RecordingMetadata } from '../RecordingMetadata';
 
 const props = defineProps<{
   recording: RecordingMetadata;

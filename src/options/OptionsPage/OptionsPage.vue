@@ -57,12 +57,12 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import RecordingWidget from '../../common/RecordingWidget.vue';
 import AlertBanner from '../../common/views/AlertBanner.vue';
 import BtnIcon from '../../common/views/BtnIcon.vue';
 import IconArrowDown from '../../common/views/IconArrowDown.vue';
 import IconCode from '../../common/views/IconCode.vue';
 import IconTrash from '../../common/views/IconTrash.vue';
+import RecordingWidget from '../../common/views/RecordingWidget.vue';
 import { getOptionsComponents } from '../components/optionsComponents';
 import SettingsModal from './ConfiguratonModal.vue';
 import HeartFooter from './HeartFooter.vue';

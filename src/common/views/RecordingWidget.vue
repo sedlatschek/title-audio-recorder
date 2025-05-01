@@ -69,15 +69,15 @@
 </template>
 
 <script setup lang="ts">
-import BtnIcon from '../common/views/BtnIcon.vue';
-import DateText from '../common/views/DateText.vue';
-import DurationText from '../common/views/DurationText.vue';
-import IconArrowDown from '../common/views/IconArrowDown.vue';
-import IconRectangle from '../common/views/IconRectangle.vue';
-import IconTrash from '../common/views/IconTrash.vue';
-import { MessageBus } from './MessageBus';
+import { MessageBus } from '../MessageBus';
+import { RecordingMetadata } from '../RecordingMetadata';
+import BtnIcon from './BtnIcon.vue';
+import DateText from './DateText.vue';
+import DurationText from './DurationText.vue';
+import IconArrowDown from './IconArrowDown.vue';
+import IconRectangle from './IconRectangle.vue';
+import IconTrash from './IconTrash.vue';
 import RecordingImage from './RecordingImage.vue';
-import { RecordingMetadata } from './RecordingMetadata';
 
 const props = defineProps<{
   messageBus: MessageBus;
