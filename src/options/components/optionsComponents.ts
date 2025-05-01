@@ -1,8 +1,9 @@
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { MessageBus } from '../../common/MessageBus';
 import { createRecordingsRef, RecordingsRef } from '../../common/RecordingsRef';
-import { createTosHandler } from '../../common/tos/tosHandler';
-import { createTosAcceptedRef, TosAcceptedRef } from '../../common/TosAcceptedRef';
+import { createTosAcceptedRef, TosAcceptedRef } from '../../common/tos/createTosAcceptedRef';
+import { createTosHandler } from '../../common/tos/createTosHandler';
+import { TosHandler } from '../../common/tos/TosHandler';
 import { AutoDownloader } from '../AutoDownloader';
 import { BrowserStorageConfigurationHandler } from '../configuration/browserStorageConfigurationHandler';
 import { ConfigurationHandler } from '../configuration/ConfigurationHandler';
@@ -12,7 +13,6 @@ import { Recording } from '../recorder/Recording';
 import { RecordingSession } from '../recorder/RecordingSession';
 import { TabCaptureRecordingSession } from '../recorder/TabCaptureRecordingSession';
 import { observeTabs } from '../tabObserver';
-import { TosHandler } from '../tos/TosHandler';
 import { createFFmpeg } from './ffmpeg';
 import { createMessageBus } from './messageBus';
 

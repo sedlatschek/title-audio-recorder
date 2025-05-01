@@ -1,8 +1,8 @@
 import { MessageBus } from '../common/MessageBus';
 import { createRecordingsRef, RecordingsRef } from '../common/RecordingsRef';
-import { createTosHandler } from '../common/tos/tosHandler';
-import { createTosAcceptedRef, TosAcceptedRef } from '../common/TosAcceptedRef';
-import { TosHandler } from '../options/tos/TosHandler';
+import { createTosAcceptedRef, TosAcceptedRef } from '../common/tos/createTosAcceptedRef';
+import { createTosHandler } from '../common/tos/createTosHandler';
+import { TosHandler } from '../common/tos/TosHandler';
 
 type PopupComponents = {
   messageBus: MessageBus;

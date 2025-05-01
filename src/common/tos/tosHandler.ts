@@ -1,16 +1,30 @@
-import { Component } from 'vue';
-import { BrowserStorageTosAcceptanceStorage } from '../../options/tos/browserStorageTosAcceptanceStorage';
-import { TosHandler } from '../../options/tos/TosHandler';
-import { TosVersion } from '../../options/tos/TosVersion';
+import { TosAcceptanceStorage } from './TosAcceptanceStorage';
+import { TosVersion } from './TosVersion';
 
-export function createTosHandler(): TosHandler {
-  const tosVersions: TosVersion[] = Object.entries(
-    import.meta.glob<{ default: Component }>('./*.vue', { eager: true }),
-  ).map(([path, module]) => ({
-    name: path.replace(/^\.\/|\.vue$/g, ''),
-    component: module.default,
-  }));
+export class TosHandler {
+  constructor(
+    private readonly tosStorage: TosAcceptanceStorage,
+    public readonly tosVersions: TosVersion[],
+  ) {
+    if (this.tosVersions.length === 0) {
+      throw new Error('At least one ToS version is required');
+    }
+    this.tosVersions.sort((a, b) => a.name.localeCompare(b.name));
+  }
 
-  const tosStorage = new BrowserStorageTosAcceptanceStorage();
-  return new TosHandler(tosStorage, tosVersions);
+  public onTosAccepted(callback: (tosVersion: TosVersion) => Promise<void>): void {
+    this.tosStorage.onTosAccepted(callback);
+  }
+
+  public getLatestTosVersion(): TosVersion {
+    return this.tosVersions[this.tosVersions.length - 1];
+  }
+
+  public isAccepted(tosVersion: TosVersion): Promise<boolean> {
+    return this.tosStorage.isAccepted(tosVersion);
+  }
+
+  public accept(tosVersion: TosVersion): Promise<void> {
+    return this.tosStorage.accept(tosVersion);
+  }
 }
