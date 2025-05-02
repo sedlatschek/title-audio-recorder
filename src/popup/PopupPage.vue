@@ -18,7 +18,8 @@
           id="number-recordings"
           v-model="numberRecordings"
           class="mt-3"
-          title="Number recordings (01, 02, 03...)">
+          title="Number recordings (01, 02, 03...)"
+          :disabled="!tosAccepted || currentTabRecordings.length > 0">
           Number recordings
         </BaseCheckbox>
       </div>
