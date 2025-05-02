@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import BaseCheckbox from '../common/views/BaseCheckbox.vue';
 import BtnText from '../common/views/BtnText.vue';
 import IconCaretLeft from '../common/views/IconCaretLeft.vue';
@@ -47,13 +47,14 @@ import RecordingWidget from '../common/views/RecordingWidget.vue';
 import { getComponents } from './components';
 import { PopupPageProps } from './PopupPageProps';
 
-const { messageBus, recordings, tosAccepted } = getComponents();
+const { messageBus, configurationHandler, recordings, tosAccepted } = getComponents();
 const props = defineProps<PopupPageProps>();
 
 const numberRecordings = ref(false);
 
-function start(): Promise<void> {
-  return messageBus.startRecording(props.tabId, numberRecordings.value);
+async function start(): Promise<void> {
+  await messageBus.startRecording(props.tabId, numberRecordings.value);
+  await saveSettings();
 }
 
 const currentTabRecordings = computed(() =>
@@ -63,6 +64,19 @@ const currentTabRecordings = computed(() =>
 const buttonTitle = computed(() =>
   currentTabRecordings.value.length > 0 ? 'Restart recording' : 'Start recording',
 );
+
+onMounted(async () => {
+  await restoreSettings();
+});
+
+async function restoreSettings(): Promise<void> {
+  const settings = await configurationHandler.getSettings();
+  numberRecordings.value = settings.numberRecordings;
+}
+
+function saveSettings(): Promise<void> {
+  return configurationHandler.set('numberRecordings', numberRecordings.value);
+}
 </script>
 
 <style lang="css">

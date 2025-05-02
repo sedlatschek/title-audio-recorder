@@ -5,5 +5,6 @@ export function getDefaultConfigurationSettings(): ConfigurationSettings {
     downloadMimeTypes: ['audio/mpeg'],
     downloadAutomatically: false,
     removeAfterDownloadingAutomatically: false,
+    numberRecordings: false,
   };
 }

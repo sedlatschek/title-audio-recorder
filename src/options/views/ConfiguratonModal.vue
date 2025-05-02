@@ -70,6 +70,7 @@ const { configurationHandler } = getComponents();
 const mimeTypeSetting = ref<MimeType | undefined>(undefined);
 const downloadAutomaticallySetting = ref<boolean>(false);
 const removeAfterDownloadingAutomaticallySetting = ref<boolean>(false);
+const numberRecordings = ref<boolean>(false);
 
 async function loadSettings(): Promise<void> {
   const settings = await configurationHandler.getSettings();
@@ -77,6 +78,7 @@ async function loadSettings(): Promise<void> {
   mimeTypeSetting.value = settings.downloadMimeTypes[0];
   downloadAutomaticallySetting.value = settings.downloadAutomatically;
   removeAfterDownloadingAutomaticallySetting.value = settings.removeAfterDownloadingAutomatically;
+  numberRecordings.value = settings.numberRecordings;
 }
 
 function buildSettings(): ConfigurationSettings {
@@ -94,6 +96,7 @@ function buildSettings(): ConfigurationSettings {
     downloadMimeTypes: [mimeTypeSetting.value],
     downloadAutomatically: downloadAutomaticallySetting.value,
     removeAfterDownloadingAutomatically: removeAfterDownloadingAutomaticallySetting.value,
+    numberRecordings: numberRecordings.value,
   };
 }
 

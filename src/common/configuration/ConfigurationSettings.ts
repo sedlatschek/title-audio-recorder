@@ -4,4 +4,5 @@ export type ConfigurationSettings = {
   downloadMimeTypes: MimeType[];
   downloadAutomatically: boolean;
   removeAfterDownloadingAutomatically: boolean;
+  numberRecordings: boolean;
 };

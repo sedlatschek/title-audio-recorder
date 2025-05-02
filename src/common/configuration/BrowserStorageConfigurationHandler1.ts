@@ -29,6 +29,15 @@ export class BrowserStorageConfigurationHandler implements ConfigurationHandler 
     return browser.storage.sync.set({ [this.storageKey]: properties });
   }
 
+  public async set<T extends keyof ConfigurationSettings>(
+    key: T,
+    value: ConfigurationSettings[T],
+  ): Promise<void> {
+    const properties = await this.getSettings();
+    properties[key] = value;
+    return this.setSettings(properties);
+  }
+
   public onSettingsUpdate(callback: (properties: ConfigurationSettings) => Promise<void>): void {
     this.updatedPubSub.on(callback);
   }
