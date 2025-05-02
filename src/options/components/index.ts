@@ -1,10 +1,10 @@
 import { FFmpeg } from '@ffmpeg/ffmpeg';
-import { BrowserStorageConfigurationHandler } from '../../common/configuration/browserStorageConfigurationHandler';
+import { createConfigurationHandler } from '../../common/components/configurationHandler';
+import { createRecordingsRef, RecordingsRef } from '../../common/components/recordingsRef';
+import { createTosAcceptedRef, TosAcceptedRef } from '../../common/components/tosAcceptedRef';
+import { createTosHandler } from '../../common/components/tosHandler';
 import { ConfigurationHandler } from '../../common/configuration/ConfigurationHandler';
-import { createRecordingsRef, RecordingsRef } from '../../common/createRecordingsRef';
 import { MessageBus } from '../../common/MessageBus';
-import { createTosAcceptedRef, TosAcceptedRef } from '../../common/tos/createTosAcceptedRef';
-import { createTosHandler } from '../../common/tos/createTosHandler';
 import { TosHandler } from '../../common/tos/TosHandler';
 import { AutoDownloader } from '../AutoDownloader';
 import { Converter } from '../converter/Converter';
@@ -12,9 +12,9 @@ import { observeTabs } from '../observeTabs';
 import { Recorder } from '../recorder/Recorder';
 import { Recording } from '../recorder/Recording';
 import { RecordingSession } from '../recorder/RecordingSession';
-import { TabCaptureRecordingSession } from '../recorder/TabCaptureRecordingSession';
 import { createFFmpeg } from './ffmpeg';
 import { createMessageBus } from './messageBus';
+import { createRecorder } from './recorder';
 
 type OptionsComponents = {
   configurationHandler: ConfigurationHandler;
@@ -30,9 +30,9 @@ type OptionsComponents = {
 
 let optionsComponents: OptionsComponents | undefined;
 
-export async function initializeOptionsComponents(): Promise<void> {
-  const configurationHandler = new BrowserStorageConfigurationHandler();
-  const recorder = new Recorder(TabCaptureRecordingSession);
+export async function initializeComponents(): Promise<void> {
+  const configurationHandler = createConfigurationHandler();
+  const recorder = createRecorder();
   const messageBus = createMessageBus(recorder);
   const recordings = createRecordingsRef(messageBus, true);
   const ffmpeg = await createFFmpeg();
@@ -56,7 +56,7 @@ export async function initializeOptionsComponents(): Promise<void> {
   observeTabs(recorder);
 }
 
-export function getOptionsComponents(): OptionsComponents {
+export function getComponents(): OptionsComponents {
   if (optionsComponents === undefined) {
     throw new Error('Popup components not initialized');
   }

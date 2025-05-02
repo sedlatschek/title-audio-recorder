@@ -5,7 +5,7 @@ import { getExtension } from '../../common/MimeType';
 import { PubSub } from '../../common/PubSub';
 import { RecordingMetadata } from '../../common/RecordingMetadata';
 import { UUID } from '../../common/types';
-import { getOptionsComponents } from '../components/optionsComponents';
+import { getComponents } from '../components';
 import { Recording } from './Recording';
 import { RecordingBlob } from './RecordingBlob';
 
@@ -37,7 +37,7 @@ export class RecordingWrapper<T extends Recording> {
 
       this.recordingBlobs.push(this.recording.recordingBlob);
 
-      const { converter } = getOptionsComponents();
+      const { converter } = getComponents();
 
       const blobs = await Promise.all(
         this.recordingBlobs.map((blob) => converter.convert(blob.blob)),
@@ -73,7 +73,7 @@ export class RecordingWrapper<T extends Recording> {
   }
 
   public async download(): Promise<void> {
-    const { configurationHandler } = getOptionsComponents();
+    const { configurationHandler } = getComponents();
     const { downloadMimeTypes } = await configurationHandler.getSettings();
 
     await Promise.all(
@@ -98,7 +98,7 @@ export class RecordingWrapper<T extends Recording> {
   }
 
   public async getRecordingMetadata(): Promise<RecordingMetadata> {
-    const { configurationHandler } = getOptionsComponents();
+    const { configurationHandler } = getComponents();
     const { downloadMimeTypes } = await configurationHandler.getSettings();
     return {
       ...this.recording.getRecordingMetadata(),

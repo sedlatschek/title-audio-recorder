@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-import { PubSub } from '../../common/PubSub';
+import { PubSub } from '../PubSub';
 import { TosAcceptanceStorage } from './TosAcceptanceStorage';
 import { TosVersion } from './TosVersion';
 

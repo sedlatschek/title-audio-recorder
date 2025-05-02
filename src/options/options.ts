@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
 import { getErrorPageUrl, getOptionPageTabs } from '../common/tabs';
-import { initializeOptionsComponents } from './components/optionsComponents';
+import { initializeComponents } from './components';
 import OptionsPage from './views/OptionsPage.vue';
 import '../index.css';
 
@@ -10,7 +10,7 @@ async function initialize(): Promise<void> {
   if ((await getOptionPageTabs()).length > 1) {
     window.location.href = getErrorPageUrl();
   } else {
-    await initializeOptionsComponents();
+    await initializeComponents();
     createApp(OptionsPage).mount('body');
   }
 }

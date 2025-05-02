@@ -1,14 +1,13 @@
 import browser from 'webextension-polyfill';
 import { MessageType, TabTitleChangedMessage, TabTitleChangedMessageTab } from '../common/Message';
-import { HtmlTitleChangeDetector } from './HtmlTitleChangeDetector';
-import { TitleChangeDetector } from './TitleChangeDetector';
+import { createTitleChangeDetector } from './components/titleChangeDetector';
 
 type TabTitleChangedMessageTabWithoutTabId = Omit<TabTitleChangedMessageTab, 'tabId'>;
 type TabTitleChangedMessageWithoutTabId = Omit<TabTitleChangedMessage, 'tab'> & {
   tab: TabTitleChangedMessageTabWithoutTabId;
 };
 
-const titleChangeDetector: TitleChangeDetector = new HtmlTitleChangeDetector();
+const titleChangeDetector = createTitleChangeDetector();
 titleChangeDetector.onTitleChanged((title: string, url: string) => {
   const message: TabTitleChangedMessageWithoutTabId = {
     messageType: MessageType.TAB_TITLE_CHANGED,

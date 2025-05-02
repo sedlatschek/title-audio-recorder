@@ -1,6 +1,6 @@
 import { Ref, ref } from 'vue';
-import { MessageBus } from './MessageBus';
-import { RecordingMetadata } from './RecordingMetadata';
+import { MessageBus } from '../MessageBus';
+import { RecordingMetadata } from '../RecordingMetadata';
 
 export type RecordingsRef = Ref<RecordingMetadata[]>;
 

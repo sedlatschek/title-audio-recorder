@@ -43,10 +43,10 @@ import BtnText from '../common/views/BtnText.vue';
 import IconCaretLeft from '../common/views/IconCaretLeft.vue';
 import IconCircle from '../common/views/IconCircle.vue';
 import RecordingWidget from '../common/views/RecordingWidget.vue';
-import { getPopupComponents } from './popupComponents';
+import { getComponents } from './components';
 import { PopupPageProps } from './PopupPageProps';
 
-const { messageBus, recordings, tosAccepted } = getPopupComponents();
+const { messageBus, recordings, tosAccepted } = getComponents();
 const props = defineProps<PopupPageProps>();
 
 const numberRecordings = ref(false);

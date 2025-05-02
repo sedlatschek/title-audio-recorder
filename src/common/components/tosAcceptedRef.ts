@@ -1,5 +1,5 @@
 import { ref, Ref } from 'vue';
-import { TosHandler } from './TosHandler';
+import { TosHandler } from '../tos/TosHandler';
 
 export type TosAcceptedRef = Ref<boolean>;
 

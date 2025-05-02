@@ -63,13 +63,13 @@ import IconArrowDown from '../../common/views/IconArrowDown.vue';
 import IconCode from '../../common/views/IconCode.vue';
 import IconTrash from '../../common/views/IconTrash.vue';
 import RecordingWidget from '../../common/views/RecordingWidget.vue';
-import { getOptionsComponents } from '../components/optionsComponents';
+import { getComponents } from '../components';
 import SettingsModal from './ConfiguratonModal.vue';
 import HeartFooter from './HeartFooter.vue';
 import LicenseModal from './LicenseModal.vue';
 import TosModal from './TosModal.vue';
 
-const { messageBus, recordings } = getOptionsComponents();
+const { messageBus, recordings } = getComponents();
 
 const hasRecordings = computed(() => recordings.value.length > 0);
 

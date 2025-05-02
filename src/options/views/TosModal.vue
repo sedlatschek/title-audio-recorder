@@ -14,9 +14,9 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue';
 import ModalDialog from '../../common/views/ModalDialog.vue';
-import { getOptionsComponents } from '../components/optionsComponents';
+import { getComponents } from '../components';
 
-const { tosHandler } = getOptionsComponents();
+const { tosHandler } = getComponents();
 const latestVersion = tosHandler.getLatestTosVersion();
 const LatestTosVersion = latestVersion.component;
 
