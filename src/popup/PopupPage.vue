@@ -70,8 +70,7 @@ onMounted(async () => {
 });
 
 async function restoreSettings(): Promise<void> {
-  const settings = await configurationHandler.getSettings();
-  numberRecordings.value = settings.numberRecordings;
+  numberRecordings.value = await configurationHandler.get('numberRecordings');
 }
 
 function saveSettings(): Promise<void> {

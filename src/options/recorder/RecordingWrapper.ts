@@ -74,7 +74,7 @@ export class RecordingWrapper<T extends Recording> {
 
   public async download(): Promise<void> {
     const { configurationHandler } = getComponents();
-    const { downloadMimeTypes } = await configurationHandler.getSettings();
+    const downloadMimeTypes = await configurationHandler.get('downloadMimeTypes');
 
     await Promise.all(
       this.recordingBlobs
@@ -99,7 +99,7 @@ export class RecordingWrapper<T extends Recording> {
 
   public async getRecordingMetadata(): Promise<RecordingMetadata> {
     const { configurationHandler } = getComponents();
-    const { downloadMimeTypes } = await configurationHandler.getSettings();
+    const downloadMimeTypes = await configurationHandler.get('downloadMimeTypes');
     return {
       ...this.recording.getRecordingMetadata(),
       download: {

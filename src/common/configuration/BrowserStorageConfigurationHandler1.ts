@@ -1,44 +1,94 @@
 import browser from 'webextension-polyfill';
-import { PubSub } from '../PubSub';
-import { ConfigurationHandler } from './ConfigurationHandler';
-import { ConfigurationSettings } from './ConfigurationSettings';
+import { ConfigurationChangeListener, ConfigurationHandler } from './ConfigurationHandler';
+import { ConfigurationSettings, isConfigurationSettings } from './ConfigurationSettings';
 import { getDefaultConfigurationSettings } from './defaultConfigurationSettings';
 
 export class BrowserStorageConfigurationHandler implements ConfigurationHandler {
   private storageKey = 'title-audio-recorder-configuration';
-  private updatedPubSub = new PubSub<ConfigurationSettings, void>();
+  private onChangeListeners: ConfigurationChangeListener<keyof ConfigurationSettings>[] = [];
 
   constructor() {
-    browser.storage.onChanged.addListener((changes, area) => {
-      if (area === 'sync' && changes.options?.newValue) {
-        this.updatedPubSub.emit(changes.options.newValue as ConfigurationSettings);
+    this.setupChangeListener();
+  }
+
+  private setupChangeListener(): void {
+    browser.storage.sync.onChanged.addListener((changes) => {
+      if (changes[this.storageKey]) {
+        const { newValue, oldValue } = changes[this.storageKey];
+
+        if (!isConfigurationSettings(newValue)) {
+          console.warn(
+            `[${BrowserStorageConfigurationHandler.name}] Invalid change detected:`,
+            changes[this.storageKey],
+          );
+          return;
+        }
+
+        for (const property of Object.keys(newValue) as (keyof ConfigurationSettings)[]) {
+          if (!oldValue) return;
+
+          if (!isConfigurationSettings(oldValue) || newValue[property] !== oldValue[property]) {
+            this.onChangeListeners.forEach((callback) => {
+              console.debug(
+                `[${BrowserStorageConfigurationHandler.name}] Change detected for property:`,
+                property,
+                'New value:',
+                newValue[property],
+              );
+              callback(property, newValue[property]);
+            });
+          }
+        }
       }
     });
   }
 
-  public async getSettings(): Promise<ConfigurationSettings> {
-    const properties = await browser.storage.sync.get(this.storageKey);
-    if (properties[this.storageKey]) {
-      return properties[this.storageKey] as ConfigurationSettings;
+  public async setAll(settings: ConfigurationSettings): Promise<void> {
+    console.debug(
+      `[${BrowserStorageConfigurationHandler.name}] Setting all configuration settings:`,
+      settings,
+    );
+    await browser.storage.sync.set({ [this.storageKey]: settings });
+  }
+
+  public async getAll(): Promise<ConfigurationSettings> {
+    const settings = await browser.storage.sync.get(this.storageKey);
+    if (settings[this.storageKey]) {
+      return settings[this.storageKey] as ConfigurationSettings;
     }
     return getDefaultConfigurationSettings();
   }
 
-  public setSettings(properties: ConfigurationSettings): Promise<void> {
-    console.debug('[BrowserStorageConfigurationHandler] settings set', properties);
-    return browser.storage.sync.set({ [this.storageKey]: properties });
-  }
-
   public async set<T extends keyof ConfigurationSettings>(
-    key: T,
+    property: T,
     value: ConfigurationSettings[T],
   ): Promise<void> {
-    const properties = await this.getSettings();
-    properties[key] = value;
-    return this.setSettings(properties);
+    const settings = await this.getAll();
+    settings[property] = value;
+    console.debug(
+      `[${BrowserStorageConfigurationHandler.name}] Setting property:`,
+      property,
+      'Value:',
+      value,
+    );
+    await browser.storage.sync.set({ [this.storageKey]: settings });
   }
 
-  public onSettingsUpdate(callback: (properties: ConfigurationSettings) => Promise<void>): void {
-    this.updatedPubSub.on(callback);
+  public async get<T extends keyof ConfigurationSettings>(
+    property: T,
+  ): Promise<ConfigurationSettings[T]> {
+    const settings = await this.getAll();
+    const value = settings[property];
+    console.debug(
+      `[${BrowserStorageConfigurationHandler.name}] Retrieved property:`,
+      property,
+      'Value:',
+      value,
+    );
+    return value;
+  }
+
+  public onChange(callback: ConfigurationChangeListener<keyof ConfigurationSettings>): void {
+    this.onChangeListeners.push(callback);
   }
 }

@@ -1,11 +1,17 @@
 import { ConfigurationSettings } from './ConfigurationSettings';
 
+export type ConfigurationChangeListener<T extends keyof ConfigurationSettings> = (
+  property: T,
+  value: ConfigurationSettings[T],
+) => void;
+
 export interface ConfigurationHandler {
-  getSettings(): Promise<ConfigurationSettings>;
-  setSettings(configurationSettings: ConfigurationSettings): Promise<void>;
+  setAll(settings: ConfigurationSettings): Promise<void>;
+  getAll(): Promise<ConfigurationSettings>;
   set<T extends keyof ConfigurationSettings>(
-    key: T,
+    property: T,
     value: ConfigurationSettings[T],
   ): Promise<void>;
-  onSettingsUpdate(callback: (configurationSettings: ConfigurationSettings) => Promise<void>): void;
+  get<T extends keyof ConfigurationSettings>(key: T): Promise<ConfigurationSettings[T]>;
+  onChange(callback: ConfigurationChangeListener<keyof ConfigurationSettings>): void;
 }

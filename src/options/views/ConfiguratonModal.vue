@@ -55,7 +55,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import { ConfigurationSettings } from '../../common/configuration/ConfigurationSettings';
+import { getDefaultConfigurationSettings } from '../../common/configuration/defaultConfigurationSettings';
 import { MimeType, mimeTypeToExtensionMap } from '../../common/MimeType';
 import BaseCheckbox from '../../common/views/BaseCheckbox.vue';
 import BtnIcon from '../../common/views/BtnIcon.vue';
@@ -67,37 +67,30 @@ const isOpen = ref(false);
 
 const { configurationHandler } = getComponents();
 
-const mimeTypeSetting = ref<MimeType | undefined>(undefined);
-const downloadAutomaticallySetting = ref<boolean>(false);
-const removeAfterDownloadingAutomaticallySetting = ref<boolean>(false);
-const numberRecordings = ref<boolean>(false);
+const { downloadMimeTypes, downloadAutomatically, removeAfterDownloadingAutomatically } =
+  getDefaultConfigurationSettings();
+
+const mimeTypeSetting = ref<MimeType>(downloadMimeTypes[0]);
+const downloadAutomaticallySetting = ref<boolean>(downloadAutomatically);
+const removeAfterDownloadingAutomaticallySetting = ref<boolean>(
+  removeAfterDownloadingAutomatically,
+);
 
 async function loadSettings(): Promise<void> {
-  const settings = await configurationHandler.getSettings();
-  console.debug('[ConfigurationModal] Loaded settings', settings);
-  mimeTypeSetting.value = settings.downloadMimeTypes[0];
-  downloadAutomaticallySetting.value = settings.downloadAutomatically;
-  removeAfterDownloadingAutomaticallySetting.value = settings.removeAfterDownloadingAutomatically;
-  numberRecordings.value = settings.numberRecordings;
+  mimeTypeSetting.value = (await configurationHandler.get('downloadMimeTypes'))[0];
+  downloadAutomaticallySetting.value = await configurationHandler.get('downloadAutomatically');
+  removeAfterDownloadingAutomaticallySetting.value = await configurationHandler.get(
+    'removeAfterDownloadingAutomatically',
+  );
 }
 
-function buildSettings(): ConfigurationSettings {
-  if (!mimeTypeSetting.value) {
-    throw new Error('mimeTypeSetting is not set');
-  }
-  if (downloadAutomaticallySetting.value === undefined) {
-    throw new Error('downloadAutomaticallySetting is not set');
-  }
-  if (removeAfterDownloadingAutomaticallySetting.value === undefined) {
-    throw new Error('removeAfterDownloadingAutomatically is not set');
-  }
-
-  return {
-    downloadMimeTypes: [mimeTypeSetting.value],
-    downloadAutomatically: downloadAutomaticallySetting.value,
-    removeAfterDownloadingAutomatically: removeAfterDownloadingAutomaticallySetting.value,
-    numberRecordings: numberRecordings.value,
-  };
+async function saveSettings(): Promise<void> {
+  await configurationHandler.set('downloadMimeTypes', [mimeTypeSetting.value]);
+  await configurationHandler.set('downloadAutomatically', downloadAutomaticallySetting.value);
+  await configurationHandler.set(
+    'removeAfterDownloadingAutomatically',
+    removeAfterDownloadingAutomaticallySetting.value,
+  );
 }
 
 watch(isOpen, async (value) => {
@@ -110,8 +103,7 @@ function onOpen(): Promise<void> {
   return loadSettings();
 }
 
-async function onConfirm(): Promise<void> {
-  const settings = buildSettings();
-  await configurationHandler.setSettings(settings);
+function onConfirm(): Promise<void> {
+  return saveSettings();
 }
 </script>

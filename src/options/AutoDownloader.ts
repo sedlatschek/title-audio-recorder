@@ -13,22 +13,23 @@ export class AutoDownloader {
 
   private listenForAutoDownload(): void {
     this.recorder.onRecordingBlobAdded(async ({ recording, recordingBlob }) => {
-      const settings = await this.configurationHandler.getSettings();
+      const { downloadAutomatically, downloadMimeTypes, removeAfterDownloadingAutomatically } =
+        await this.configurationHandler.getAll();
 
-      if (!settings.downloadAutomatically) {
+      if (!downloadAutomatically) {
         return;
       }
 
-      if (!settings.downloadMimeTypes.includes(recordingBlob.mimeType)) {
+      if (!downloadMimeTypes.includes(recordingBlob.mimeType)) {
         return;
       }
 
-      console.debug(`[AutoDownloader] downloading recording ${recording.id}`);
+      console.debug(`[${AutoDownloader.name}] Downloading recording ${recording.id}`);
 
       await this.recorder.downloadRecording(recording);
 
-      if (settings.removeAfterDownloadingAutomatically) {
-        console.debug(`[AutoDownloader] deleting recording ${recording.id}`);
+      if (removeAfterDownloadingAutomatically) {
+        console.debug(`[${AutoDownloader.name}] Deleting recording ${recording.id}`);
         await this.recorder.removeRecording(recording);
       }
     });

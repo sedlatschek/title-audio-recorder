@@ -15,8 +15,10 @@ export class Converter {
   }
 
   public async convert(blob: Blob): Promise<Blob[]> {
-    const { downloadMimeTypes: mimeTypes } = await this.configurationHandler.getSettings();
-    console.debug(`[Converter] Converting blob with type ${blob.type} to ${mimeTypes.join(', ')}`);
+    const mimeTypes = await this.configurationHandler.get('downloadMimeTypes');
+    console.debug(
+      `[${Converter.name}] Converting blob with type ${blob.type} to ${mimeTypes.join(', ')}`,
+    );
     return Promise.all(
       mimeTypes
         .map((mimeType) => this.getConversion(blob.type as MimeType, mimeType))
