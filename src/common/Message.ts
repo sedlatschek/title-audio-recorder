@@ -1,5 +1,6 @@
 import { RecordingBlobAdded } from './RecordingBlobAdded';
 import { RecordingMetadata } from './RecordingMetadata';
+import { isAppearanceMode } from './types';
 
 export enum MessageType {
   DISCOVER_OPTIONS_TAB = 'DISCOVER_OPTIONS_TAB',
@@ -13,6 +14,7 @@ export enum MessageType {
   RECORDING_BLOB_ADDED = 'RECORDING_BLOB_ADDED',
   RECORDING_REMOVED = 'RECORDING_REMOVED',
   TAB_TITLE_CHANGED = 'TAB_TITLE_CHANGED',
+  APPEARANCE_MODE_CHANGED = 'APPEARANCE_MODE_CHANGED',
 }
 
 export function isMessage(message: unknown): message is Message {
@@ -22,6 +24,24 @@ export function isMessage(message: unknown): message is Message {
     'messageType' in message &&
     Object.values(MessageType).includes(message.messageType as MessageType)
   );
+}
+
+export type DiscoverOptionsTabMessage = {
+  messageType: MessageType.DISCOVER_OPTIONS_TAB;
+};
+
+export function isDiscoverOptionsTabMessage(
+  message: unknown,
+): message is DiscoverOptionsTabMessage {
+  return isMessage(message) && message.messageType === MessageType.DISCOVER_OPTIONS_TAB;
+}
+
+export type GetRecordingsMessage = {
+  messageType: MessageType.GET_RECORDINGS;
+};
+
+export function isGetRecordingsMessage(message: unknown): message is GetRecordingsMessage {
+  return isMessage(message) && message.messageType === MessageType.GET_RECORDINGS;
 }
 
 export type StartRecordingMessagePayload = {
@@ -110,6 +130,22 @@ export type EnrichedTabTitleChangeMessageTab = TabTitleChangedMessageTab & {
   tabId: number;
 };
 
+export type AppearanceModeChangedMessage = {
+  messageType: MessageType.APPEARANCE_MODE_CHANGED;
+  mode: 'dark' | 'light';
+};
+
+export function isAppearanceModeChangedMessage(
+  message: unknown,
+): message is AppearanceModeChangedMessage {
+  return (
+    isMessage(message) &&
+    message.messageType === MessageType.APPEARANCE_MODE_CHANGED &&
+    'mode' in message &&
+    isAppearanceMode(message.mode)
+  );
+}
+
 export type TabTitleChangedMessage = {
   messageType: MessageType.TAB_TITLE_CHANGED;
   tab: TabTitleChangedMessageTab;
@@ -117,24 +153,6 @@ export type TabTitleChangedMessage = {
 
 export function isTabTitleChangedMessage(message: unknown): message is TabTitleChangedMessage {
   return isMessage(message) && message.messageType === MessageType.TAB_TITLE_CHANGED;
-}
-
-export type DiscoverOptionsTabMessage = {
-  messageType: MessageType.DISCOVER_OPTIONS_TAB;
-};
-
-export function isDiscoverOptionsTabMessage(
-  message: unknown,
-): message is DiscoverOptionsTabMessage {
-  return isMessage(message) && message.messageType === MessageType.DISCOVER_OPTIONS_TAB;
-}
-
-export type GetRecordingsMessage = {
-  messageType: MessageType.GET_RECORDINGS;
-};
-
-export function isGetRecordingsMessage(message: unknown): message is GetRecordingsMessage {
-  return isMessage(message) && message.messageType === MessageType.GET_RECORDINGS;
 }
 
 export type Message =
@@ -148,4 +166,5 @@ export type Message =
   | RecordingUpdatedMessage
   | RecordingBlobAddedMessage
   | RecordingRemovedMessage
+  | AppearanceModeChangedMessage
   | TabTitleChangedMessage;

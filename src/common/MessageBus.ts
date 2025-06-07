@@ -1,6 +1,7 @@
 import browser from 'webextension-polyfill';
 import {
   EnrichedTabTitleChangeMessageTab,
+  isAppearanceModeChangedMessage,
   isDiscoverOptionsTabMessage,
   isDownloadRecordingMessage,
   isGetRecordingsMessage,
@@ -19,6 +20,7 @@ import {
 import { PubSub } from './PubSub';
 import { RecordingBlobAdded } from './RecordingBlobAdded';
 import { RecordingMetadata } from './RecordingMetadata';
+import { AppearanceMode } from './types';
 
 export class MessageBus {
   private readonly discoverOptionsTabPubSub = new PubSub<void, number>();
@@ -31,6 +33,7 @@ export class MessageBus {
   private readonly recordingUpdatedPubSub = new PubSub<RecordingMetadata, void>();
   private readonly recordingBlobAddedPubSub = new PubSub<RecordingBlobAdded, void>();
   private readonly recordingRemovedPubSub = new PubSub<RecordingMetadata, void>();
+  private readonly appearanceChangedPubSub = new PubSub<AppearanceMode, void>();
   private readonly tabTitleChangedPubSub = new PubSub<EnrichedTabTitleChangeMessageTab, void>();
 
   constructor(private readonly location: string) {
@@ -65,6 +68,8 @@ export class MessageBus {
       this.recordingBlobAddedPubSub.emit(message);
     } else if (isRecordingRemovedMessage(message)) {
       this.recordingRemovedPubSub.emit(message.recording);
+    } else if (isAppearanceModeChangedMessage(message)) {
+      this.appearanceChangedPubSub.emit(message.mode);
     } else if (isTabTitleChangedMessage(message)) {
       if (sender.tab?.id === undefined) {
         throw new Error(
@@ -233,6 +238,17 @@ export class MessageBus {
     await this.request<RecordingMetadata, void>(this.recordingRemovedPubSub, recording, {
       messageType: MessageType.RECORDING_REMOVED,
       recording,
+    });
+  }
+
+  public onAppearanceChanged(callback: (mode: AppearanceMode) => Promise<void>): void {
+    this.appearanceChangedPubSub.on(callback);
+  }
+
+  public async appearanceChanged(mode: AppearanceMode): Promise<void> {
+    await this.request<AppearanceMode, void>(this.appearanceChangedPubSub, mode, {
+      messageType: MessageType.APPEARANCE_MODE_CHANGED,
+      mode,
     });
   }
 

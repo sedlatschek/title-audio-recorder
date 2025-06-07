@@ -1,3 +1,5 @@
+import { AppearanceModeChangeDetector } from '../../common/appearanceMode/AppearanceModeChangeDetector';
+import { createAppearanceModeChangeDetector } from '../../common/components/appearanceModeChangeDetector';
 import { createConfigurationHandler } from '../../common/components/configurationHandler';
 import { createRecordingsRef, RecordingsRef } from '../../common/components/recordingsRef';
 import { createTosAcceptedRef, TosAcceptedRef } from '../../common/components/tosAcceptedRef';
@@ -14,12 +16,14 @@ type PopupComponents = {
   recordings: RecordingsRef;
   tosHandler: TosHandler;
   tosAccepted: TosAcceptedRef;
+  appearanceModeChangeDetector: AppearanceModeChangeDetector;
 };
 
 let popupComponents: PopupComponents | undefined;
 
 export async function initializeComponents(): Promise<void> {
-  const messageBus = createMessageBus();
+  const appearanceModeChangeDetector = createAppearanceModeChangeDetector();
+  const messageBus = await createMessageBus(appearanceModeChangeDetector);
   const configurationHandler = createConfigurationHandler();
   const tosHandler = createTosHandler();
 
@@ -29,6 +33,7 @@ export async function initializeComponents(): Promise<void> {
     recordings: createRecordingsRef(messageBus, true),
     tosHandler,
     tosAccepted: await createTosAcceptedRef(tosHandler),
+    appearanceModeChangeDetector,
   };
 }
 

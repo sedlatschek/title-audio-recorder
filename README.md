@@ -1,3 +1,3 @@
-# ![Logo](public/icon/16.png) Title Audio Recorder
+# ![Logo](public/icon/16_light.png) Title Audio Recorder
 
 Can be used to record audio from the current browser tab. Detects when the title changes, saves the recording and starts a new one.
