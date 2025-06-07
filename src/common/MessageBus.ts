@@ -35,15 +35,13 @@ export class MessageBus {
 
   constructor(private readonly location: string) {
     console.debug(`[${this.location} MessageBus] initialized`);
-    browser.runtime.onMessage.addListener((message, sender, sendResponse) =>
-      this.handleRuntimeMessage(message, sender, sendResponse),
-    );
+    browser.runtime.onMessage.addListener(this.handleRuntimeMessage.bind(this));
   }
 
   private handleRuntimeMessage(
     message: unknown,
     sender: browser.Runtime.MessageSender,
-    sendResponse: (message: unknown) => void,
+    sendResponse?: (message: unknown) => void,
   ): true | Promise<unknown> | undefined {
     console.debug(`<< [${this.location} MessageBus]`, message);
 
@@ -84,7 +82,11 @@ export class MessageBus {
     }
   }
 
-  private respond(promise: Promise<unknown>, sendResponse: (message: unknown) => void): true {
+  private respond(promise: Promise<unknown>, sendResponse?: (message: unknown) => void): true {
+    if (!sendResponse) {
+      throw new Error(`[${this.location} MessageBus] sendResponse is not defined`);
+    }
+
     promise
       .then((response) => {
         console.debug(`>> [${this.location} MessageBus] response`, response);

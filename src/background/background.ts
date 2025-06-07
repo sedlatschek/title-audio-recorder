@@ -3,7 +3,7 @@ import browser, { Tabs } from 'webextension-polyfill';
 import { DiscoverOptionsTabMessage, isMessage, MessageType } from '../common/Message';
 import { getOptionPageTabs, getOptionsPageUrl } from '../common/tabs';
 
-browser.runtime.onMessage.addListener((message): undefined => {
+browser.runtime.onMessage.addListener((message: unknown): undefined => {
   if (!isMessage(message)) {
     throw new Error(`[background] received invalid message: ${JSON.stringify(message)}`);
   }
