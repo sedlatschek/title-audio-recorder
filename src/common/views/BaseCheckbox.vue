@@ -10,7 +10,7 @@
     <label
       :for="id"
       :class="{ 'opacity-55': disabled }"
-      class="ms-1 block text-sm">
+      class="ms-1 block text-sm dark:text-white">
       <slot />
     </label>
   </div>
