@@ -4,6 +4,7 @@ import { ConfigurationSettings, isConfigurationSettings } from './ConfigurationS
 import { getDefaultConfigurationSettings } from './defaultConfigurationSettings';
 
 export class BrowserStorageConfigurationHandler implements ConfigurationHandler {
+  private storageArea = browser.storage.sync;
   private storageKey = 'title-audio-recorder-configuration';
   private onChangeListeners: ConfigurationChangeListener<keyof ConfigurationSettings>[] = [];
 
@@ -12,7 +13,7 @@ export class BrowserStorageConfigurationHandler implements ConfigurationHandler 
   }
 
   private setupChangeListener(): void {
-    browser.storage.sync.onChanged.addListener((changes) => {
+    this.storageArea.onChanged.addListener((changes) => {
       if (changes[this.storageKey]) {
         const { newValue, oldValue } = changes[this.storageKey];
 
@@ -25,14 +26,12 @@ export class BrowserStorageConfigurationHandler implements ConfigurationHandler 
         }
 
         for (const property of Object.keys(newValue) as (keyof ConfigurationSettings)[]) {
-          if (!oldValue) return;
-
           if (!isConfigurationSettings(oldValue) || newValue[property] !== oldValue[property]) {
             this.onChangeListeners.forEach((callback) => {
               console.debug(
                 `[${BrowserStorageConfigurationHandler.name}] Change detected for property:`,
                 property,
-                'New value:',
+                'value:',
                 newValue[property],
               );
               callback(property, newValue[property]);
@@ -52,7 +51,7 @@ export class BrowserStorageConfigurationHandler implements ConfigurationHandler 
   }
 
   public async getAll(): Promise<ConfigurationSettings> {
-    const settings = await browser.storage.sync.get(this.storageKey);
+    const settings = await this.storageArea.get(this.storageKey);
     if (settings[this.storageKey]) {
       return settings[this.storageKey] as ConfigurationSettings;
     }
@@ -68,10 +67,10 @@ export class BrowserStorageConfigurationHandler implements ConfigurationHandler 
     console.debug(
       `[${BrowserStorageConfigurationHandler.name}] Setting property:`,
       property,
-      'Value:',
+      'value:',
       value,
     );
-    await browser.storage.sync.set({ [this.storageKey]: settings });
+    await this.storageArea.set({ [this.storageKey]: settings });
   }
 
   public async get<T extends keyof ConfigurationSettings>(
@@ -82,7 +81,7 @@ export class BrowserStorageConfigurationHandler implements ConfigurationHandler 
     console.debug(
       `[${BrowserStorageConfigurationHandler.name}] Retrieved property:`,
       property,
-      'Value:',
+      'value:',
       value,
     );
     return value;

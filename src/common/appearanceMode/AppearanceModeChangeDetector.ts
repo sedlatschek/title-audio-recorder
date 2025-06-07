@@ -5,4 +5,5 @@ export type AppearanceModeChangeHandler = (appearanceMode: AppearanceMode) => Pr
 export interface AppearanceModeChangeDetector {
   getAppearanceMode(): Promise<AppearanceMode>;
   onAppearanceModeChanged(handler: AppearanceModeChangeHandler): void;
+  fire(): void;
 }

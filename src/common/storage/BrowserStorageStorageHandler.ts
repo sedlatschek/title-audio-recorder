@@ -1,9 +1,10 @@
 import browser from 'webextension-polyfill';
 import { getDefaultStorageContent } from './defaultStorageContent';
-import { StorageContent } from './StorageContent';
+import { isStorageContent, StorageContent } from './StorageContent';
 import { StorageChangeListener, StorageHandler } from './StorageHandler';
 
 export class BrowserStorageStorageHandler implements StorageHandler {
+  private storageArea = browser.storage.local;
   private storageKey = 'title-audio-recorder-storage';
   private onChangeListeners: StorageChangeListener<keyof StorageContent>[] = [];
 
@@ -12,22 +13,25 @@ export class BrowserStorageStorageHandler implements StorageHandler {
   }
 
   private setupChangeListener(): void {
-    browser.storage.local.onChanged.addListener((changes) => {
+    this.storageArea.onChanged.addListener((changes) => {
       if (changes[this.storageKey]) {
-        const { newValue, oldValue } = changes[this.storageKey] as {
-          oldValue: StorageContent;
-          newValue: StorageContent;
-        };
+        const { newValue, oldValue } = changes[this.storageKey];
 
-        for (const property of Object.keys(oldValue) as (keyof StorageContent)[]) {
-          if (newValue[property] !== oldValue[property]) {
+        if (!isStorageContent(newValue)) {
+          console.warn(
+            `[${BrowserStorageStorageHandler.name}] Invalid change detected:`,
+            changes[this.storageKey],
+          );
+          return;
+        }
+
+        for (const property of Object.keys(newValue) as (keyof StorageContent)[]) {
+          if (!isStorageContent(oldValue) || newValue[property] !== oldValue[property]) {
             this.onChangeListeners.forEach((callback) => {
               console.debug(
                 `[${BrowserStorageStorageHandler.name}] Change detected for property:`,
                 property,
-                'Old value:',
-                oldValue[property],
-                'New value:',
+                'value:',
                 newValue[property],
               );
               callback(property, newValue[property]);
@@ -39,7 +43,7 @@ export class BrowserStorageStorageHandler implements StorageHandler {
   }
 
   private async getStorageContent(): Promise<StorageContent> {
-    const properties = await browser.storage.local.get(this.storageKey);
+    const properties = await this.storageArea.get(this.storageKey);
     if (properties[this.storageKey]) {
       return properties[this.storageKey] as StorageContent;
     }
@@ -52,7 +56,7 @@ export class BrowserStorageStorageHandler implements StorageHandler {
     console.debug(
       `[${BrowserStorageStorageHandler.name}] Retrieved property:`,
       property,
-      'Value:',
+      'value:',
       value,
     );
     return value;
@@ -67,10 +71,10 @@ export class BrowserStorageStorageHandler implements StorageHandler {
     console.debug(
       `[${BrowserStorageStorageHandler.name}] Setting property:`,
       property,
-      'Value:',
+      'value:',
       value,
     );
-    await browser.storage.local.set({ [this.storageKey]: newStorageContent });
+    await this.storageArea.set({ [this.storageKey]: newStorageContent });
   }
 
   onChange(callback: StorageChangeListener<keyof StorageContent>): void {

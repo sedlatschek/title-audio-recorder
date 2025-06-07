@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
 import { getErrorPageUrl, getOptionPageTabs } from '../common/tabs';
-import { initializeComponents } from './components';
+import { getComponents, initializeComponents } from './components';
 import OptionsPage from './views/OptionsPage.vue';
 import '../index.css';
 
@@ -11,6 +11,10 @@ async function initialize(): Promise<void> {
     window.location.href = getErrorPageUrl();
   } else {
     await initializeComponents();
+
     createApp(OptionsPage).mount('body');
+
+    const { appearanceModeChangeDetector } = getComponents();
+    return appearanceModeChangeDetector.fire();
   }
 }

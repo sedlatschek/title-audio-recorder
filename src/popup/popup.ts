@@ -1,10 +1,12 @@
 import { createApp } from 'vue';
 import { getCurrentTabId } from '../common/tabs';
-import { initializeComponents } from './components';
+import { getComponents, initializeComponents } from './components';
 
 import PopupPage from './PopupPage.vue';
 import '../index.css';
 import { PopupPageProps } from './PopupPageProps';
+
+initialize();
 
 async function initialize(): Promise<void> {
   await initializeComponents();
@@ -15,6 +17,7 @@ async function initialize(): Promise<void> {
     tabId,
   };
   createApp(PopupPage, props).mount('body');
-}
 
-initialize();
+  const { appearanceModeChangeDetector } = getComponents();
+  return appearanceModeChangeDetector.fire();
+}

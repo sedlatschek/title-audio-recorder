@@ -32,4 +32,9 @@ export class HtmlMediaQueryAppearanceModeChangeDetector implements AppearanceMod
   public onAppearanceModeChanged(handler: AppearanceModeChangeHandler): void {
     this.onChangePubSub.on(handler);
   }
+
+  public async fire(): Promise<void> {
+    const mediaQuery = window.matchMedia(query);
+    this.handleMatchMediaChange(mediaQuery);
+  }
 }
