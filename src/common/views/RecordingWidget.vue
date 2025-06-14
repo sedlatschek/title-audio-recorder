@@ -21,7 +21,7 @@
           <div>
             <a
               target="_blank"
-              class="leading-none font-medium break-all text-sky-500 dark:text-sky-300"
+              class="leading-none font-medium break-all text-sky-700 dark:text-sky-300"
               :href="recording.pageUrl">
               {{ recording.pageUrl }}
             </a>
